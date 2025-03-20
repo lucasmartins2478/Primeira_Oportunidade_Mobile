@@ -59,7 +59,7 @@
                     style="@style/EditTextLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/name_label"
+                    android:text="@string/company_name"
 
                     app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -118,7 +118,7 @@
                     style="@style/EditTextLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/email_label" />
+                    android:text="@string/corporative_email" />
 
                 <EditText
                     android:id="@+id/email_input"
@@ -141,7 +141,7 @@
                 <EditText
                     android:id="@+id/phone_number_input"
                     style="@style/EditTextRegister"
-                    android:inputType="number"
+                    android:inputType="phone"
                     />
             </LinearLayout>
             <LinearLayout

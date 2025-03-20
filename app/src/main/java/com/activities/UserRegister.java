@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -16,11 +17,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.models.Candidate;
 import com.models.User;
 import com.services.CandidateService;
+import com.services.LoginService;
 
 
 public class UserRegister extends AppCompatActivity {
 
     private CandidateService candidateService;
+
+    private LoginService loginService;
 
 //    private ProgressBar progressBar;
 
@@ -37,8 +41,10 @@ public class UserRegister extends AppCompatActivity {
 
 //        progressBar = findViewById(R.id.progressBar);
         candidateService = new CandidateService();
+        loginService = new LoginService();
     }
-    public void registerUser(View view) {
+    public void registerUser(View view){
+        // Captura os dados dos campos de entrada
         EditText nameInput = findViewById(R.id.name_input);
         String name = nameInput.getText().toString();
 
@@ -57,6 +63,7 @@ public class UserRegister extends AppCompatActivity {
         EditText confirmPasswordInput = findViewById(R.id.confirm_password_input);
         String confirmPassword = confirmPasswordInput.getText().toString();
 
+        // Validação dos dados
         if (name.isEmpty()) {
             nameInput.setError("Preencha o seu nome");
             nameInput.requestFocus();
@@ -92,58 +99,55 @@ public class UserRegister extends AppCompatActivity {
             return;
         }
 
-//        progressBar.setVisibility(View.VISIBLE);
-//        setFormEnabled();
-
+        // Criar o objeto User e Candidate
+        User user = new User(email, password, "user");  // "user" pode ser alterado conforme seu caso
         Candidate candidate = new Candidate(name, phone, cpf);
-        User user = new User(email, password, "user");
+
+        // Cadastro do candidato e do usuário
         candidateService.registerCandidate(candidate, new CandidateService.CandidateCallback() {
             @Override
             public void onSuccess() {
-                runOnUiThread(() -> {
-//                    progressBar.setVisibility(View.GONE);
-//                    setFormEnabled();
-                    Toast.makeText(UserRegister.this, "Usuário cadastrado!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(UserRegister.this, Vacancies.class);
-                    startActivity(intent);
+                loginService.registerUser(user, new LoginService.UserCallback() {
+                    @Override
+                    public void onSuccess() {
+                        runOnUiThread(() -> {
+//                            loginService.login(email, password);
+                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("email", user.getEmail());
+                            editor.putString("password", user.getPassword());
+                            editor.putString("userType", user.getUserType());
+                            editor.apply();
+                            Intent intent = new Intent(UserRegister.this, Vacancies.class);
+                            startActivity(intent);
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar usuário: " + error, Toast.LENGTH_SHORT).show());
+                    }
                 });
             }
 
             @Override
             public void onFailure(String error) {
-                runOnUiThread(() -> {
-//                    progressBar.setVisibility(View.GONE);
-//                    setFormEnabled();
-                    Toast.makeText(UserRegister.this, "Erro ao cadastrar: " + error, Toast.LENGTH_SHORT).show();
-                });
+
+                runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
             }
         });
     }
 
+    // Função para quando o usuário já tiver uma conta
     public void haveAccount(View view){
         Intent intent = new Intent(UserRegister.this, FormLogin.class);
         startActivity(intent);
     }
+
+    // Função de back
     public void onBackPressed(View view){
         finish();
     }
-
-//    private void setFormEnabled() {
-//        EditText nameInput = findViewById(R.id.name_input);
-//        EditText phoneInput = findViewById(R.id.phone_number_input);
-//        EditText cpfInput = findViewById(R.id.cpf_input);
-//        EditText emailInput = findViewById(R.id.email_input);
-//        EditText passwordInput = findViewById(R.id.password_input);
-//        EditText confirmPasswordInput = findViewById(R.id.confirm_password_input);
-//        View submitButton = findViewById(R.id.register_button); // Adapte conforme seu ID de botão
-//
-//        nameInput.setVisibility(View.GONE);
-//        phoneInput.setVisibility(View.GONE);
-//        cpfInput.setVisibility(View.GONE);
-//        emailInput.setVisibility(View.GONE);
-//        passwordInput.setVisibility(View.GONE);
-//        confirmPasswordInput.setVisibility(View.GONE);
-//        submitButton.setVisibility(View.GONE);
-//    }
 
 }

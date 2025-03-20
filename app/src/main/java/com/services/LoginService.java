@@ -66,35 +66,39 @@ public class LoginService {
         void onFailure(String error);
     }
 
-    public void registerUser(User user, UserCallback callback){
-        new Thread(() ->{
-            try{
+    public void registerUser(User user, UserCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando JSON do usuário
                 JSONObject json = new JSONObject();
                 json.put("email", user.getEmail());
                 json.put("password", user.getPassword());
                 json.put("userType", user.getUserType());
 
-
+                // Criando corpo da requisição
                 RequestBody body = RequestBody.create(
                         json.toString(),
                         MediaType.get("application/json; charset=utf-8")
                 );
 
+                // Criando requisição POST
+                Request request = new Request.Builder()
+                        .url(apiUrl)
+                        .post(body)
+                        .build();
 
-
-                Request request = new Request.Builder().url(apiUrl).post(body).build();
-
+                // Enviando requisição
                 Response response = client.newCall(request).execute();
 
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
                     callback.onSuccess();
-                }else{
-                    callback.onFailure("Erro"+response.message());
+                } else {
+                    callback.onFailure("Erro ao cadastrar o usuário: " + response.message());
                 }
-            }catch (Exception e){
-                callback.onFailure("Falha ao conectar: "+ e.getMessage());
-            }
 
+            } catch (Exception e) {
+                callback.onFailure("Falha ao conectar: " + e.getMessage());
+            }
         }).start();
     }
 
@@ -106,4 +110,5 @@ public class LoginService {
         }
         return null;
     }
+
 }

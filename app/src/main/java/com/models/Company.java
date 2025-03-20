@@ -4,7 +4,6 @@ public class Company {
     private String companyName;
     private String cnpj;
     private String segment;
-    private String email;
     private String phoneNumber;
     private String responsible;
     private String website;
@@ -13,18 +12,14 @@ public class Company {
     private String uf;
     private String address;
     private String addressNumber;
-    private String password;
     private String logo;
-    private String userType;
-
     public Company() {
     }
 
-    public Company(String companyName, String cnpj, String segment, String email, String phoneNumber, String responsible, String website, String city, String cep, String uf, String address, String addressNumber, String password, String logo, String userType) {
+    public Company(String companyName, String cnpj, String segment,  String phoneNumber, String responsible, String website, String city, String cep, String uf, String address, String addressNumber,  String logo) {
         this.companyName = companyName;
         this.cnpj = cnpj;
         this.segment = segment;
-        this.email = email;
         this.phoneNumber = phoneNumber;
         this.responsible = responsible;
         this.website = website;
@@ -33,9 +28,7 @@ public class Company {
         this.uf = uf;
         this.address = address;
         this.addressNumber = addressNumber;
-        this.password = password;
         this.logo = logo;
-        this.userType = userType;
     }
 
     public String getCompanyName() {
@@ -62,13 +55,7 @@ public class Company {
         this.segment = segment;
     }
 
-    public String getEmail() {
-        return email;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -134,13 +121,7 @@ public class Company {
         this.addressNumber = addressNumber;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getLogo() {
         return logo;
@@ -150,12 +131,7 @@ public class Company {
         this.logo = logo;
     }
 
-    public String getUserType() {
-        return userType;
-    }
-    public void setUserType(String userType){
-        this.userType = userType;
-    }
+
     }
 
 

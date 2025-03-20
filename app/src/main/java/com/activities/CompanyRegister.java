@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -13,11 +14,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.models.Company;
+import com.models.User;
 import com.services.CompanyService;
+import com.services.LoginService;
 
 public class CompanyRegister extends AppCompatActivity {
 
     private CompanyService companyService;
+    private LoginService loginService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class CompanyRegister extends AppCompatActivity {
             return insets;
         });
         companyService = new CompanyService();
+        loginService = new LoginService();
     }
 
 
@@ -156,16 +161,46 @@ public class CompanyRegister extends AppCompatActivity {
                 return;
             }
 
-            Company company = new Company(companyName, cnpj, segment, email, phoneNumber, responsible,
-                    website, city, cep, uf, address, addressNumber, password, logo, "company");
 
-            if (companyService.registerCompany(company)) {
-                Toast.makeText(this, "Empresa cadastrada com sucesso!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Ocorreu um erro", Toast.LENGTH_SHORT).show();
+
+        Company company = new Company(companyName, cnpj, segment,  phoneNumber, responsible,
+                website, city, cep, uf, address, addressNumber, logo);
+        User user = new User(email, password, "company");
+
+
+        companyService.registerCompany(company, new CompanyService.CompanyCallback() {
+            @Override
+            public void onSuccess() {
+                loginService.registerUser(user, new LoginService.UserCallback() {
+                    @Override
+                    public void onSuccess() {
+                        runOnUiThread(() -> {
+                            Toast.makeText(CompanyRegister.this, "Empresa cadastrada com sucesso!", Toast.LENGTH_SHORT).show();
+                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("email", user.getEmail());
+                            editor.putString("password", user.getPassword());
+                            editor.putString("userType", user.getUserType());
+                            editor.apply();
+                            Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
+                            startActivity(intent);
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar usuário: " + error, Toast.LENGTH_SHORT).show());
+                    }
+                });
             }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
+
+
+            }
+        });
 
 
         }

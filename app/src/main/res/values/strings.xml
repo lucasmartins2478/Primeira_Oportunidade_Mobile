@@ -11,6 +11,8 @@
     <string name="reset_password_text">Para redefinir sua senha, preencha o campo abaixo com o email cadastrado e enviaremos um link com as instruções para redefinir sua senha</string>
     <string name="reset_password_button">Enviar Link</string>
     <string name="name_label">Nome*</string>
+    <string name="company_name">Nome da empresa*</string>
+    <string name="corporative_email">Email corporativo*</string>
     <string name="phone_number_label">Telefone*</string>
     <string name="cpf_label">CPF*</string>
     <string name="email_label">E-mail*</string>
