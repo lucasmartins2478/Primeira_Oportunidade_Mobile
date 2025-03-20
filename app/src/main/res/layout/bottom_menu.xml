@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialogbkg"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatButton
+        style="@style/MenuOrangeBar"
+        android:layout_width="140dp"
+        android:layout_height="6dp"
+        android:layout_gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnHome"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/home_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/home_menu_option"
+        android:textAlignment="viewStart" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnComunity"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/comunity_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/comunity_menu_option"
+        android:textAlignment="viewStart" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCompanies"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/companies_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/companies_menu_option"
+        android:textAlignment="viewStart" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnProfile"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableLeft="@drawable/profile_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/profile_menu_option"
+        android:textAlignment="viewStart" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnMyApplications"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:drawableLeft="@drawable/my_applications_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/my_applications_menu_option"
+        android:textAlignment="viewStart" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnVacancyRegister"
+        style="@style/MenuOptionButton"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/vacancy_register_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/vacancy_register_menu"
+        android:textAlignment="viewStart" />
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnClose"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableLeft="@drawable/exit_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/exit_menu_option"
+        android:textAlignment="viewStart" />
+</LinearLayout>

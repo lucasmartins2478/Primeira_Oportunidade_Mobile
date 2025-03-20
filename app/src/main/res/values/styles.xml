@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="EditText">
+        <item name="android:layout_width">294dp</item>
+        <item name="android:layout_height">55dp</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:background">@drawable/edit_text</item>
+    </style>
+
+    <style name="SearchInput">
+        <item name="android:layout_width">294dp</item>
+        <item name="android:layout_height">55dp</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:textColorHint">@color/black</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/search_input</item>
+    </style>
+
+    <style name="EditTextLabel">
+        <item name="android:textSize">16dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="EditTextRegister">
+        <item name="android:layout_width">340dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textSize">15dp</item>
+        <item name="android:background">@drawable/edit_text</item>
+    </style>
+
+    <style name="ButtonBlue">
+        <item name="android:background">@drawable/button_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ButtonOrange">
+        <item name="android:background">@drawable/button_orange</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="textAllCaps">false</item>
+
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BackButton">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_margin">15dp</item>
+    </style>
+
+    <style name="MenuOptionButton">
+        <item name="android:background">@drawable/option_menu_button</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="textAllCaps">false</item>
+    </style>
+    <style name="MenuOrangeBar">
+        <item name="android:background">@drawable/menu_orange_bar</item>
+        <item name="android:layout_marginBottom">40dp</item>
+    </style>
+    <style name="CardButton">
+        <item name="android:background">@drawable/card_button</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="RegisterTitle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SectionTitle">
+        <item name="android:background">@drawable/section_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="TextViewData">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

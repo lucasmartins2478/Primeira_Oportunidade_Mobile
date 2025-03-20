@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">PrimeiraOportunidade</string>
+    <string name="forgot_password_text">Esqueceu sua senha?</string>
+    <string name="create_account_text">Primeiro acesso? Crie uma conta</string>
+    <string name="email_hint">E-mail</string>
+    <string name="password_hint">Senha</string>
+    <string name="login_button">Entrar</string>
+    <string name="create_user_account">Sou candidato</string>
+    <string name="create_company_account">Sou empresa</string>
+    <string name="reset_password_title">Redefinir Senha</string>
+    <string name="reset_password_text">Para redefinir sua senha, preencha o campo abaixo com o email cadastrado e enviaremos um link com as instruções para redefinir sua senha</string>
+    <string name="reset_password_button">Enviar Link</string>
+    <string name="name_label">Nome*</string>
+    <string name="phone_number_label">Telefone*</string>
+    <string name="cpf_label">CPF*</string>
+    <string name="email_label">E-mail*</string>
+    <string name="password_label">Senha*</string>
+    <string name="confirm_password_label">Confirme sua senha*</string>
+    <string name="register_button_text">Cadastrar</string>
+    <string name="have_account">Já possui conta? <font color="#FF7B2A">Login</font></string>
+    <string name="company_name_label">Nome da empresa*</string>
+    <string name="cnpj_label">CNPJ*</string>
+    <string name="segment_label">Segmento de Atividade*</string>
+    <string name="responsible_label">Responsável pela abertura das vagas*</string>
+    <string name="website_label">Site</string>
+    <string name="city_label">Cidade*</string>
+    <string name="cep_label">CEP*</string>
+    <string name="uf_label">Estado*</string>
+    <string name="address_label">Endereço*</string>
+    <string name="address_number_label">Nº*</string>
+    <string name="logo_label">Logo*</string>
+    <string name="exit_menu_option">Sair</string>
+    <string name="profile_menu_option">Perfil</string>
+    <string name="home_menu_option">Início</string>
+    <string name="comunity_menu_option">Comunidade</string>
+    <string name="companies_menu_option">Empresas</string>
+    <string name="my_applications_menu_option">Minhas Candidaturas</string>
+    <string name="search">Pesquisar</string>
+    <string name="your_profile">Seu perfil</string>
+    <string name="vacancy_register_menu">Cadastrar Vaga</string>
+    <string name="vacancy_register_title">Cadastro de Vaga</string>
+    <string name="vacancy_name">Nome do Cargo*</string>
+    <string name="vacancy_level">Nível da Vaga*</string>
+    <string name="salary">Salário*</string>
+    <string name="contact">Contato*</string>
+    <string name="modality">Modalidade*</string>
+    <string name="about_company">Sobra a Empresa*</string>
+    <string name="description">Descrição da Vaga*</string>
+    <string name="requirements">Requisitos da Vaga*</string>
+    <string name="benefits">Benefícios Oferecidos*</string>
+    <string name="add_adictional_questions">Incluir perguntas adicionais</string>
+    <string name="add_more_questions">Adicionar mais uma pergunta</string>
+    <string name="finish_register">Finalizar cadastro</string>
+    <string name="adictional_questions_title">Perguntas Adicionais</string>
+    <string name="register_curriculum">Cadastre seu currículo</string>
+    <string name="back">Voltar</string>
+
+
+</resources>

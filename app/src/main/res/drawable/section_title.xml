@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cor do fundo -->
+    <solid android:color="@color/background_color"/>
+
+    <!-- Borda mais escura -->
+    <stroke android:width="3dp" android:color="@color/gray"/>
+
+    <!-- Cantos arredondados -->
+    <corners android:radius="50dp"/>
+</shape>
