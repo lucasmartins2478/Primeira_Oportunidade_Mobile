@@ -15,6 +15,18 @@
         android:theme="@style/Theme.PrimeiraOportunidade"
         tools:targetApi="31">
         <activity
+            android:name=".CoursesRegister"
+            android:exported="false" />
+        <activity
+            android:name=".AdditionalDataRegister"
+            android:exported="false" />
+        <activity
+            android:name=".AcademicDataRegister"
+            android:exported="false" />
+        <activity
+            android:name=".CurriculumRegister"
+            android:exported="false" />
+        <activity
             android:name=".MyVacancies"
             android:exported="false" />
         <activity

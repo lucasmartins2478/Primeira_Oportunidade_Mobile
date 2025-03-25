@@ -57,6 +57,36 @@
     <string name="register_curriculum">Cadastre seu currículo</string>
     <string name="back">Voltar</string>
     <string name="question">Pergunta</string>
-
-
+    <string name="full_name">Nome Completo*</string>
+    <string name="birth_date">Data de Nascimento*</string>
+    <string name="age">Idade*</string>
+    <string name="gender">Gênero*</string>
+    <string name="race">Raça*</string>
+    <string name="institution_name">Nome da Instituição de Ensino*</string>
+    <string name="level">Nível*</string>
+    <string name="period">Ano/Semestre*</string>
+    <string name="start_date">Data Início*</string>
+    <string name="end_date">Data Conclusão*</string>
+    <string name="course_name">Nome do curso*</string>
+    <string name="curriculum_register">Cadastro de Currículo</string>
+    <string name="academic_data">Dados Acadêmicos</string>
+    <string name="courses_competences">Cursos e Competências</string>
+    <string name="additional_data">Dados Adicionais</string>
+    <string name="studing_yet">estudo atualmente</string>
+    <string name="dont_have_courses">não possuo cursos</string>
+    <string name="complementary_course_name">Nome do Curso Complementar*</string>
+    <string name="duration">Duração*</string>
+    <string name="granting_institution">Instituição Concedente*</string>
+    <string name="go_to_academic_data">Ir para dados acadêmicos</string>
+    <string name="add_another_background">Adicionar outra formação</string>
+    <string name="add_another_course">Adicionar outro curso</string>
+    <string name="go_to_courses_and_competences">Ir para cursos e competências</string>
+    <string name="go_to_additional_data">Ir para dados adicionais</string>
+    <string name="insert_your_competences">Insira suas competências</string>
+    <string name="add_curriculum">Possui seu currículo? Anexe-o aqui:</string>
+    <string name="about_you">Fale sobre você:</string>
+    <string name="interest_areas">Quais suas áreas de interesse?</string>
+    <string name="use_terms">Termos de Uso</string>
+    <string name="privacy_politic">Política de Privacidade</string>
+    <string name="finish_curriculum">Cadastrar currículo</string>
 </resources>

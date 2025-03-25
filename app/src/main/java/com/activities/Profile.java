@@ -1,7 +1,9 @@
 package com.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +33,10 @@ public class Profile extends AppCompatActivity {
 
 
         loadUserData();
+    }
+    public void curriculumData(View view){
+        Intent intent = new Intent(Profile.this, CurriculumRegister.class);
+        startActivity(intent);
     }
 
     private void loadUserData() {
