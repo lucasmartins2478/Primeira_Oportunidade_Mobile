@@ -23,6 +23,13 @@ public class QuestionRegister extends AppCompatActivity {
         });
     }
 
+    public void addQuestions(View view){
+
+    }
+    public void registerVacancy(View view){
+
+    }
+
 
     public void onBackPressed(View view){
         finish();

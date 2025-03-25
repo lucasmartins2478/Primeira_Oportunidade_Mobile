@@ -306,6 +306,8 @@
                     android:id="@+id/register_button"
                     style="@style/ButtonBlue"
                     android:onClick="registerVacancy"
+                    android:layout_width="268dp"
+                    android:layout_height="wrap_content"
                     android:text="@string/register_button_text"
                     android:textAllCaps="false" />
 

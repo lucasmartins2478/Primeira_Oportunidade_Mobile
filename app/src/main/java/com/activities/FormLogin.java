@@ -33,7 +33,6 @@ public class FormLogin extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String savedEmail = sharedPreferences.getString("email", null);
         String savedPassword = sharedPreferences.getString("password", null);
@@ -44,11 +43,8 @@ public class FormLogin extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
         loginService = new LoginService();
-
     }
-
     public void forgotPassword(View view){
         Intent intent = new Intent(FormLogin.this, ResetPassword.class);
         startActivity(intent);
@@ -73,8 +69,6 @@ public class FormLogin extends AppCompatActivity {
 
             if(user != null){
                 Toast.makeText(this, "Bem vindo !", Toast.LENGTH_SHORT).show();
-
-
                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("email", user.getEmail());
@@ -88,7 +82,6 @@ public class FormLogin extends AppCompatActivity {
                 Toast.makeText(this, "Usuário não encontrado!", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
     public void selectUser(View view){
         Intent intent = new Intent(FormLogin.this, SelectUser.class);

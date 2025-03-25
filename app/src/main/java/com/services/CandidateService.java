@@ -2,8 +2,10 @@ package com.services;
 
 import com.models.Candidate;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,53 @@ public class CandidateService {
         client = new OkHttpClient();
     }
 
-    public interface CandidateCallback {
+    public interface registerCallback {
         void onSuccess();
         void onFailure(String error);
     }
-    public void registerCandidate(Candidate candidate, CandidateCallback callback) {
+
+    public void getCandidateByUserId(int userId, CandidateCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando requisição GET
+                Request request = new Request.Builder()
+                        .url(apiUrl + "/" + userId) // Buscar candidato por ID
+                        .get()
+                        .build();
+
+                // Executando requisição
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String responseData = response.body().string();
+                        JSONObject json = new JSONObject(responseData);
+
+                        // Criando objeto Candidate com os dados retornados
+                        Candidate candidate = new Candidate(
+                                json.getString("name"),
+                                json.getString("phoneNumber"),
+                                json.getString("cpf"),
+                                json.getInt("id")
+                        );
+
+                        callback.onSuccess(candidate);
+                    } else {
+                        callback.onFailure("Erro ao buscar candidato: " + response.message());
+                    }
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } catch (IOException e) {
+                callback.onFailure("Falha na conexão: " + e.getMessage());
+            }
+        }).start();
+    }
+
+    public interface CandidateCallback {
+        void onSuccess(Candidate candidate);
+        void onFailure(String error);
+    }
+    public void registerCandidate(Candidate candidate, registerCallback callback) {
         new Thread(() -> {
             try {
                 // Criando JSON do candidato
@@ -66,4 +110,6 @@ public class CandidateService {
             }
         }).start();
     }
+
+
 }

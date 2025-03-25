@@ -13,7 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/container"
@@ -48,7 +51,6 @@
         </LinearLayout>
 
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,7 +61,7 @@
                 style="@style/EditTextLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="pergunta" />
+                android:text="@string/question" />
 
             <EditText
                 android:id="@+id/about_company_input"
@@ -89,10 +91,11 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/register_button"
                 style="@style/ButtonBlue"
+                android:layout_width="268dp"
+                android:layout_height="wrap_content"
                 android:onClick="registerVacancy"
                 android:text="@string/finish_register"
                 android:textAllCaps="false" />
-
 
 
         </LinearLayout>

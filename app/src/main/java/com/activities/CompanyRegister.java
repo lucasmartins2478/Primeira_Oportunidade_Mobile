@@ -162,16 +162,16 @@ public class CompanyRegister extends AppCompatActivity {
             }
 
 
-
-        Company company = new Company(companyName, cnpj, segment,  phoneNumber, responsible,
-                website, city, cep, uf, address, addressNumber, logo);
         User user = new User(email, password, "company");
 
-
-        companyService.registerCompany(company, new CompanyService.CompanyCallback() {
+        loginService.registerUser(user, new LoginService.UserCallback()
+         {
             @Override
             public void onSuccess() {
-                loginService.registerUser(user, new LoginService.UserCallback() {
+
+                Company company = new Company(companyName, cnpj, segment,  phoneNumber, responsible,
+                        website, city, cep, uf, address, addressNumber, logo, user.getId());
+                companyService.registerCompany(company, new CompanyService.CompanyCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {

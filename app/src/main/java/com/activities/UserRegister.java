@@ -101,13 +101,17 @@ public class UserRegister extends AppCompatActivity {
 
         // Criar o objeto User e Candidate
         User user = new User(email, password, "user");  // "user" pode ser alterado conforme seu caso
-        Candidate candidate = new Candidate(name, phone, cpf);
+
 
         // Cadastro do candidato e do usuário
-        candidateService.registerCandidate(candidate, new CandidateService.CandidateCallback() {
+
+        loginService.registerUser(user, new LoginService.UserCallback() {
             @Override
             public void onSuccess() {
-                loginService.registerUser(user, new LoginService.UserCallback() {
+
+                Candidate candidate = new Candidate(name, phone, cpf, user.getId());
+
+                candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
@@ -118,13 +122,21 @@ public class UserRegister extends AppCompatActivity {
                             editor.putString("email", user.getEmail());
                             editor.putString("password", user.getPassword());
                             editor.putString("userType", user.getUserType());
+                            editor.putString("name", candidate.getName());
+                            editor.putString("cpf", candidate.getCpf());
+                            editor.putString("phoneNumber", candidate.getPhoneNumber());
                             editor.apply();
                             Intent intent = new Intent(UserRegister.this, Vacancies.class);
                             startActivity(intent);
                         });
                     }
 
-                    @Override
+
+                    public void onSuccess(Candidate candidate) {
+
+                    }
+
+
                     public void onFailure(String error) {
                         runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar usuário: " + error, Toast.LENGTH_SHORT).show());
                     }

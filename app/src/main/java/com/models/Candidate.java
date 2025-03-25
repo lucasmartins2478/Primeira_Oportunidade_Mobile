@@ -9,16 +9,19 @@ public class Candidate {
     private String cpf;
     private String email;
 
+    private int userId;
+
 
 
 
     public Candidate() {
     }
 
-    public Candidate( String name, String phoneNumber, String cpf) {
+    public Candidate( String name, String phoneNumber, String cpf, int userId) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.cpf = cpf;
+        this.userId = userId;
 
     }
     public int getId(){
@@ -58,6 +61,13 @@ public class Candidate {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
 }

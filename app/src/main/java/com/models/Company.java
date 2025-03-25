@@ -13,10 +13,12 @@ public class Company {
     private String address;
     private String addressNumber;
     private String logo;
+
+    private int userId;
     public Company() {
     }
 
-    public Company(String companyName, String cnpj, String segment,  String phoneNumber, String responsible, String website, String city, String cep, String uf, String address, String addressNumber,  String logo) {
+    public Company(String companyName, String cnpj, String segment,  String phoneNumber, String responsible, String website, String city, String cep, String uf, String address, String addressNumber,  String logo, int userId) {
         this.companyName = companyName;
         this.cnpj = cnpj;
         this.segment = segment;
@@ -29,6 +31,7 @@ public class Company {
         this.address = address;
         this.addressNumber = addressNumber;
         this.logo = logo;
+        this.userId = userId;
     }
 
     public String getCompanyName() {
@@ -129,6 +132,14 @@ public class Company {
 
     public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
 
