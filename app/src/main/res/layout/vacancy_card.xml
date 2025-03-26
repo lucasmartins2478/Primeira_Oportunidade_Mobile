@@ -74,7 +74,7 @@
             android:layout_width="211dp"
             android:layout_height="32dp"
             android:layout_marginTop="20dp"
-            android:text="Ver mais Informações"
+            android:text="@string/see_more_informations"
             android:textAllCaps="false" />
 
 

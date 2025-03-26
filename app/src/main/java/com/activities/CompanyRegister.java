@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.models.Company;
+import com.models.MaskEditText;
 import com.models.User;
 import com.services.CompanyService;
 import com.services.LoginService;
@@ -22,6 +23,8 @@ public class CompanyRegister extends AppCompatActivity {
 
     private CompanyService companyService;
     private LoginService loginService;
+
+    private EditText companyNameInput, cnpjInput, segmentInput, emailInput, phoneInput, responsibleInput, websiteInput, cityInput, cepInput,ufInput, addressInput, addressNumberInput, passwordInput, confirmPasswordInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,29 @@ public class CompanyRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        companyNameInput = findViewById(R.id.compay_name_input);
+        cnpjInput = findViewById(R.id.cnpj_input);
+        segmentInput = findViewById(R.id.segment_input);
+        emailInput = findViewById(R.id.email_input);
+        phoneInput = findViewById(R.id.phone_number_input);
+        responsibleInput = findViewById(R.id.responsible_input);
+        websiteInput = findViewById(R.id.website_input);
+        cityInput = findViewById(R.id.city_input);
+        cepInput = findViewById(R.id.cep_input);
+        ufInput = findViewById(R.id.uf_input);
+        addressInput = findViewById(R.id.address_input);
+        addressNumberInput = findViewById(R.id.address_number_input);
+        passwordInput = findViewById(R.id.password_input);
+        confirmPasswordInput = findViewById(R.id.confirm_password_input);
+
+        phoneInput.addTextChangedListener(MaskEditText.mask(phoneInput, "(##) #####-####"));
+        cnpjInput.addTextChangedListener(MaskEditText.mask(cnpjInput, "##.###.###/####-##"));
+        cepInput.addTextChangedListener(MaskEditText.mask(cepInput, "#####-###"));
+
+
+
+
         companyService = new CompanyService();
         loginService = new LoginService();
     }
@@ -40,50 +66,20 @@ public class CompanyRegister extends AppCompatActivity {
 
 
     public void registerCompany(View view) {
-        EditText companyNameInput = findViewById(R.id.compay_name_input);
+
         String companyName = companyNameInput.getText().toString().trim();
-
-        EditText cnpjInput = findViewById(R.id.cnpj_input);
         String cnpj = cnpjInput.getText().toString().trim();
-
-
-        EditText segmentInput = findViewById(R.id.segment_input);
         String segment = segmentInput.getText().toString().trim();
-
-        EditText emailInput = findViewById(R.id.email_input);
         String email = emailInput.getText().toString().trim();
-
-        EditText phoneInput = findViewById(R.id.phone_number_input);
         String phoneNumber = phoneInput.getText().toString().trim();
-
-
-        EditText responsibleInput = findViewById(R.id.responsible_input);
         String responsible = responsibleInput.getText().toString().trim();
-
-        EditText websiteInput = findViewById(R.id.website_input);
         String website = websiteInput.getText().toString().trim();
-
-        EditText cityInput = findViewById(R.id.city_input);
         String city = cityInput.getText().toString().trim();
-
-        EditText cepInput = findViewById(R.id.cep_input);
         String cep = cepInput.getText().toString().trim();
-
-
-        EditText ufInput = findViewById(R.id.uf_input);
         String uf = ufInput.getText().toString().trim();
-
-        EditText addressInput = findViewById(R.id.address_input);
         String address = addressInput.getText().toString().trim();
-
-        EditText addressNumberInput = findViewById(R.id.address_number_input);
         String addressNumber = addressNumberInput.getText().toString().trim();
-
-
-        EditText passwordInput = findViewById(R.id.password_input);
         String password = passwordInput.getText().toString().trim();
-
-        EditText confirmPasswordInput = findViewById(R.id.confirm_password_input);
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
 
         EditText logoInput = findViewById(R.id.logo_input);

@@ -43,6 +43,7 @@
     <string name="vacancy_register_title">Cadastro de Vaga</string>
     <string name="vacancy_name">Nome do Cargo*</string>
     <string name="vacancy_level">Nível da Vaga*</string>
+    <string name="locality">Localidade*</string>
     <string name="salary">Salário*</string>
     <string name="contact">Contato*</string>
     <string name="modality">Modalidade*</string>
@@ -89,4 +90,14 @@
     <string name="use_terms">Termos de Uso</string>
     <string name="privacy_politic">Política de Privacidade</string>
     <string name="finish_curriculum">Cadastrar currículo</string>
+    <string name="wellcome_community">Bem-vindo à Comunidade!</string>
+    <string name="know_our_sections">Conheça nossas seções</string>
+    <string name="tips_creating_curriculum">Dicas de Montagem de Currículo</string>
+    <string name="see_more_informations">Ver mais informações</string>
+    <string name="tips_of_courses">Dicas de Cursos</string>
+    <string name="tips_to_enterviews">Dicas para Entrevistas</string>
+    <string name="know_competences">Conheça as Competências</string>
+    <string name="chat">Chat</string>
+    <string name="chat_text">Seja bem-vindo ao nosso chat, aqui você pode se conectar com outros candidatos, tirar dúvidas e compartilhar experiências</string>
+
 </resources>

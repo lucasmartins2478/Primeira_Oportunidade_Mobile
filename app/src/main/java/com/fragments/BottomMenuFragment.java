@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.activities.Community;
 import com.activities.FormLogin;
 import com.activities.MyVacancies;
 import com.activities.Profile;
@@ -94,6 +95,8 @@ public class BottomMenuFragment extends Fragment {
         });
         btnCommunity.setOnClickListener(v ->{
             bottomSheetDialog.dismiss();
+            Intent intent = new Intent(getContext(), Community.class);
+            startActivity(intent);
         });
         btnVacancyRegister.setOnClickListener(v ->{
             bottomSheetDialog.dismiss();

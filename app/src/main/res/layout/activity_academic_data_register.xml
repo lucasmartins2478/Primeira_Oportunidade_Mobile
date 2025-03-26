@@ -233,7 +233,7 @@
                     android:layout_width="268dp"
                     android:layout_height="wrap_content"
                     android:onClick="courseData"
-                    android:text="@string/go_to_academic_data" />
+                    android:text="@string/go_to_courses_and_competences" />
 
             </LinearLayout>
 

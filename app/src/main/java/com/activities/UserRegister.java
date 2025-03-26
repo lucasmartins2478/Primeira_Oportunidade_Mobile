@@ -5,16 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.models.Candidate;
+import com.models.MaskEditText;
 import com.models.User;
 import com.services.CandidateService;
 import com.services.LoginService;
@@ -26,7 +24,9 @@ public class UserRegister extends AppCompatActivity {
 
     private LoginService loginService;
 
-//    private ProgressBar progressBar;
+    private EditText nameInput, phoneInput, cpfInput, emailInput, passwordInput, confirmPasswordInput;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,29 +38,25 @@ public class UserRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        nameInput = findViewById(R.id.name_input);
+        phoneInput = findViewById(R.id.phone_number_input);
+        cpfInput = findViewById(R.id.cpf_input);
+        emailInput = findViewById(R.id.email_input);
+        passwordInput = findViewById(R.id.password_input);
+        confirmPasswordInput = findViewById(R.id.confirm_password_input);
+        cpfInput.addTextChangedListener(MaskEditText.mask(cpfInput, "###.###.###-##"));
+        phoneInput.addTextChangedListener(MaskEditText.mask(phoneInput, "(##) #####-####"));
 
-//        progressBar = findViewById(R.id.progressBar);
         candidateService = new CandidateService();
         loginService = new LoginService();
     }
     public void registerUser(View view){
-        // Captura os dados dos campos de entrada
-        EditText nameInput = findViewById(R.id.name_input);
+
         String name = nameInput.getText().toString();
-
-        EditText phoneInput = findViewById(R.id.phone_number_input);
         String phone = phoneInput.getText().toString();
-
-        EditText cpfInput = findViewById(R.id.cpf_input);
         String cpf = cpfInput.getText().toString();
-
-        EditText emailInput = findViewById(R.id.email_input);
         String email = emailInput.getText().toString();
-
-        EditText passwordInput = findViewById(R.id.password_input);
         String password = passwordInput.getText().toString();
-
-        EditText confirmPasswordInput = findViewById(R.id.confirm_password_input);
         String confirmPassword = confirmPasswordInput.getText().toString();
 
         // Validação dos dados

@@ -12,12 +12,16 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.models.MaskEditText;
+import com.models.MoneyTextWatcher;
 import com.models.Vacancy;
 import com.services.VacancyService;
 
 public class VacancyRegister extends AppCompatActivity {
 
     private VacancyService vacancyService;
+
+    private EditText vacancyNameInput, vacancyLevelInput, salaryInput, cityInput, ufInput, contactInput, modalityInput, aboutCompanyInput, descriptionInput,requirementsInput, benefitsInput, localityInput;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +32,22 @@ public class VacancyRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        vacancyNameInput = findViewById(R.id.vacancy_name_input);
+        vacancyLevelInput = findViewById(R.id.level_input);
+        salaryInput = findViewById(R.id.salary_input);
+        cityInput = findViewById(R.id.city_input);
+        ufInput = findViewById(R.id.uf_input);
+        contactInput = findViewById(R.id.contact_input);
+        modalityInput = findViewById(R.id.modality_input);
+        aboutCompanyInput = findViewById(R.id.about_company_input);
+        descriptionInput = findViewById(R.id.description_input);
+        requirementsInput = findViewById(R.id.requirements_input);
+        benefitsInput = findViewById(R.id.benefits_input);
+        localityInput = findViewById(R.id.locality_input);
+
+        salaryInput.addTextChangedListener(new MoneyTextWatcher(salaryInput));
+
         vacancyService = new VacancyService();
     }
 
@@ -36,29 +56,19 @@ public class VacancyRegister extends AppCompatActivity {
         startActivity(intent);
     }
     public void registerVacancy(View view){
-        EditText vacancyNameInput = findViewById(R.id.vacancy_name_input);
+
         String vacancyName = vacancyNameInput.getText().toString().trim();
-        EditText vacancyLevelInput = findViewById(R.id.level_input);
         String level = vacancyLevelInput.getText().toString().trim();
-        EditText salaryInput = findViewById(R.id.salary_input);
         String salary = salaryInput.getText().toString().trim();
-        EditText cityInput = findViewById(R.id.city_input);
         String city = cityInput.getText().toString().trim();
-        EditText ufInput = findViewById(R.id.uf_input);
         String uf = ufInput.getText().toString().trim();
-        EditText contactInput = findViewById(R.id.contact_input);
         String contact = contactInput.getText().toString().trim();
-        EditText modalityInput = findViewById(R.id.modality_input);
         String modality = modalityInput.getText().toString().trim();
-        EditText aboutCompanyInput = findViewById(R.id.about_company_input);
         String aboutCompany = aboutCompanyInput.getText().toString().trim();
-        EditText descriptionInput = findViewById(R.id.description_input);
         String description = descriptionInput.getText().toString().trim();
-        EditText requirementsInput = findViewById(R.id.requirements_input);
         String requirements = requirementsInput.getText().toString().trim();
-        EditText benefitsInput = findViewById(R.id.benefits_input);
         String benefits = benefitsInput.getText().toString().trim();
-        String locality = "Rua das flores";
+        String locality = localityInput.getText().toString().trim();
 
         // Verificação dos campos vazios
         if (vacancyName.isEmpty()) {
@@ -114,6 +124,11 @@ public class VacancyRegister extends AppCompatActivity {
         if (benefits.isEmpty()) {
             benefitsInput.setError("Preencha os benefícios");
             benefitsInput.requestFocus();
+            return;
+        }
+        if(locality.isEmpty()){
+            localityInput.setError("Preencha a localidade");
+            localityInput.requestFocus();
             return;
         }
 
