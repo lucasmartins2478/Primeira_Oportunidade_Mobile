@@ -100,7 +100,7 @@
                         android:id="@+id/birth_date_input"
                         style="@style/EditTextRegister"
                         android:layout_width="209dp"
-                        android:inputType="text" />
+                        android:inputType="datetime" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -190,7 +190,7 @@
                         android:id="@+id/race_input"
                         style="@style/EditTextRegister"
                         android:layout_width="151dp"
-                        android:inputType="number" />
+                        android:inputType="text" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -228,7 +228,7 @@
                 <EditText
                     android:id="@+id/email_input"
                     style="@style/EditTextRegister"
-                    android:inputType="phone" />
+                    android:inputType="textEmailAddress" />
             </LinearLayout>
 
             <LinearLayout
