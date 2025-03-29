@@ -99,5 +99,20 @@
     <string name="know_competences">Conheça as Competências</string>
     <string name="chat">Chat</string>
     <string name="chat_text">Seja bem-vindo ao nosso chat, aqui você pode se conectar com outros candidatos, tirar dúvidas e compartilhar experiências</string>
+    <string-array name="gender_options">
+        <item>Selecione</item>
+        <item>Masculino</item>
+        <item>Feminino</item>
+        <item>Não-binário</item>
+        <item>Prefiro não dizer</item>
+    </string-array>
 
+    <string-array name="race_options">
+        <item>Selecione</item>
+        <item>Branco</item>
+        <item>Negro</item>
+        <item>Pardo</item>
+        <item>Indígena</item>
+        <item>Amarelo</item>
+    </string-array>
 </resources>

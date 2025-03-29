@@ -160,11 +160,31 @@
                         android:layout_height="wrap_content"
                         android:text="@string/gender" />
 
-                    <EditText
-                        android:id="@+id/gender_input"
-                        style="@style/EditTextRegister"
-                        android:layout_width="166dp"
-                        android:inputType="text" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/gender_spinner"
+                            style="@style/EditTextRegister"
+                            android:layout_width="164dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp" />
+
+                        <ImageView
+                            android:id="@+id/gender_spinner_arrow"
+                            android:layout_width="79dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:src="@drawable/select_icon" />
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 
@@ -186,11 +206,31 @@
                         android:layout_height="wrap_content"
                         android:text="@string/race" />
 
-                    <EditText
-                        android:id="@+id/race_input"
-                        style="@style/EditTextRegister"
-                        android:layout_width="151dp"
-                        android:inputType="text" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/race_spinner"
+                            style="@style/EditTextRegister"
+                            android:layout_width="164dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp" />
+
+                        <ImageView
+                            android:id="@+id/race_spinner_arrow"
+                            android:layout_width="79dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:src="@drawable/select_icon" />
+                    </RelativeLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -208,7 +248,7 @@
                     <EditText
                         android:id="@+id/phone_number_input"
                         style="@style/EditTextRegister"
-                        android:layout_width="166dp"
+                        android:layout_width="163dp"
                         android:inputType="text" />
                 </LinearLayout>
             </LinearLayout>
@@ -296,7 +336,7 @@
                     <EditText
                         android:id="@+id/uf_input"
                         style="@style/EditTextRegister"
-                        android:layout_width="166dp"
+                        android:layout_width="163dp"
                         android:inputType="text" />
                 </LinearLayout>
             </LinearLayout>

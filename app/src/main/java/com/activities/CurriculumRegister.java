@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -42,8 +46,6 @@ public class CurriculumRegister extends AppCompatActivity {
         birthDateInput = findViewById(R.id.birth_date_input);
         ageInput = findViewById(R.id.age_input);
         cpfInput = findViewById(R.id.cpf_input);
-        genderInput = findViewById(R.id.gender_input);
-        raceInput = findViewById(R.id.race_input);
         phoneNumberInput = findViewById(R.id.phone_number_input);
         emailInput = findViewById(R.id.email_input);
         cityInput = findViewById(R.id.city_input);
@@ -58,6 +60,44 @@ public class CurriculumRegister extends AppCompatActivity {
         phoneNumberInput.addTextChangedListener(MaskEditText.mask(phoneNumberInput, "(##) #####-####"));
         cepInput.addTextChangedListener(MaskEditText.mask(cepInput, "#####-###"));
 
+
+        Spinner genderSpinner = findViewById(R.id.gender_spinner);
+
+        ArrayAdapter<CharSequence> genderAdapter = ArrayAdapter.createFromResource(this,
+                R.array.gender_options, R.layout.spinner_item);
+        genderAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        genderSpinner.setAdapter(genderAdapter);
+
+        Spinner raceSpinner = findViewById(R.id.race_spinner);
+
+        ArrayAdapter<CharSequence> raceAdapter = ArrayAdapter.createFromResource(this,
+                R.array.race_options, R.layout.spinner_item);
+        raceAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        raceSpinner.setAdapter(raceAdapter);
+
+
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedGender = parent.getItemAtPosition(position).toString();
+                Toast.makeText(CurriculumRegister.this, "Gênero selecionado: " + selectedGender, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+
+        raceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedRace = parent.getItemAtPosition(position).toString();
+                Toast.makeText(CurriculumRegister.this, "Raça selecionada: " + selectedRace, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         birthDateInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -115,8 +155,8 @@ public class CurriculumRegister extends AppCompatActivity {
         String birthDate = birthDateInput.getText().toString();
         String age = ageInput.getText().toString();
         String cpf = cpfInput.getText().toString();
-        String gender = genderInput.getText().toString();
-        String race = raceInput.getText().toString();
+        String gender = ((Spinner) findViewById(R.id.gender_spinner)).getSelectedItem().toString();
+        String race = ((Spinner) findViewById(R.id.race_spinner)).getSelectedItem().toString();
         String phoneNumber = phoneNumberInput.getText().toString();
         String email = emailInput.getText().toString();
         String city = cityInput.getText().toString();
