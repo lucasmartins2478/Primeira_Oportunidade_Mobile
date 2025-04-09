@@ -50,7 +50,6 @@ public class CurriculumRegister extends AppCompatActivity {
         emailInput = findViewById(R.id.email_input);
         cityInput = findViewById(R.id.city_input);
         cepInput = findViewById(R.id.cep_input);
-        ufInput = findViewById(R.id.uf_input);
         addressInput = findViewById(R.id.address_input);
         addressNumberInput = findViewById(R.id.address_number_input);
 
@@ -59,6 +58,14 @@ public class CurriculumRegister extends AppCompatActivity {
         cpfInput.addTextChangedListener(MaskEditText.mask(cpfInput, "###.###.###-##"));
         phoneNumberInput.addTextChangedListener(MaskEditText.mask(phoneNumberInput, "(##) #####-####"));
         cepInput.addTextChangedListener(MaskEditText.mask(cepInput, "#####-###"));
+
+
+        Spinner ufSpinner = findViewById(R.id.uf_spinner);
+        ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(this,
+                R.array.uf_options, R.layout.spinner_item);
+        ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ufSpinner.setAdapter(ufAdapter);
+
 
 
         Spinner genderSpinner = findViewById(R.id.gender_spinner);
@@ -76,28 +83,6 @@ public class CurriculumRegister extends AppCompatActivity {
         raceSpinner.setAdapter(raceAdapter);
 
 
-        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedGender = parent.getItemAtPosition(position).toString();
-                Toast.makeText(CurriculumRegister.this, "Gênero selecionado: " + selectedGender, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
-
-        raceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedRace = parent.getItemAtPosition(position).toString();
-                Toast.makeText(CurriculumRegister.this, "Raça selecionada: " + selectedRace, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
 
         birthDateInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -161,7 +146,7 @@ public class CurriculumRegister extends AppCompatActivity {
         String email = emailInput.getText().toString();
         String city = cityInput.getText().toString();
         String cep = cepInput.getText().toString();
-        String uf = ufInput.getText().toString();
+        String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
         String address = addressInput.getText().toString();
         String addressNumber = addressNumberInput.getText().toString();
 

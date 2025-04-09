@@ -1,6 +1,7 @@
 package com.models;
 
 public class Vacancy {
+    private int id;
     private String title;
     private String description;
     private String aboutCompany;
@@ -13,6 +14,9 @@ public class Vacancy {
     private String salary;
     private String level;
     private int companyId;
+
+    private boolean isActive;
+    private boolean isFilled;
 
     public Vacancy(String title, String description, String aboutCompany, String benefits,
                    String requirements, String modality, String locality, String uf,
@@ -29,6 +33,48 @@ public class Vacancy {
         this.salary = salary;
         this.level = level;
         this.companyId = companyId;
+    }
+
+    public Vacancy(int id, String title, String description, String aboutCompany, String benefits, String requirements, String modality, String locality, String uf, String contact, String salary, String level, int companyId, boolean isActive, boolean isFilled) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.aboutCompany = aboutCompany;
+        this.benefits = benefits;
+        this.requirements = requirements;
+        this.modality = modality;
+        this.locality = locality;
+        this.uf = uf;
+        this.contact = contact;
+        this.salary = salary;
+        this.level = level;
+        this.companyId = companyId;
+        this.isActive = isActive;
+        this.isFilled = isFilled;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isFilled() {
+        return isFilled;
+    }
+
+    public void setFilled(boolean filled) {
+        isFilled = filled;
     }
 
     public String getTitle() {

@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -16,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.models.Company;
 import com.models.MaskEditText;
 import com.models.User;
+import com.models.UserType;
 import com.services.CompanyService;
 import com.services.LoginService;
 
@@ -24,7 +28,7 @@ public class CompanyRegister extends AppCompatActivity {
     private CompanyService companyService;
     private LoginService loginService;
 
-    private EditText companyNameInput, cnpjInput, segmentInput, emailInput, phoneInput, responsibleInput, websiteInput, cityInput, cepInput,ufInput, addressInput, addressNumberInput, passwordInput, confirmPasswordInput;
+    private EditText companyNameInput, cnpjInput, emailInput, phoneInput, responsibleInput, websiteInput, cityInput, cepInput, addressInput, addressNumberInput, passwordInput, confirmPasswordInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +43,13 @@ public class CompanyRegister extends AppCompatActivity {
 
         companyNameInput = findViewById(R.id.compay_name_input);
         cnpjInput = findViewById(R.id.cnpj_input);
-        segmentInput = findViewById(R.id.segment_input);
         emailInput = findViewById(R.id.email_input);
         phoneInput = findViewById(R.id.phone_number_input);
         responsibleInput = findViewById(R.id.responsible_input);
         websiteInput = findViewById(R.id.website_input);
         cityInput = findViewById(R.id.city_input);
         cepInput = findViewById(R.id.cep_input);
-        ufInput = findViewById(R.id.uf_input);
+
         addressInput = findViewById(R.id.address_input);
         addressNumberInput = findViewById(R.id.address_number_input);
         passwordInput = findViewById(R.id.password_input);
@@ -57,6 +60,21 @@ public class CompanyRegister extends AppCompatActivity {
         cepInput.addTextChangedListener(MaskEditText.mask(cepInput, "#####-###"));
 
 
+        Spinner segmentSpinner = findViewById(R.id.segment_spinner);
+
+        ArrayAdapter<CharSequence> segmentAdapter = ArrayAdapter.createFromResource(this,
+                R.array.segment_options, R.layout.spinner_item);
+        segmentAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        segmentSpinner.setAdapter(segmentAdapter);
+
+
+        Spinner ufSpinner = findViewById(R.id.uf_spinner);
+        ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(this,
+                R.array.uf_options, R.layout.spinner_item);
+        ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ufSpinner.setAdapter(ufAdapter);
+
+
 
 
         companyService = new CompanyService();
@@ -64,19 +82,18 @@ public class CompanyRegister extends AppCompatActivity {
     }
 
 
-
     public void registerCompany(View view) {
 
         String companyName = companyNameInput.getText().toString().trim();
         String cnpj = cnpjInput.getText().toString().trim();
-        String segment = segmentInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
         String phoneNumber = phoneInput.getText().toString().trim();
         String responsible = responsibleInput.getText().toString().trim();
         String website = websiteInput.getText().toString().trim();
         String city = cityInput.getText().toString().trim();
         String cep = cepInput.getText().toString().trim();
-        String uf = ufInput.getText().toString().trim();
+        String segment = ((Spinner) findViewById(R.id.segment_spinner)).getSelectedItem().toString();
+        String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
         String address = addressInput.getText().toString().trim();
         String addressNumber = addressNumberInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -96,11 +113,7 @@ public class CompanyRegister extends AppCompatActivity {
             cnpjInput.requestFocus();
             return;
         }
-        if (segment.isEmpty()) {
-            segmentInput.setError("Preencha o segmento");
-            segmentInput.requestFocus();
-            return;
-        }
+
         if (email.isEmpty()) {
             emailInput.setError("Preencha o email corporativo");
             emailInput.requestFocus();
@@ -126,11 +139,7 @@ public class CompanyRegister extends AppCompatActivity {
             cepInput.requestFocus();
             return;
         }
-        if (uf.isEmpty()) {
-            ufInput.setError("Preencha o nome do estado");
-            ufInput.requestFocus();
-            return;
-        }
+
         if (address.isEmpty()) {
             addressInput.setError("Preencha o endereço");
             addressInput.requestFocus();
@@ -141,6 +150,7 @@ public class CompanyRegister extends AppCompatActivity {
             addressNumberInput.requestFocus();
             return;
         }
+        int addressNumberInt = Integer.parseInt(addressNumber);
 
         if (password.isEmpty()) {
             passwordInput.setError("Preencha a senha");
@@ -153,21 +163,22 @@ public class CompanyRegister extends AppCompatActivity {
             return;
         }
         if (!password.equals(confirmPassword)) {
-                Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
 
-        User user = new User(email, password, "company");
+        User user = new User(email, password, UserType.COMPANY);
 
-        loginService.registerUser(user, new LoginService.UserCallback()
-         {
+        loginService.registerUser(user, new LoginService.UserCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(int userId) {
 
-                Company company = new Company(companyName, cnpj, segment,  phoneNumber, responsible,
-                        website, city, cep, uf, address, addressNumber, logo, user.getId());
-                companyService.registerCompany(company, new CompanyService.CompanyCallback() {
+
+                Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
+                        city, cep, address, addressNumberInt, uf, website, logo, userId);
+
+                companyService.registerCompany(company, new CompanyService.RegisterCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
@@ -175,8 +186,19 @@ public class CompanyRegister extends AppCompatActivity {
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("email", user.getEmail());
-                            editor.putString("password", user.getPassword());
-                            editor.putString("userType", user.getUserType());
+                            editor.putString("type", user.getType().getValue());
+                            editor.putString("name", company.getCompanyName());
+                            editor.putString("cnpj", company.getCnpj());
+                            editor.putString("segment", company.getSegment());
+                            editor.putString("responsible", company.getResponsible());
+                            editor.putString("phone", company.getPhoneNumber());
+                            editor.putString("city", company.getCity());
+                            editor.putString("cep", company.getCep());
+                            editor.putString("address", company.getAddress());
+                            editor.putInt("addressNumber", company.getAddressNumber());
+                            editor.putString("uf", company.getUf());
+                            editor.putString("url", company.getWebsite());
+                            editor.putString("logo", company.getLogo());
                             editor.apply();
                             Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
                             startActivity(intent);
@@ -199,17 +221,18 @@ public class CompanyRegister extends AppCompatActivity {
         });
 
 
-        }
+    }
 
 
-    public void haveAccount(View view){
+    public void haveAccount(View view) {
         Intent intent = new Intent(CompanyRegister.this, FormLogin.class);
         startActivity(intent);
     }
-    public void onBackPressed(View view){
+
+    public void onBackPressed(View view) {
         finish();
     }
-    }
+}
 
 
 

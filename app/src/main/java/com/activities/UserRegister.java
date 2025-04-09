@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.models.Candidate;
 import com.models.MaskEditText;
 import com.models.User;
+import com.models.UserType;
 import com.services.CandidateService;
 import com.services.LoginService;
 
@@ -96,38 +97,37 @@ public class UserRegister extends AppCompatActivity {
         }
 
         // Criar o objeto User e Candidate
-        User user = new User(email, password, "user");  // "user" pode ser alterado conforme seu caso
+        User user = new User(email, password, UserType.CANDIDATE);
 
 
         // Cadastro do candidato e do usuário
 
         loginService.registerUser(user, new LoginService.UserCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(int userId) {
+                System.out.println(userId);
 
-                Candidate candidate = new Candidate(name, phone, cpf, user.getId());
+                Candidate candidate = new Candidate(name, cpf, phone, userId);
+
 
                 candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
-//                            loginService.login(email, password);
+
                             Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
                             editor.putString("email", user.getEmail());
-                            editor.putString("password", user.getPassword());
-                            editor.putString("userType", user.getUserType());
+                            editor.putString("type", user.getType().getValue());
                             editor.putString("name", candidate.getName());
                             editor.putString("cpf", candidate.getCpf());
-                            editor.putString("phoneNumber", candidate.getPhoneNumber());
+                            editor.putString("phone", candidate.getPhoneNumber());
                             editor.apply();
                             Intent intent = new Intent(UserRegister.this, Vacancies.class);
                             startActivity(intent);
                         });
                     }
-
-
                     public void onSuccess(Candidate candidate) {
 
                     }

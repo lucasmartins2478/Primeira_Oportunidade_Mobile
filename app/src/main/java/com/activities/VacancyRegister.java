@@ -3,7 +3,9 @@ package com.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -33,20 +35,37 @@ public class VacancyRegister extends AppCompatActivity {
             return insets;
         });
 
-        vacancyNameInput = findViewById(R.id.vacancy_name_input);
         vacancyLevelInput = findViewById(R.id.level_input);
         salaryInput = findViewById(R.id.salary_input);
         cityInput = findViewById(R.id.city_input);
-        ufInput = findViewById(R.id.uf_input);
         contactInput = findViewById(R.id.contact_input);
-        modalityInput = findViewById(R.id.modality_input);
         aboutCompanyInput = findViewById(R.id.about_company_input);
         descriptionInput = findViewById(R.id.description_input);
         requirementsInput = findViewById(R.id.requirements_input);
         benefitsInput = findViewById(R.id.benefits_input);
-        localityInput = findViewById(R.id.locality_input);
-
         salaryInput.addTextChangedListener(new MoneyTextWatcher(salaryInput));
+
+        Spinner modalitySpinner = findViewById(R.id.modality_spinner);
+        ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.modality_options, R.layout.spinner_item);
+        modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        modalitySpinner.setAdapter(modalityAdapter);
+
+        Spinner ufSpinner = findViewById(R.id.uf_spinner);
+        ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(this,
+                R.array.uf_options, R.layout.spinner_item);
+        ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        ufSpinner.setAdapter(ufAdapter);
+
+        Spinner nameSpinner = findViewById(R.id.vacancy_name_spinner);
+        ArrayAdapter<CharSequence> nameAdapter = ArrayAdapter.createFromResource(this,
+                R.array.vacancy_titles_options, R.layout.spinner_item);
+        nameAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        nameSpinner.setAdapter(nameAdapter);
+
+
+
+
 
         vacancyService = new VacancyService();
     }
@@ -57,13 +76,13 @@ public class VacancyRegister extends AppCompatActivity {
     }
     public void registerVacancy(View view){
 
-        String vacancyName = vacancyNameInput.getText().toString().trim();
+        String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
         String level = vacancyLevelInput.getText().toString().trim();
         String salary = salaryInput.getText().toString().trim();
         String city = cityInput.getText().toString().trim();
-        String uf = ufInput.getText().toString().trim();
+        String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
         String contact = contactInput.getText().toString().trim();
-        String modality = modalityInput.getText().toString().trim();
+        String modality = ((Spinner) findViewById(R.id.modality_spinner)).getSelectedItem().toString();
         String aboutCompany = aboutCompanyInput.getText().toString().trim();
         String description = descriptionInput.getText().toString().trim();
         String requirements = requirementsInput.getText().toString().trim();

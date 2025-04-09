@@ -58,10 +58,10 @@ public class BottomMenuFragment extends Fragment {
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
 
-        String userType = sharedPreferences.getString("userType", "Usuário não encontrado");
+        String userType = sharedPreferences.getString("type", "Usuário não encontrado");
 
 
-        if ("user".equals(userType)) {
+        if ("candidate".equals(userType)) {
             btnCompanies.setVisibility(View.VISIBLE);
             btnCommunity.setVisibility(View.VISIBLE);
             btnMyApplications.setVisibility(View.VISIBLE);
@@ -73,7 +73,7 @@ public class BottomMenuFragment extends Fragment {
         btnHome.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
 
-            if(userType == "user"){
+            if(userType == "candidate"){
                 Intent intent = new Intent(getContext(), Vacancies.class);
                 startActivity(intent);
             }else{

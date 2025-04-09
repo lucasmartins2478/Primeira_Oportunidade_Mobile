@@ -1,6 +1,9 @@
 package com.services;
 
+import android.util.Log;
+
 import com.models.User;
+import com.models.UserType;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,7 +20,7 @@ import okhttp3.Response;
 public class LoginService {
 
     private List<User> users;
-    private String apiUrl = "https://664f28a4fafad45dfae29755.mockapi.io/api/v1/users";
+    private String apiUrl = "https://backend-po.onrender.com/user";
     private OkHttpClient client;
 
     public LoginService() {
@@ -32,7 +35,7 @@ public class LoginService {
             try {
                 // Criando a requisição GET
                 Request request = new Request.Builder()
-                        .url(apiUrl)
+                        .url(apiUrl+"s")
                         .build();
 
                 // Enviando requisição
@@ -48,7 +51,7 @@ public class LoginService {
                         User user = new User(
                                 userJson.getString("email"),
                                 userJson.getString("password"),
-                                userJson.getString("userType")
+                                UserType.valueOf(userJson.getString("type").toUpperCase())
                         );
                         users.add(user); // Adicionando o usuário na lista
                     }
@@ -59,9 +62,8 @@ public class LoginService {
         }).start();
     }
 
-
     public interface UserCallback{
-        void onSuccess();
+        void onSuccess(int userId);
 
         void onFailure(String error);
     }
@@ -73,7 +75,10 @@ public class LoginService {
                 JSONObject json = new JSONObject();
                 json.put("email", user.getEmail());
                 json.put("password", user.getPassword());
-                json.put("userType", user.getUserType());
+                json.put("type", user.getType().getValue());
+
+                Log.d("UserRegisterJSON", json.toString());
+
 
                 // Criando corpo da requisição
                 RequestBody body = RequestBody.create(
@@ -91,10 +96,22 @@ public class LoginService {
                 Response response = client.newCall(request).execute();
 
                 if (response.isSuccessful()) {
-                    callback.onSuccess();
+                    try {
+                        String responseData = response.body().string();
+                        Log.d("UserRegisterResponse", "Dados recebidos: " + responseData);
+
+                        JSONObject jsonResponse = new JSONObject(responseData);
+                        int userId = jsonResponse.getInt("id");
+
+                        callback.onSuccess(userId);
+                    } catch (Exception e) {
+                        Log.e("UserRegisterParseError", "Erro ao ler resposta: ", e);
+                        callback.onFailure("Erro ao processar resposta do servidor.");
+                    }
                 } else {
                     callback.onFailure("Erro ao cadastrar o usuário: " + response.message());
                 }
+
 
             } catch (Exception e) {
                 callback.onFailure("Falha ao conectar: " + e.getMessage());
@@ -102,13 +119,47 @@ public class LoginService {
         }).start();
     }
 
-    public User login(String email, String password) {
-        for (User user : users) {
-            if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
-                return user;
+
+    public void login(String email, String password, LoginCallback callback) {
+        new Thread(() -> {
+            Request request = new Request.Builder()
+                    .url(apiUrl + "s") // /users
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    JSONArray usersArray = new JSONArray(responseData);
+
+                    for (int i = 0; i < usersArray.length(); i++) {
+                        JSONObject userJson = usersArray.getJSONObject(i);
+                        String userEmail = userJson.getString("email");
+                        String userPassword = userJson.getString("password");
+
+                        if (email.equals(userEmail) && password.equals(userPassword)) {
+                            int id = userJson.getInt("id");
+                            String type = userJson.getString("type");
+
+                            User user = new User(id, userEmail, userPassword, UserType.valueOf(type.toUpperCase()));
+                            callback.onSuccess(user);
+                            return;
+                        }
+                    }
+                    callback.onFailure("Email ou senha inválidos");
+                } else {
+                    callback.onFailure("Erro ao buscar usuários: " + response.message());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onFailure("Erro de conexão: " + e.getMessage());
             }
-        }
-        return null;
+        }).start();
+    }
+    public interface LoginCallback {
+        void onSuccess(User user);
+        void onFailure(String errorMessage);
     }
 
 }
+
+

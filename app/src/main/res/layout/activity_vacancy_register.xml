@@ -53,7 +53,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="356dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="vertical">
@@ -62,16 +62,33 @@
                     style="@style/EditTextLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/vacancy_name"
+                    android:text="@string/vacancy_name" />
 
-                    app:layout_constraintTop_toBottomOf="@+id/name" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <!-- CNPJ -->
-                <EditText
-                    android:id="@+id/vacancy_name_input"
-                    style="@style/EditTextRegister"
-                    android:inputType="text"
-                    android:layout_gravity="center" />
+                    <Spinner
+                        android:id="@+id/vacancy_name_spinner"
+                        style="@style/EditTextRegister"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp" />
+
+                    <ImageView
+                        android:id="@+id/vacancy_name_spinner_arrow"
+                        android:layout_width="79dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:padding="8dp"
+                        android:src="@drawable/select_icon" />
+                </RelativeLayout>
             </LinearLayout>
 
 
@@ -145,7 +162,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="192dp"
+                    android:layout_width="149dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="vertical">
@@ -156,33 +173,35 @@
                         android:layout_height="wrap_content"
                         android:text="@string/uf_label" />
 
-                    <EditText
-                        android:id="@+id/uf_input"
-                        style="@style/EditTextRegister"
-                        android:layout_width="109dp"
-                        android:inputType="text" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/uf_spinner"
+                            style="@style/EditTextRegister"
+                            android:layout_width="110dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp" />
+
+                        <ImageView
+                            android:id="@+id/modality_spinner_arrow3"
+                            android:layout_width="102dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:src="@drawable/select_icon" />
+
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical">
 
-                <TextView
-                    style="@style/EditTextLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/locality"
-                    />
-
-                <!-- CNPJ -->
-                <EditText
-                    android:id="@+id/locality_input"
-                    style="@style/EditTextRegister"
-                    android:inputType="text"
-                    android:layout_gravity="center" />
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="358dp"
                 android:layout_height="wrap_content"
@@ -220,11 +239,31 @@
                         android:layout_height="wrap_content"
                         android:text="@string/modality" />
 
-                    <EditText
-                        android:id="@+id/modality_input"
-                        style="@style/EditTextRegister"
-                        android:inputType="text"
-                        android:layout_width="166dp" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/modality_spinner"
+                            style="@style/EditTextRegister"
+                            android:layout_width="164dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp" />
+
+                        <ImageView
+                            android:id="@+id/modality_spinner_arrow"
+                            android:layout_width="79dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:src="@drawable/select_icon" />
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout

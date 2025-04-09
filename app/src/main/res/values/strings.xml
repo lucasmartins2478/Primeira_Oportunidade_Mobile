@@ -115,4 +115,147 @@
         <item>Indígena</item>
         <item>Amarelo</item>
     </string-array>
+    <string-array name="segment_options">
+        <item>Selecione</item>
+        <item>Agronegócio</item>
+        <item>Alimentos e Bebidas</item>
+        <item>Automotivo</item>
+        <item>Comércio</item>
+        <item>Construção Civil</item>
+        <item>Educação</item>
+        <item>Entretenimento</item>
+        <item>Financeiro</item>
+        <item>Indústria</item>
+        <item>Logística</item>
+        <item>Moda e Vestuário</item>
+        <item>Saúde</item>
+        <item>Serviços</item>
+        <item>Tecnologia</item>
+        <item>Turismo e Hotelaria</item>
+        <item>Outro</item>
+    </string-array>
+    <string-array name="uf_options">
+        <item>Selecione</item>
+        <item>AC</item>
+        <item>AL</item>
+        <item>AP</item>
+        <item>AM</item>
+        <item>BA</item>
+        <item>CE</item>
+        <item>DF</item>
+        <item>ES</item>
+        <item>GO</item>
+        <item>MA</item>
+        <item>MT</item>
+        <item>MS</item>
+        <item>MG</item>
+        <item>PA</item>
+        <item>PB</item>
+        <item>PR</item>
+        <item>PE</item>
+        <item>PI</item>
+        <item>RJ</item>
+        <item>RN</item>
+        <item>RS</item>
+        <item>RO</item>
+        <item>RR</item>
+        <item>SC</item>
+        <item>SP</item>
+        <item>SE</item>
+        <item>TO</item>
+    </string-array>
+    <string-array name="modality_options">
+        <item>Selecione</item>
+        <item>Presencial</item>
+        <item>Remoto</item>
+        <item>Híbrido</item>
+    </string-array>
+    <string-array name="level_options">
+        <item>Selecione</item>
+        <item>Ensino Fundamental</item>
+        <item>Ensino Médio</item>
+        <item>Técnico</item>
+        <item>Profissionalizante</item>
+        <item>Tecnólogo</item>
+        <item>Graduação</item>
+    </string-array>
+    <string-array name="period_options">
+        <item>Selecione</item>
+        <item>1º semestre</item>
+        <item>2º semestre</item>
+        <item>3º semestre</item>
+        <item>4º semestre</item>
+        <item>5º semestre</item>
+        <item>6º semestre</item>
+        <item>7º semestre</item>
+        <item>8º semestre</item>
+        <item>9º semestre</item>
+        <item>10º semestre</item>
+        <item>Concluído</item>
+    </string-array>
+    <string-array name="course_modality_options">
+        <item>Selecione</item>
+        <item>Online</item>
+        <item>Presencial</item>
+        <item>Híbrido</item>
+        <item>Bootcamp</item>
+        <item>Imersivo</item>
+        <item>Autoinstrucional</item>
+    </string-array>
+    <string-array name="interest_area_options">
+        <item>Selecione</item>
+        <item>Administração</item>
+        <item>Atendimento ao Cliente</item>
+        <item>Comercial e Vendas</item>
+        <item>Comunicação e Marketing</item>
+        <item>Design</item>
+        <item>Educação</item>
+        <item>Engenharia</item>
+        <item>Financeiro</item>
+        <item>Jurídico</item>
+        <item>Logística</item>
+        <item>Recursos Humanos</item>
+        <item>Saúde</item>
+        <item>Serviços Gerais</item>
+        <item>Suporte Técnico</item>
+        <item>Tecnologia da Informação</item>
+        <item>Turismo e Hotelaria</item>
+        <item>Outro</item>
+    </string-array>
+    <string-array name="vacancy_titles_options">
+        <item>Selecione</item>
+        <item>Assistente Administrativo</item>
+        <item>Atendente</item>
+        <item>Auxiliar de Escritório</item>
+        <item>Auxiliar de Limpeza</item>
+        <item>Auxiliar de Logística</item>
+        <item>Auxiliar de Produção</item>
+        <item>Balconista</item>
+        <item>Caixa</item>
+        <item>Consultor de Vendas</item>
+        <item>Copeira</item>
+        <item>Designer Gráfico</item>
+        <item>Desenvolvedor Backend</item>
+        <item>Desenvolvedor Frontend</item>
+        <item>Desenvolvedor Fullstack</item>
+        <item>Eletricista</item>
+        <item>Estagiário em Administração</item>
+        <item>Estagiário em Direito</item>
+        <item>Estagiário em Marketing</item>
+        <item>Garçom</item>
+        <item>Jovem Aprendiz</item>
+        <item>Mecânico</item>
+        <item>Motoboy</item>
+        <item>Operador de Caixa</item>
+        <item>Operador de Telemarketing</item>
+        <item>Recepcionista</item>
+        <item>Recrutador</item>
+        <item>Social Media</item>
+        <item>Suporte Técnico</item>
+        <item>Técnico em Informática</item>
+        <item>Vendedor</item>
+        <item>Zelador</item>
+    </string-array>
+
+
 </resources>

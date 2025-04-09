@@ -7,17 +7,21 @@ public class Candidate {
     private String name;
     private String phoneNumber;
     private String cpf;
-    private String email;
+    private Integer curriculumId; // permite null
 
     private int userId;
 
 
-
-
-    public Candidate() {
+    public Candidate(String name, String cpf, String phoneNumber, Integer curriculumId, int userId) {
+        this.name = name;
+        this.cpf = cpf;
+        this.phoneNumber = phoneNumber;
+        this.curriculumId = curriculumId;
+        this.userId = userId;
     }
 
-    public Candidate( String name, String phoneNumber, String cpf, int userId) {
+
+    public Candidate( String name,  String cpf, String phoneNumber, int userId) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.cpf = cpf;
@@ -55,13 +59,6 @@ public class Candidate {
         this.cpf = cpf;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
     public int getUserId() {
         return userId;
     }
@@ -70,4 +67,11 @@ public class Candidate {
         this.userId = userId;
     }
 
+    public Integer getCurriculumId() {
+        return curriculumId;
+    }
+
+    public void setCurriculumId(Integer curriculumId) {
+        this.curriculumId = curriculumId;
+    }
 }

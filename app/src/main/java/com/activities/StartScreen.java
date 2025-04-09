@@ -35,7 +35,7 @@ public class StartScreen extends AppCompatActivity {
 
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Intent intent = new Intent(StartScreen.this, CarouselStep1.class);
+            Intent intent = new Intent(StartScreen.this, FormLogin.class);
             startActivity(intent);
             finish();
         }, 2000);

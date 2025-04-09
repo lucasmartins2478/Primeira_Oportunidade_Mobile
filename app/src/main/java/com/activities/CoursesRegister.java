@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -33,10 +35,16 @@ public class CoursesRegister extends AppCompatActivity {
         });
 
         courseNameInput = findViewById(R.id.course_name_input);
-        modalityInput = findViewById(R.id.modality_input);
         durationInput = findViewById(R.id.duration_input);
         endDateInput = findViewById(R.id.end_date_input);
         grantingInstitutionInput = findViewById(R.id.granting_intitution_input);
+
+        Spinner modalitySpinner = findViewById(R.id.modality_spinner);
+        ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(this,
+                R.array.course_modality_options, R.layout.spinner_item);
+        modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        modalitySpinner.setAdapter(modalityAdapter);
+
 
         endDateInput.addTextChangedListener(MaskEditText.mask(endDateInput, "##/####"));
 
@@ -72,7 +80,7 @@ public class CoursesRegister extends AppCompatActivity {
     public void additionalData(View view){
 
         String courseName = courseNameInput.getText().toString();
-        String modality = modalityInput.getText().toString();
+        String modality = ((Spinner) findViewById(R.id.modality_spinner)).getSelectedItem().toString();
         String duration = durationInput.getText().toString();
         String endDate = endDateInput.getText().toString();
         String grantingIntitution = grantingInstitutionInput.getText().toString();

@@ -73,11 +73,11 @@
                     android:id="@+id/curriculum_input"
                     style="@style/EditTextRegister"
                     android:layout_height="116dp"
+                    android:padding="25dp"
                     android:layout_gravity="center"
+                    android:drawableTop="@drawable/add_curriculum_icon"
                     android:inputType="text" />
             </LinearLayout>
-
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

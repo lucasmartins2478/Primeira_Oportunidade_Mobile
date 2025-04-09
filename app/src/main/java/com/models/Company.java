@@ -1,6 +1,7 @@
 package com.models;
 
 public class Company {
+    private int id;
     private String companyName;
     private String cnpj;
     private String segment;
@@ -11,15 +12,15 @@ public class Company {
     private String cep;
     private String uf;
     private String address;
-    private String addressNumber;
+    private int addressNumber;
     private String logo;
 
     private int userId;
     public Company() {
     }
 
-    public Company(String companyName, String cnpj, String segment,  String phoneNumber, String responsible, String website, String city, String cep, String uf, String address, String addressNumber,  String logo, int userId) {
-        this.companyName = companyName;
+    public Company(String name, String cnpj, String segment, String responsible , String phoneNumber, String city, String cep,  String address, int addressNumber, String uf , String url, String logo, int userId) {
+        this.companyName = name;
         this.cnpj = cnpj;
         this.segment = segment;
         this.phoneNumber = phoneNumber;
@@ -32,6 +33,16 @@ public class Company {
         this.addressNumber = addressNumber;
         this.logo = logo;
         this.userId = userId;
+    }
+
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getCompanyName() {
@@ -116,11 +127,11 @@ public class Company {
         this.address = address;
     }
 
-    public String getAddressNumber() {
+    public int getAddressNumber() {
         return addressNumber;
     }
 
-    public void setAddressNumber(String addressNumber) {
+    public void setAddressNumber(int addressNumber) {
         this.addressNumber = addressNumber;
     }
 

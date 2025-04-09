@@ -1,12 +1,12 @@
 package com.services;
 
+
 import com.models.Candidate;
 
-import org.json.JSONException;
+
+
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -19,7 +19,7 @@ public class CandidateService {
 
     private List<Candidate> candidates;
 
-    private String apiUrl = "https://664f28a4fafad45dfae29755.mockapi.io/api/v1/candidates";
+    private String apiUrl = "https://backend-po.onrender.com/candidate";
     private OkHttpClient client;
 
 
@@ -32,58 +32,61 @@ public class CandidateService {
         void onFailure(String error);
     }
 
-    public void getCandidateByUserId(int userId, CandidateCallback callback) {
+    public void fetchCandidateFromApi(int userId, CandidateCallback callback) {
         new Thread(() -> {
             try {
-                // Criando requisição GET
+                String url = apiUrl + "/" + userId;
+
+
                 Request request = new Request.Builder()
-                        .url(apiUrl + "/" + userId) // Buscar candidato por ID
-                        .get()
+                        .url(url)
                         .build();
 
-                // Executando requisição
                 try (Response response = client.newCall(request).execute()) {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseData = response.body().string();
-                        JSONObject json = new JSONObject(responseData);
+                        JSONObject candidateJson = new JSONObject(responseData);
 
-                        // Criando objeto Candidate com os dados retornados
+                        // Trata curriculumId que pode vir como null
+                        Integer curriculumId = candidateJson.isNull("curriculumId") ? null : candidateJson.getInt("curriculumId");
+
                         Candidate candidate = new Candidate(
-                                json.getString("name"),
-                                json.getString("phoneNumber"),
-                                json.getString("cpf"),
-                                json.getInt("id")
+                                candidateJson.getString("name"),
+                                candidateJson.getString("cpf"),
+                                candidateJson.getString("phoneNumber"),
+                                curriculumId,
+                                candidateJson.getInt("userId")
                         );
+
 
                         callback.onSuccess(candidate);
                     } else {
-                        callback.onFailure("Erro ao buscar candidato: " + response.message());
+                        callback.onFailure("Erro ao buscar candidato: " + response.code());
                     }
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
                 }
-
-            } catch (IOException e) {
-                callback.onFailure("Falha na conexão: " + e.getMessage());
+            } catch (Exception e) {
+                callback.onFailure("Erro ao conectar: " + e.getMessage());
             }
         }).start();
     }
 
+
+
+    // Interface para callback
     public interface CandidateCallback {
         void onSuccess(Candidate candidate);
         void onFailure(String error);
     }
+
     public void registerCandidate(Candidate candidate, registerCallback callback) {
         new Thread(() -> {
             try {
                 // Criando JSON do candidato
                 JSONObject json = new JSONObject();
                 json.put("name", candidate.getName());
-                json.put("phoneNumber", candidate.getPhoneNumber());
                 json.put("cpf", candidate.getCpf());
-                json.put("email", candidate.getEmail());
-                json.put("id", candidate.getId());
-
+                json.put("phoneNumber", candidate.getPhoneNumber());
+                json.put("userId", candidate.getUserId());
                 // Criando corpo da requisição
                 RequestBody body = RequestBody.create(
                         json.toString(),

@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -33,8 +35,7 @@ public class AcademicDataRegister extends AppCompatActivity {
         });
 
         instituitionNameInput = findViewById(R.id.institution_name_input);
-        levelInput = findViewById(R.id.level_input);
-        periodInput = findViewById(R.id.period_input);
+
         startDateInput = findViewById(R.id.start_date_input);
         endDateInput = findViewById(R.id.end_date_input);
         courseNameInput = findViewById(R.id.course_name_input);
@@ -42,6 +43,23 @@ public class AcademicDataRegister extends AppCompatActivity {
 
         startDateInput.addTextChangedListener(MaskEditText.mask(startDateInput, "##/####"));
         endDateInput.addTextChangedListener(MaskEditText.mask(endDateInput, "##/####"));
+
+
+
+        Spinner periodSpinner = findViewById(R.id.period_spinner);
+        ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource(this,
+                R.array.period_options, R.layout.spinner_item);
+        periodAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        periodSpinner.setAdapter(periodAdapter);
+
+
+        Spinner levelSpinner = findViewById(R.id.level_spinner);
+        ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(this,
+                R.array.uf_options, R.layout.spinner_item);
+        levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        levelSpinner.setAdapter(levelAdapter);
+
+
 
         startDateInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -98,8 +116,8 @@ public class AcademicDataRegister extends AppCompatActivity {
     }
     public void courseData(View view){
         String institutionName = instituitionNameInput.getText().toString();
-        String level = levelInput.getText().toString();
-        String period = periodInput.getText().toString();
+        String level = ((Spinner) findViewById(R.id.level_spinner)).getSelectedItem().toString();
+        String period = ((Spinner) findViewById(R.id.period_spinner)).getSelectedItem().toString();
         String startDate = startDateInput.getText().toString();
         String endDate = endDateInput.getText().toString();
         String courseName = courseNameInput.getText().toString();

@@ -44,7 +44,7 @@ public class Profile extends AppCompatActivity {
 
         String name = sharedPreferences.getString("name", "Usuário não encontrado");
         String email = sharedPreferences.getString("email", "Email não encontrado");
-        String phone = sharedPreferences.getString("phoneNumber", "Telefone não encontrado");
+        String phone = sharedPreferences.getString("phone", "Telefone não encontrado");
 
         txtPhone.setText(phone);
         txtName.setText(name);
