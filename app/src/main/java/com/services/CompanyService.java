@@ -46,6 +46,7 @@ public class CompanyService {
                     String urlSite = companyJson.isNull("url") ? null : companyJson.getString("url");
 
                     Company company = new Company(
+                            companyJson.getInt("id"),
                             companyJson.getString("name"),
                             companyJson.getString("cnpj"),
                             companyJson.getString("segment"),

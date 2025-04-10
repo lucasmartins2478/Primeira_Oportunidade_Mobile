@@ -20,8 +20,16 @@ public class Candidate {
         this.userId = userId;
     }
 
+    public Candidate(int id,String name,String cpf, String phoneNumber, Integer curriculumId,int userId    ) {
+        this.userId = userId;
+        this.cpf = cpf;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.id = id;
+        this.curriculumId = curriculumId;
+    }
 
-    public Candidate( String name,  String cpf, String phoneNumber, int userId) {
+    public Candidate(String name, String cpf, String phoneNumber, int userId) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.cpf = cpf;

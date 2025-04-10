@@ -51,6 +51,7 @@ public class CandidateService {
                         Integer curriculumId = candidateJson.isNull("curriculumId") ? null : candidateJson.getInt("curriculumId");
 
                         Candidate candidate = new Candidate(
+                                candidateJson.getInt("id"),
                                 candidateJson.getString("name"),
                                 candidateJson.getString("cpf"),
                                 candidateJson.getString("phoneNumber"),

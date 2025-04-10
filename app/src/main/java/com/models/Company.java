@@ -2,7 +2,7 @@ package com.models;
 
 public class Company {
     private int id;
-    private String companyName;
+    private String name;
     private String cnpj;
     private String segment;
     private String phoneNumber;
@@ -20,7 +20,7 @@ public class Company {
     }
 
     public Company(String name, String cnpj, String segment, String responsible , String phoneNumber, String city, String cep,  String address, int addressNumber, String uf , String url, String logo, int userId) {
-        this.companyName = name;
+        this.name = name;
         this.cnpj = cnpj;
         this.segment = segment;
         this.phoneNumber = phoneNumber;
@@ -35,7 +35,22 @@ public class Company {
         this.userId = userId;
     }
 
-
+    public Company(int id, String name, String cnpj, String segment,  String responsible, String phoneNumber,String city, String cep,String address, int addressNumber, String uf, String website,   String logo, int userId) {
+        this.id = id;
+        this.name = name;
+        this.cnpj = cnpj;
+        this.segment = segment;
+        this.responsible = responsible;
+        this.phoneNumber = phoneNumber;
+        this.city = city;
+        this.cep = cep;
+        this.address = address;
+        this.addressNumber = addressNumber;
+        this.uf = uf;
+        this.website = website;
+        this.logo = logo;
+        this.userId = userId;
+    }
 
     public int getId() {
         return id;
@@ -46,11 +61,11 @@ public class Company {
     }
 
     public String getCompanyName() {
-        return companyName;
+        return name;
     }
 
     public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+        this.name = companyName;
     }
 
     public String getCnpj() {

@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,13 +36,28 @@ public class Vacancies extends AppCompatActivity {
         });
 
         vacancyService = new VacancyService();
-
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {
+            @Override
+            public void onSuccess(ArrayList<Vacancy> vacancies) {
+                runOnUiThread(() -> {
+                    vagaAdapter = new VacancyAdapter(vacancies);
+                    recyclerView.setAdapter(vagaAdapter);
+                });
+            }
 
-        // Configurando o Adapter
-        vagaAdapter = new VacancyAdapter(vacancyService.getVacancies());
-        recyclerView.setAdapter(vagaAdapter);
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(Vacancies.this, error, Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+
     }
+
+
+
 }
