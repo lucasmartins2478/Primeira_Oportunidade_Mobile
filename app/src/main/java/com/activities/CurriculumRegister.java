@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,8 +19,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.models.Curriculum;
 import com.models.DateValidator;
 import com.models.MaskEditText;
+import com.services.CurriculumService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +31,7 @@ import java.util.Locale;
 
 public class CurriculumRegister extends AppCompatActivity {
 
+    private CurriculumService curriculumService;
     private EditText fullNameInput, birthDateInput, ageInput, cpfInput, genderInput, raceInput, phoneNumberInput, emailInput, cityInput, cepInput, ufInput, addressInput, addressNumberInput;
 
     @Override
@@ -42,12 +46,26 @@ public class CurriculumRegister extends AppCompatActivity {
         });
 
 
+
+        curriculumService = new CurriculumService();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String name = sharedPreferences.getString("name", "Usuário não encontrado");
+        String email = sharedPreferences.getString("email", "Email não encontrado");
+        String phone = sharedPreferences.getString("phone", "Telefone não encontrado");
+
+
+
         fullNameInput = findViewById(R.id.full_name_input);
+        fullNameInput.setText(name);
         birthDateInput = findViewById(R.id.birth_date_input);
         ageInput = findViewById(R.id.age_input);
         cpfInput = findViewById(R.id.cpf_input);
         phoneNumberInput = findViewById(R.id.phone_number_input);
+        phoneNumberInput.setText(phone);
         emailInput = findViewById(R.id.email_input);
+        emailInput.setText(email);
         cityInput = findViewById(R.id.city_input);
         cepInput = findViewById(R.id.cep_input);
         addressInput = findViewById(R.id.address_input);
@@ -134,7 +152,7 @@ public class CurriculumRegister extends AppCompatActivity {
     public void onBackPressed(View view){
         finish();
     }
-    public void academicData(View view){
+    public void registerCurriculum(View view){
 
         String fullName = fullNameInput.getText().toString();
         String birthDate = birthDateInput.getText().toString();
@@ -217,8 +235,35 @@ public class CurriculumRegister extends AppCompatActivity {
             return;
         }
 
+        Curriculum curriculum = new Curriculum(
+                birthDate,
+                age,
+                gender,
+                race,
+                city,
+                cep,
+                uf,
+                address,
+                addressNumber
+        );
 
-        Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
-        startActivity(intent);
+
+        CurriculumService.registerCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(CurriculumRegister.this, "Currículo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                // Vai pra próxima tela
+                Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
+
+
 }
