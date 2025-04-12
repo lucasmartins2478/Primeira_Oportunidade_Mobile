@@ -9,15 +9,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class VacancyService {
 
     private List<Vacancy> vacancies;
 
-    private String apiUrl = "https://backend-po.onrender.com/vacanc";
+    private String registerUrl = "https://backend-po.onrender.com/vacancy";
+    private String fetchUrl = "https://backend-po.onrender.com/vacancies";
 
     private OkHttpClient client;
 
@@ -25,28 +28,24 @@ public class VacancyService {
         return true;
     }
 
-    public VacancyService (){
 
-        vacancies = new ArrayList<Vacancy>();
-
-        vacancies.add(new Vacancy( "Front-end", "Desenvolvedor", "Facebook", "Vale alimentação", "Formado", "Remoto", "São Paulo", "SP", "facebook@gmail.com", "R$12.000,00", "Pleno", 1));
-        vacancies.add(new Vacancy( "Back-end", "Desenvolvedor", "Facebook", "Vale alimentação", "Formado", "Remoto", "São Paulo", "SP", "facebook@gmail.com", "R$12.000,00", "Pleno", 1));
-        vacancies.add(new Vacancy( "Fullstack", "Desenvolvedor", "Facebook", "Vale alimentação", "Formado", "Remoto", "São Paulo", "SP", "facebook@gmail.com", "R$12.000,00", "Pleno", 1));
-
+    public VacancyService(){
+        client = new OkHttpClient();
     }
 
     public List<Vacancy> getVacancies(){
         return vacancies;
     }
 
+
+
   public void fetchVacanciesFromApi(VacancyCallback callback) {
     new Thread(() -> {
         try {
-            String url = apiUrl + "ies"; // URL completa: https://backend-po.onrender.com/vacancies
             client = new OkHttpClient();
 
             Request request = new Request.Builder()
-                    .url(url)
+                    .url(fetchUrl)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -92,11 +91,10 @@ public class VacancyService {
     public void fetchVacanciesByCompanyId(int companyId, VacancyCallback callback) {
         new Thread(() -> {
             try {
-                String url = "https://backend-po.onrender.com/vacancies"; // ou apiUrl se preferir
                 client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                        .url(url)
+                        .url(fetchUrl)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
@@ -144,9 +142,56 @@ public class VacancyService {
         }).start();
     }
 
+    public void registerVacancy(Vacancy vacancy, RegisterCallback callback){
+        new Thread(()->{
+            try{
+                JSONObject json = new JSONObject();
+                json.put("title", vacancy.getTitle());
+                json.put("description", vacancy.getDescription());
+                json.put("aboutCompany", vacancy.getAboutCompany());
+                json.put("benefits", vacancy.getBenefits());
+                json.put("requirements", vacancy.getRequirements());
+                json.put("modality", vacancy.getModality());
+                json.put("locality", vacancy.getLocality());
+                json.put("uf", vacancy.getUf());
+                json.put("contact", vacancy.getContact());
+                json.put("salary", vacancy.getSalary());
+                json.put("level", vacancy.getLevel());
+                json.put("companyId", vacancy.getCompanyId());
 
-public interface VacancyCallback {
-    void onSuccess(ArrayList<Vacancy> vacancies);
-    void onFailure(String error);
-}
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder().url(registerUrl).post(body).build();
+
+                Response response = client.newCall(request).execute();
+                if(response.isSuccessful()){
+                    callback.onSuccess();
+                }else{
+                    callback.onFailure("Erro :"+response.message());
+                }
+
+
+
+            } catch (Exception e) {
+                callback.onFailure("Falha ao conectar: "+e.getMessage());
+            }
+
+        }).start();
+
+    }
+
+
+
+
+    public interface RegisterCallback {
+        void onSuccess();
+        void onFailure(String error);
+    }
+    public interface VacancyCallback {
+        void onSuccess(ArrayList<Vacancy> vacancies);
+        void onFailure(String error);
+    }
 }

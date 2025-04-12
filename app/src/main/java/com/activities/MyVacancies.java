@@ -35,8 +35,10 @@ public class MyVacancies extends AppCompatActivity {
             return insets;
         });
 
-
         vacancyService = new VacancyService();
+
+
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

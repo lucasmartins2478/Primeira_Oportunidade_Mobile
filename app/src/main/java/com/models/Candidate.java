@@ -7,10 +7,11 @@ public class Candidate {
     private String name;
     private String phoneNumber;
     private String cpf;
-    private Integer curriculumId; // permite null
+    private Integer curriculumId;
 
     private int userId;
 
+    
 
     public Candidate(String name, String cpf, String phoneNumber, Integer curriculumId, int userId) {
         this.name = name;
