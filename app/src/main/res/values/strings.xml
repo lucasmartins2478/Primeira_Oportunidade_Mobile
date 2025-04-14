@@ -65,7 +65,7 @@
     <string name="race">Raça*</string>
     <string name="institution_name">Nome da Instituição de Ensino*</string>
     <string name="level">Nível*</string>
-    <string name="period">Ano/Semestre*</string>
+    <string name="period">Semestre*</string>
     <string name="start_date">Data Início*</string>
     <string name="end_date">Data Conclusão*</string>
     <string name="course_name">Nome do curso*</string>
@@ -181,17 +181,17 @@
     </string-array>
     <string-array name="period_options">
         <item>Selecione</item>
-        <item>1º semestre</item>
-        <item>2º semestre</item>
-        <item>3º semestre</item>
-        <item>4º semestre</item>
-        <item>5º semestre</item>
-        <item>6º semestre</item>
-        <item>7º semestre</item>
-        <item>8º semestre</item>
-        <item>9º semestre</item>
-        <item>10º semestre</item>
-        <item>Concluído</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+
     </string-array>
     <string-array name="course_modality_options">
         <item>Selecione</item>

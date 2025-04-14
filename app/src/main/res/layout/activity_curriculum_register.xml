@@ -419,7 +419,7 @@
                     style="@style/ButtonBlue"
                     android:layout_width="268dp"
                     android:layout_height="wrap_content"
-                    android:onClick="registerCurriculum"
+                    android:onClick="atalho"
                     android:text="@string/go_to_academic_data" />
 
             </LinearLayout>

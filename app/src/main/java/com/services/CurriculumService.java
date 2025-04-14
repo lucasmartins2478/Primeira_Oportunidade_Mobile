@@ -89,6 +89,73 @@ public class CurriculumService {
         }).start();
     }
 
+    public static void addSchoolData(Context context, Curriculum curriculum, CurriculumCallback callback){
+        new Thread(() -> {
+            try {
+                // Recuperar o userId do SharedPreferences
+                SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                int userId = prefs.getInt("candidateId", -1);
+
+                if (userId == -1) {
+                    throw new Exception("ID do usuário não encontrado");
+                }
+
+
+
+                JSONObject json = new JSONObject();
+
+                json.put("schoolName", curriculum.getSchoolName());
+                json.put("schoolYear", curriculum.getSchoolYear());
+                json.put("schoolCity", curriculum.getSchoolCity());
+                json.put("schoolStartDate", convertMonthYearToIso(curriculum.getSchoolStartDate()));
+                json.put("schoolEndDate", convertMonthYearToIso(curriculum.getSchoolEndDate()));
+                json.put("isCurrentlyStudying", curriculum.isCurrentlyStudying());
+
+
+
+                System.out.println("JSON enviado para o backend: " + json.toString());
+
+
+                // Fazer a requisição HTTP
+                URL url = new URL(BASE_URL+"/"+userId+"/addSchoolData");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("PUT");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                os.write(json.toString().getBytes("UTF-8"));
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == 200 || responseCode == 201) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao registrar currículo. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+    private static String convertMonthYearToIso(String input) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
+            Date date = inputFormat.parse(input);
+
+            // Use sempre o dia 01 como default
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     private static String convertToIsoDate(String inputDate) {
         try {
             SimpleDateFormat brFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());

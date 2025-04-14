@@ -265,5 +265,10 @@ public class CurriculumRegister extends AppCompatActivity {
 
     }
 
+    public void atalho(View view){
+        Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
+        startActivity(intent);
+    }
+
 
 }

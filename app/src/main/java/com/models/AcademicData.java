@@ -10,17 +10,36 @@ public class AcademicData {
     private String courseName;
     private String city;
 
-    private boolean inProgress;
+    private boolean isCurrentlyStudying;
 
-    public AcademicData(String city, String courseName, String endDate, String startDate, String period, String level, String institutionName, boolean inProgress) {
-        this.city = city;
+    private int curriculumId;
+
+    public AcademicData(String courseName, String period, String startDate, String endDate, boolean isCurrentlyStudying, String institutionName, String level, String city, int curriculumId) {
         this.courseName = courseName;
-        this.endDate = endDate;
-        this.startDate = startDate;
         this.period = period;
-        this.level = level;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isCurrentlyStudying = isCurrentlyStudying;
         this.institutionName = institutionName;
-        this.inProgress = inProgress;
+        this.level = level;
+        this.city = city;
+        this.curriculumId = curriculumId;
+    }
+
+    public boolean isCurrentlyStudying() {
+        return isCurrentlyStudying;
+    }
+
+    public void setCurrentlyStudying(boolean currentlyStudying) {
+        isCurrentlyStudying = currentlyStudying;
+    }
+
+    public int getCurriculumId() {
+        return curriculumId;
+    }
+
+    public void setCurriculumId(int curriculumId) {
+        this.curriculumId = curriculumId;
     }
 
     public String getInstitutionName() {
@@ -78,10 +97,10 @@ public class AcademicData {
     public void setCity(String city) {
         this.city = city;
     }
-    public boolean getInProgress(){
-        return  inProgress;
+    public boolean getIsCurrentlyStudying(){
+        return  isCurrentlyStudying;
     }
-    public void setInProgress(boolean inProgress){
-        this.inProgress = inProgress;
+    public void setIsCurrentlyStudying(boolean isCurrentlyStudying){
+        this.isCurrentlyStudying = isCurrentlyStudying;
     }
 }

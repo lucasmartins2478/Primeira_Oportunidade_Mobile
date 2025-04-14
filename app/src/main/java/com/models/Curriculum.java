@@ -11,6 +11,71 @@ public class Curriculum {
     private String address;
     private String addressNumber;
 
+    private String schoolName;
+    private String schoolYear;
+    private String schoolCity;
+    private String schoolStartDate;
+    private String schoolEndDate;
+    private boolean isCurrentlyStudying;
+
+
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
+    }
+
+    public String getSchoolYear() {
+        return schoolYear;
+    }
+
+    public void setSchoolYear(String schoolYear) {
+        this.schoolYear = schoolYear;
+    }
+
+    public String getSchoolCity() {
+        return schoolCity;
+    }
+
+    public void setSchoolCity(String schoolCity) {
+        this.schoolCity = schoolCity;
+    }
+
+    public String getSchoolStartDate() {
+        return schoolStartDate;
+    }
+
+    public void setSchoolStartDate(String schoolStartDate) {
+        this.schoolStartDate = schoolStartDate;
+    }
+
+    public String getSchoolEndDate() {
+        return schoolEndDate;
+    }
+
+    public void setSchoolEndDate(String schoolEndDate) {
+        this.schoolEndDate = schoolEndDate;
+    }
+
+    public boolean isCurrentlyStudying() {
+        return isCurrentlyStudying;
+    }
+
+    public Curriculum(String schoolName, String schoolYear, String schoolCity, String schoolStartDate, String schoolEndDate, boolean isCurrentlyStudying) {
+        this.schoolName = schoolName;
+        this.schoolYear = schoolYear;
+        this.schoolCity = schoolCity;
+        this.schoolStartDate = schoolStartDate;
+        this.schoolEndDate = schoolEndDate;
+        this.isCurrentlyStudying = isCurrentlyStudying;
+    }
+
+    public void setCurrentlyStudying(boolean currentlyStudying) {
+        isCurrentlyStudying = currentlyStudying;
+    }
+
     public Curriculum(String birthDate, String age, String gender, String race, String city, String cep, String uf, String address, String addressNumber) {
         this.birthDate = birthDate;
         this.age = age;
