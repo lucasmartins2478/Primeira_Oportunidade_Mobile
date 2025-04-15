@@ -9,6 +9,8 @@ public class CourseData {
 
     private boolean inProgress;
 
+    private int curriculumId;
+
     public String getCourseName() {
         return courseName;
     }
@@ -57,12 +59,21 @@ public class CourseData {
         this.inProgress = inProgress;
     }
 
-    public CourseData(String courseName, String modality, String duration, String endDate, String grantingIntitution, boolean inProgress) {
+    public int getCurriculumId() {
+        return curriculumId;
+    }
+
+    public void setCurriculumId(int curriculumId) {
+        this.curriculumId = curriculumId;
+    }
+
+    public CourseData(String courseName, String modality, String duration, String endDate, boolean inProgress, String grantingIntitution, int curriculumId) {
         this.courseName = courseName;
         this.modality = modality;
         this.duration = duration;
         this.endDate = endDate;
-        this.grantingIntitution = grantingIntitution;
         this.inProgress = inProgress;
+        this.grantingIntitution = grantingIntitution;
+        this.curriculumId = curriculumId;
     }
 }

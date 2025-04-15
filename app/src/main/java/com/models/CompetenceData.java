@@ -3,25 +3,30 @@ package com.models;
 public class CompetenceData {
     private String competence;
 
-    private String level;
+    private int curriculumId;
 
 
-    public CompetenceData(String competence, String level) {
+
+
+
+    public CompetenceData(String competence, int curriculumId) {
         this.competence = competence;
-        this.level = level;
+        this.curriculumId = curriculumId;
+
+    }
+
+    public int getCurriculumId() {
+        return curriculumId;
+    }
+
+    public void setCurriculumId(int curriculumId) {
+        this.curriculumId = curriculumId;
     }
 
     public CompetenceData(String competence) {
         this.competence = competence;
     }
 
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
 
     public String getCompetence() {
         return competence;

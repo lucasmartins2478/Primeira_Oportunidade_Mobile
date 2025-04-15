@@ -55,6 +55,15 @@
                     />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:id="@+id/forms_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -65,128 +74,26 @@
                     style="@style/EditTextLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/complementary_course_name"
+                    android:text="@string/insert_your_competences" />
 
-                    app:layout_constraintTop_toBottomOf="@+id/name" />
-
-                <!-- CNPJ -->
                 <EditText
-                    android:id="@+id/course_name_input"
-                    style="@style/EditTextRegister"
-                    android:layout_gravity="center"
+                    android:id="@+id/competenceInput"
+                    style="@style/EditTextRounded"
+                    android:imeOptions="actionDone"
+                    android:drawableLeft="@drawable/search_icon"
+                    android:drawableRight="@drawable/close_icon"
                     android:inputType="text" />
             </LinearLayout>
-
-
             <LinearLayout
-                android:layout_width="358dp"
+                android:id="@+id/competences_list_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:layout_marginTop="8dp"/>
 
-                <LinearLayout
-                    android:layout_width="230dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/EditTextLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/modality" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
 
-                        <Spinner
-                            android:id="@+id/modality_spinner"
-                            style="@style/EditTextRegister"
-                            android:layout_width="220dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="10dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginBottom="10dp" />
-
-                        <ImageView
-                            android:id="@+id/modality_spinner_arrow"
-                            android:layout_width="79dp"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:padding="8dp"
-                            android:src="@drawable/select_icon" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="128dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/EditTextLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/duration" />
-
-                    <EditText
-                        android:id="@+id/duration_input"
-                        style="@style/EditTextRegister"
-                        android:layout_width="106dp"
-                        android:inputType="number" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="358dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="176dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/EditTextLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/end_date" />
-
-                    <EditText
-                        android:id="@+id/end_date_input"
-                        style="@style/EditTextRegister"
-                        android:layout_width="151dp"
-                        android:inputType="number" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/EditTextLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/granting_institution" />
-
-                <EditText
-                    android:id="@+id/granting_intitution_input"
-                    style="@style/EditTextRegister"
-                    android:inputType="phone" />
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -198,7 +105,7 @@
                     style="@style/ButtonOrange"
                     android:layout_width="268dp"
                     android:layout_height="wrap_content"
-                    android:onClick="additionalData"
+                    android:onClick="addCourseDataForm"
                     android:text="@string/add_another_course" />
 
             </LinearLayout>
@@ -221,7 +128,7 @@
                     style="@style/ButtonBlue"
                     android:layout_width="268dp"
                     android:layout_height="wrap_content"
-                    android:onClick="additionalData"
+                    android:onClick="atalho"
                     android:text="@string/go_to_additional_data" />
 
             </LinearLayout>

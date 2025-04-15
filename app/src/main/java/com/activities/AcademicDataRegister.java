@@ -94,7 +94,7 @@ public class AcademicDataRegister extends AppCompatActivity {
     public void onBackPressed(View view){
         finish();
     }
-    public void courseData(View view){
+    public void registerAcademicData(View view){
         List<AcademicData> academicDataList = new ArrayList<>();
 
         String institutionName = instituitionNameInput.getText().toString();
