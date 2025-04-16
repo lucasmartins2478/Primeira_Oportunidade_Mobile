@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/vacancy_details_bkg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            style="@style/MenuOrangeBar"
+            android:layout_width="140dp"
+            android:layout_height="6dp"
+            android:layout_gravity="center" />
+
+        <!-- Título centralizado -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Título da Vaga"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Nome da empresa -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Empresa: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome da Empresa"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Localização -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Localização: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cidade, UF"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Descrição -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descrição: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descrição da vaga"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Benefícios -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Benefícios: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvBenefits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lista de benefícios"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Requisitos -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Requisitos: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvRequirements"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Habilidades necessárias"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Salário -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Salário: "
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+            <TextView
+                android:id="@+id/tvSalary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 0,00"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <!-- Botão -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/apply"
+            style="@style/ButtonOrange"
+            android:layout_width="268dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/apply" />
+
+    </LinearLayout>
+</ScrollView>

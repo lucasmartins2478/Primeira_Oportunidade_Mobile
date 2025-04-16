@@ -97,6 +97,7 @@
     <string name="tips_of_courses">Dicas de Cursos</string>
     <string name="tips_to_enterviews">Dicas para Entrevistas</string>
     <string name="know_competences">Conheça as Competências</string>
+    <string name="apply">Me candidatar</string>
     <string name="chat">Chat</string>
     <string name="chat_text">Seja bem-vindo ao nosso chat, aqui você pode se conectar com outros candidatos, tirar dúvidas e compartilhar experiências</string>
     <string-array name="gender_options">
@@ -256,8 +257,8 @@
         <item>Vendedor</item>
         <item>Zelador</item>
     </string-array>
-
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

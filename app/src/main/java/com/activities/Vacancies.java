@@ -1,6 +1,9 @@
 package com.activities;
 
+import static java.security.AccessController.getContext;
+
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapters.VacancyAdapter;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.models.Vacancy;
 import com.services.VacancyService;
 
@@ -43,8 +47,17 @@ public class Vacancies extends AppCompatActivity {
             @Override
             public void onSuccess(ArrayList<Vacancy> vacancies) {
                 runOnUiThread(() -> {
-                    vagaAdapter = new VacancyAdapter(vacancies);
-                    recyclerView.setAdapter(vagaAdapter);
+                    // Agora, passamos a função para o adapter
+                    VacancyAdapter adapter = new VacancyAdapter(vacancies, Vacancies.this, new VacancyAdapter.OnVerMaisClickListener() {
+                        @Override
+                        public void onVerMaisClick(Vacancy vaga) {
+                            // Aqui você pode tratar o clique no botão "Ver Mais" caso precise de algo mais
+                            // Por exemplo, você pode exibir detalhes em outro lugar ou fazer outra ação.
+                        }
+                    });
+
+                    recyclerView.setAdapter(adapter);
+
                 });
             }
 
@@ -55,9 +68,5 @@ public class Vacancies extends AppCompatActivity {
                 });
             }
         });
-
     }
-
-
-
 }

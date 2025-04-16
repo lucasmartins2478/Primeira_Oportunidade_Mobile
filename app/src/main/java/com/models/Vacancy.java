@@ -1,6 +1,8 @@
 package com.models;
 
-public class Vacancy {
+import java.io.Serializable;
+
+public class Vacancy implements Serializable {
     private int id;
     private String title;
     private String description;
