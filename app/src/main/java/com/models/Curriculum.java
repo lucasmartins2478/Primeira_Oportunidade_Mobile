@@ -18,6 +18,43 @@ public class Curriculum {
     private String schoolEndDate;
     private boolean isCurrentlyStudying;
 
+    private String attached;
+
+    private String aboutYou;
+
+    private String interestArea;
+
+
+    public Curriculum( String attached, String aboutYou, String interestArea) {
+        this.attached = attached;
+        this.aboutYou = aboutYou;
+        this.interestArea = interestArea;
+    }
+
+    public String getAttached() {
+        return attached;
+    }
+
+    public void setAttached(String attached) {
+        this.attached = attached;
+    }
+
+    public String getAboutYou() {
+        return aboutYou;
+    }
+
+
+    public void setAboutYou(String aboutYou) {
+        this.aboutYou = aboutYou;
+    }
+
+    public String getInterestArea() {
+        return interestArea;
+    }
+
+    public void setInterestArea(String interestArea) {
+        this.interestArea = interestArea;
+    }
 
     public String getSchoolName() {
         return schoolName;
