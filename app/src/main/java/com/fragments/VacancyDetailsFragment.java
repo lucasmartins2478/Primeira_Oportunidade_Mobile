@@ -1,5 +1,7 @@
 package com.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,7 +19,9 @@ import android.widget.Toast;
 import com.activities.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.models.Application;
 import com.models.Vacancy;
+import com.services.ApplicationService;
 
 
 public class VacancyDetailsFragment extends BottomSheetDialogFragment {
@@ -64,17 +68,31 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         AppCompatButton btnApply = view.findViewById(R.id.apply);
         btnApply.setOnClickListener(v -> {
-            applyForVacancy();
+            applyForVacancy(vacancy.getId());
         });
 
         return view;
     }
-    private void applyForVacancy() {
-        // Aqui você coloca a lógica que quiser
-        // Exemplo simples:
-        Toast.makeText(getContext(), "Você se candidatou à vaga: " + vacancy.getTitle(), Toast.LENGTH_SHORT).show();
+    private void applyForVacancy(int vacancyId) {
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = prefs.getInt("candidateId", -1);
 
-        // Se quiser fechar o BottomSheet depois:
-        dismiss();
+        Application application = new Application(vacancyId,userId);
+
+
+        ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(getContext(), "Candidatura realizada com sucesso", Toast.LENGTH_SHORT).show();
+                dismiss();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
+                dismiss();
+            }
+        });
+
     }
 }
