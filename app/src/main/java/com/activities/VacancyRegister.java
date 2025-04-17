@@ -133,9 +133,10 @@ public class VacancyRegister extends AppCompatActivity {
 
         int companyId = sharedPreferences.getInt("companyId", 0);
         String locality = sharedPreferences.getString("address", "Nenhum endereço encontrado");
+        String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
 
 
-        Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId );
+        Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId , false, true, companyName);
 
         vacancyService.registerVacancy(vacancy, new VacancyService.RegisterCallback() {
             @Override

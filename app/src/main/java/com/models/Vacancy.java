@@ -16,28 +16,20 @@ public class Vacancy implements Serializable {
     private String salary;
     private String level;
     private int companyId;
+    private String companyName;
 
     private boolean isActive;
     private boolean isFilled;
 
-    public Vacancy(String title, String description, String aboutCompany, String benefits,
-                   String requirements, String modality, String locality, String uf,
-                   String contact, String salary, String level, int companyId) {
-        this.title = title;
-        this.description = description;
-        this.aboutCompany = aboutCompany;
-        this.benefits = benefits;
-        this.requirements = requirements;
-        this.modality = modality;
-        this.locality = locality;
-        this.uf = uf;
-        this.contact = contact;
-        this.salary = salary;
-        this.level = level;
-        this.companyId = companyId;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public Vacancy(int id, String title, String description, String aboutCompany, String benefits, String requirements, String modality, String locality, String uf, String contact, String salary, String level, int companyId, boolean isActive, boolean isFilled) {
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Vacancy(int id, String title, String description, String aboutCompany, String benefits, String requirements, String modality, String locality, String uf, String contact, String salary, String level, int companyId, boolean isActive, boolean isFilled, String companyName) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -53,7 +45,32 @@ public class Vacancy implements Serializable {
         this.companyId = companyId;
         this.isActive = isActive;
         this.isFilled = isFilled;
+        this.companyName = companyName;
     }
+
+
+    public Vacancy( String title, String description, String aboutCompany, String benefits,
+                   String requirements, String modality, String locality, String uf,
+                   String contact, String salary, String level, int companyId,
+                   boolean isActive, boolean isFilled, String companyName) {
+
+        this.title = title;
+        this.description = description;
+        this.aboutCompany = aboutCompany;
+        this.benefits = benefits;
+        this.requirements = requirements;
+        this.modality = modality;
+        this.locality = locality;
+        this.uf = uf;
+        this.contact = contact;
+        this.salary = salary;
+        this.level = level;
+        this.companyId = companyId;
+        this.isActive = isActive;
+        this.isFilled = isFilled;
+        this.companyName = companyName; // <- isso tava faltando
+    }
+
 
     public int getId() {
         return id;

@@ -1,6 +1,5 @@
 package com.services;
 
-import com.models.Candidate;
 import com.models.Vacancy;
 
 import org.json.JSONArray;
@@ -72,7 +71,8 @@ public class VacancyService {
                             obj.getString("level"),
                             obj.getInt("companyId"),
                             obj.optBoolean("isActive", false),
-                            obj.optBoolean("isFilled", false)
+                            obj.optBoolean("isFilled", false),
+                                obj.getString("companyName")
                         );
                         vacancies.add(vacancy);
                     }
@@ -125,8 +125,8 @@ public class VacancyService {
                                         obj.getString("level"),
                                         currentCompanyId,
                                         obj.optBoolean("isActive", false),
-                                        obj.optBoolean("isFilled", false)
-                                );
+                                        obj.optBoolean("isFilled", false),
+                                        obj.getString("companyName"));
                                 filteredVacancies.add(vacancy);
                             }
                         }
@@ -158,6 +158,7 @@ public class VacancyService {
                 json.put("salary", vacancy.getSalary());
                 json.put("level", vacancy.getLevel());
                 json.put("companyId", vacancy.getCompanyId());
+                json.put("companyName", vacancy.getCompanyName());
 
                 RequestBody body = RequestBody.create(
                         json.toString(),

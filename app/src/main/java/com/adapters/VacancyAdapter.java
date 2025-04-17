@@ -47,7 +47,7 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
     public void onBindViewHolder(@NonNull VagaViewHolder holder, int position) {
         Vacancy vaga = listaVagas.get(position);
         holder.tvTitulo.setText(vaga.getTitle());
-        holder.tvEmpresa.setText(vaga.getAboutCompany());
+        holder.tvEmpresa.setText(vaga.getCompanyName());
         holder.tvLocalizacao.setText(vaga.getLocality());
 
 

@@ -58,7 +58,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         // Preenchendo os TextViews com os dados da vaga
         tvTitle.setText(vacancy.getTitle());
-        tvCompany.setText(vacancy.getAboutCompany());
+        tvCompany.setText(vacancy.getCompanyName());
         tvLocation.setText(vacancy.getLocality());
         tvDescription.setText(vacancy.getDescription());
         tvBenefits.setText(vacancy.getBenefits()); // Adicionando benefícios
