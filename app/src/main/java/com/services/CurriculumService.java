@@ -239,6 +239,63 @@ public class CurriculumService {
         }
     }
 
+    public interface FetchCurriculumCallback {
+        void onSuccess(Curriculum curriculum);
+        void onFailure(String errorMessage);
+    }
+
+    public static void getCurriculumByCandidateId(int candidateId, FetchCurriculumCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(BASE_URL + "/" + candidateId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.connect();
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    reader.close();
+
+                    JSONObject json = new JSONObject(response.toString());
+
+                    Curriculum curriculum = new Curriculum(
+                            json.optString("dateOfBirth"),
+                            String.valueOf(json.optInt("age")),
+                            json.optString("gender"),
+                            json.optString("race"),
+                            json.optString("city"),
+                            json.optString("cep"),
+                            json.optString("uf"),
+                            json.optString("address"),
+                            json.optString("addressNumber")
+                    );
+
+                    curriculum.setAttached(json.optString("attached"));
+                    curriculum.setAboutYou(json.optString("description"));
+                    curriculum.setInterestArea(json.optString("interestArea"));
+
+                    callback.onSuccess(curriculum);
+                } else {
+                    callback.onFailure("Erro: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onFailure("Erro ao conectar: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
 
 
 

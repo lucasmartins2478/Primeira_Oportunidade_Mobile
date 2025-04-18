@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/blue"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/main"
+    tools:context=".CandidateDetails">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@color/background_color"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <ImageButton
+            android:id="@+id/back_button"
+            style="@style/BackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/back_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            />
+
+        <TextView
+            android:id="@+id/textCandidateName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nome"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textCandidateCpf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CPF"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textCandidatePhone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Telefone"
+            android:textColor="@color/black"
+
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/textBirthDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+
+            android:text="Data de nascimento:" />
+
+        <TextView
+            android:id="@+id/textGender"
+            android:layout_width="match_parent"
+            android:textColor="@color/black"
+
+            android:layout_height="wrap_content"
+            android:text="Gênero:" />
+
+        <TextView
+            android:id="@+id/textCity"
+            android:layout_width="match_parent"
+            android:textColor="@color/black"
+
+            android:layout_height="wrap_content"
+            android:text="Cidade:" />
+
+        <TextView
+            android:id="@+id/textAbout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+
+            android:text="Sobre o candidato:" />
+
+        <TextView
+            android:id="@+id/textInterest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+
+            android:text="Área de interesse:" />
+
+        <TextView
+            android:id="@+id/textAcademicTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+
+            android:text="Formação Acadêmica:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingTop="16dp" />
+
+        <LinearLayout
+            android:id="@+id/academicContainer"
+            android:layout_width="match_parent"
+            android:textColor="@color/black"
+
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+
+        <!-- Lista de Competências -->
+
+        <TextView
+            android:id="@+id/textCoursesLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cursos Complementares:"
+            android:textColor="@color/black"
+
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/coursesContainer"
+            android:layout_width="match_parent"
+            android:textColor="@color/black"
+
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/textCompetencesLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+
+            android:text="Competências:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:id="@+id/competencesContainer"
+            android:layout_width="match_parent"
+            android:textColor="@color/black"
+
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+
+    <fragment
+        android:id="@+id/bottomMenuFragment"
+        android:name="com.fragments.BottomMenuFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

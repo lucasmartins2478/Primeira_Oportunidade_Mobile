@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.activities.R;
-import com.fragments.VacancyDetailsFragment;
+import com.fragments.ApplicationsBottomSheetFragment;
 import com.models.Vacancy;
 
 import java.util.List;
@@ -21,12 +21,12 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
     private OnVerMaisClickListener listener;
     private Context context;
 
-
+    // Interface para o evento de "Ver Mais"
     public interface OnVerMaisClickListener {
         void onVerMaisClick(Vacancy vaga);
     }
 
-
+    // Construtores
     public VacancyAdapter(List<Vacancy> listaVagas) {
         this.listaVagas = listaVagas;
     }
@@ -36,6 +36,7 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
         this.context = context;
         this.listener = listener; // Passando o listener
     }
+
     @NonNull
     @Override
     public VagaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -50,11 +51,11 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
         holder.tvEmpresa.setText(vaga.getCompanyName());
         holder.tvLocalizacao.setText(vaga.getLocality());
 
-
+        // Evento de clique para "Ver Mais"
         holder.btnVerMais.setOnClickListener(v -> {
-            // Cria o BottomSheet com os detalhes da vaga
-            VacancyDetailsFragment bottomSheet = VacancyDetailsFragment.newInstance(vaga);
-            bottomSheet.show(((AppCompatActivity) context).getSupportFragmentManager(), bottomSheet.getTag());
+            // Criar o fragmento de candidaturas, passando o ID da vaga
+            ApplicationsBottomSheetFragment fragment = ApplicationsBottomSheetFragment.newInstance(vaga.getId());
+            fragment.show(((AppCompatActivity) context).getSupportFragmentManager(), fragment.getTag());
         });
     }
 
@@ -72,7 +73,7 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
             tvTitulo = itemView.findViewById(R.id.tvTitulo);
             tvEmpresa = itemView.findViewById(R.id.tvEmpresa);
             tvLocalizacao = itemView.findViewById(R.id.tvLocalizacao);
-            btnVerMais = itemView.findViewById(R.id.seeMoreDetails);
+            btnVerMais = itemView.findViewById(R.id.seeMoreDetails); // Botão "Ver Mais"
         }
     }
 }

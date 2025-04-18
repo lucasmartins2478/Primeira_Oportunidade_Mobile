@@ -26,6 +26,10 @@ public class AcademicData {
         this.curriculumId = curriculumId;
     }
 
+    public AcademicData() {
+
+    }
+
     public boolean isCurrentlyStudying() {
         return isCurrentlyStudying;
     }

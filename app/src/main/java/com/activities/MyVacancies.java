@@ -39,6 +39,7 @@ public class MyVacancies extends AppCompatActivity {
 
 
 
+        vacancyService = new VacancyService();
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -52,8 +53,17 @@ public class MyVacancies extends AppCompatActivity {
                 @Override
                 public void onSuccess(ArrayList<Vacancy> vacancies) {
                     runOnUiThread(() -> {
-                        VacancyAdapter adapter = new VacancyAdapter(vacancies);
+                        // Agora, passamos a função para o adapter
+                        VacancyAdapter adapter = new VacancyAdapter(vacancies, MyVacancies.this, new VacancyAdapter.OnVerMaisClickListener() {
+                            @Override
+                            public void onVerMaisClick(Vacancy vaga) {
+                                // Aqui você pode tratar o clique no botão "Ver Mais" caso precise de algo mais
+                                // Por exemplo, você pode exibir detalhes em outro lugar ou fazer outra ação.
+                            }
+                        });
+
                         recyclerView.setAdapter(adapter);
+
                     });
                 }
 

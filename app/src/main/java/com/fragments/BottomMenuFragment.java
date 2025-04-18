@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.activities.Community;
+import com.activities.Companies;
 import com.activities.FormLogin;
+import com.activities.MyApplications;
 import com.activities.MyVacancies;
 import com.activities.Profile;
 import com.activities.R;
@@ -85,12 +87,13 @@ public class BottomMenuFragment extends Fragment {
 
         btnProfile.setOnClickListener(v -> {
             bottomSheetDialog.dismiss();
-
             Intent intent = new Intent(getContext(), Profile.class);
             startActivity(intent);
         });
 
         btnCompanies.setOnClickListener(v ->{
+            Intent intent = new Intent(getContext(), Companies.class);
+            startActivity(intent);
             bottomSheetDialog.dismiss();
         });
         btnCommunity.setOnClickListener(v ->{
@@ -100,11 +103,12 @@ public class BottomMenuFragment extends Fragment {
         });
         btnVacancyRegister.setOnClickListener(v ->{
             bottomSheetDialog.dismiss();
-
             Intent intent = new Intent(getContext(), VacancyRegister.class);
             startActivity(intent);
         });
         btnMyApplications.setOnClickListener(v ->{
+            Intent intent = new Intent(getContext(), MyApplications.class);
+            startActivity(intent);
             bottomSheetDialog.dismiss();
         });
 

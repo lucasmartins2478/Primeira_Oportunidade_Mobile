@@ -7,6 +7,7 @@ import android.os.Looper;
 import com.models.AcademicData;
 import com.models.CourseData;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -17,7 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CourseDataService {
@@ -111,5 +114,73 @@ public class CourseDataService {
             return null; // Em caso de erro, retorne null
         }
     }
+
+    public interface FetchCourseDataCallback {
+        void onSuccess(List<CourseData> courseDataList);
+        void onFailure(String errorMessage);
+    }
+
+    public static void getCourseDataByCurriculumId(int curriculumId, FetchCourseDataCallback callback) {
+        new Thread(() -> {
+            try {
+                // Fazendo a requisição para a URL com curriculumId
+                URL url = new URL("https://backend-po.onrender.com/coursesData" + "/" + curriculumId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.connect();
+
+                int responseCode = conn.getResponseCode();
+
+                // Verificando a resposta do servidor
+                if (responseCode == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    reader.close();
+
+                    // Convertendo a resposta em um JSONArray (não precisa de JSONObject para um array simples)
+                    JSONArray coursesArray = new JSONArray(response.toString());
+                    List<CourseData> courseDataList = new ArrayList<>();
+
+                    // Iterando sobre o array de cursos e adicionando na lista
+                    if (coursesArray.length() > 0) {
+                        for (int i = 0; i < coursesArray.length(); i++) {
+                            JSONObject courseJson = coursesArray.getJSONObject(i);
+
+                            CourseData courseData = new CourseData(
+                                    courseJson.optString("name"),
+                                    courseJson.optString("modality"),
+                                    courseJson.optString("duration"),
+                                    courseJson.optString("endDate"),
+                                    courseJson.optBoolean("isCurrentlyStudying"),
+                                    courseJson.optString("institutionName"),
+                                    courseJson.optInt("curriculumId")
+                            );
+
+                            courseDataList.add(courseData);
+                        }
+
+                        // Enviar a lista para a callback de sucesso
+                        callback.onSuccess(courseDataList);
+                    } else {
+                        callback.onFailure("Nenhum curso encontrado.");
+                    }
+                } else {
+                    callback.onFailure("Erro ao buscar dados: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                callback.onFailure("Erro ao buscar dados: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
 
 }

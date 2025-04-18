@@ -43,14 +43,26 @@ public class FormLogin extends AppCompatActivity {
             return insets;
         });
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String savedEmail = sharedPreferences.getString("email", null);
-        String savedPassword = sharedPreferences.getString("password", null);
+        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
 
-        if (savedEmail != null && savedPassword != null) {
-            // 🔹 Redireciona para a tela principal sem precisar fazer login
-            Intent intent = new Intent(FormLogin.this, Vacancies.class);
-            startActivity(intent);
-            finish();
+        if (isLoggedIn) {
+            String userType = sharedPreferences.getString("type", null);
+            Intent intent;
+            if (userType != null) {
+                if (userType.equals("CANDIDATE")) {
+                    intent = new Intent(FormLogin.this, Vacancies.class);
+                } else if (userType.equals("COMPANY")) {
+                    intent = new Intent(FormLogin.this, MyVacancies.class);
+                } else {
+                    intent = null;
+                }
+
+                if (intent != null) {
+                    startActivity(intent);
+                    finish(); // finaliza tela de login
+                    return;
+                }
+            }
         }
         loginService = new LoginService();
         candidateService = new CandidateService();
@@ -60,42 +72,42 @@ public class FormLogin extends AppCompatActivity {
         Intent intent = new Intent(FormLogin.this, ResetPassword.class);
         startActivity(intent);
     }
-    public void login(View view){
+    public void login(View view) {
         EditText emailInput = findViewById(R.id.email_input);
         String email = emailInput.getText().toString();
         EditText passwordInput = findViewById(R.id.password_input);
         String password = passwordInput.getText().toString();
 
-        if (email.isEmpty()){
+        if (email.isEmpty()) {
             emailInput.setError("Preencha o email");
             emailInput.requestFocus();
             return;
-        }else if(password.isEmpty()){
+        } else if (password.isEmpty()) {
             passwordInput.setError("Preencha a senha");
             passwordInput.requestFocus();
             return;
-        }
-        else{
+        } else {
             loginService.login(email, password, new LoginService.LoginCallback() {
                 @Override
                 public void onSuccess(User user) {
-                    if (user.getType() == UserType.CANDIDATE){
+                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    if (user.getType() == UserType.CANDIDATE) {
                         candidateService.fetchCandidateFromApi(user.getId(), new CandidateService.CandidateCallback() {
                             @Override
                             public void onSuccess(Candidate candidate) {
                                 runOnUiThread(() -> {
-                                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putInt("candidateId", candidate.getId());
                                     editor.putString("email", user.getEmail());
                                     editor.putString("type", user.getType().getValue());
                                     editor.putString("name", candidate.getName());
                                     editor.putString("cpf", candidate.getCpf());
                                     editor.putString("phone", candidate.getPhoneNumber());
+                                    editor.putBoolean("isLoggedIn", true);  // Marca o usuário como logado
                                     editor.apply();
 
-                                    Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show(); // ✅ agora pode usar Toast aqui
-
+                                    Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(FormLogin.this, Vacancies.class);
                                     startActivity(intent);
                                     finish(); // opcional: encerra a tela de login
@@ -111,9 +123,7 @@ public class FormLogin extends AppCompatActivity {
                         companyService.fetchCompanyFromApi(user.getId(), new CompanyService.CompanyCallback() {
                             @Override
                             public void onSuccess(Company company) {
-                                runOnUiThread(()->{
-                                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                runOnUiThread(() -> {
                                     editor.putInt("companyId", company.getId());
                                     editor.putString("email", user.getEmail());
                                     editor.putString("type", user.getType().getValue());
@@ -129,16 +139,14 @@ public class FormLogin extends AppCompatActivity {
                                     editor.putString("uf", company.getUf());
                                     editor.putString("url", company.getWebsite());
                                     editor.putString("logo", company.getLogo());
+                                    editor.putBoolean("isLoggedIn", true);  // Marca o usuário como logado
                                     editor.apply();
 
-                                    Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show(); // ✅ agora pode usar Toast aqui
-
+                                    Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(FormLogin.this, MyVacancies.class);
                                     startActivity(intent);
                                     finish(); // opcional: encerra a tela de login
                                 });
-
-
                             }
 
                             @Override
@@ -154,9 +162,9 @@ public class FormLogin extends AppCompatActivity {
                     runOnUiThread(() -> Toast.makeText(FormLogin.this, errorMessage, Toast.LENGTH_SHORT).show());
                 }
             });
-
         }
     }
+
 
     public void selectUser(View view){
         Intent intent = new Intent(FormLogin.this, SelectUser.class);

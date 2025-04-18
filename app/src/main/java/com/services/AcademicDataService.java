@@ -3,12 +3,17 @@ package com.services;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
+
+
 
 import com.models.AcademicData;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -16,8 +21,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class AcademicDataService {
 
@@ -116,6 +129,73 @@ public class AcademicDataService {
             return null; // Em caso de erro, retorne null
         }
     }
+
+
+
+    public static void getAcademicDataByCurriculumId(int curriculumId, FetchAcademicDataCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + "/" + curriculumId)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                callback.onFailure("Erro de rede: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String json = response.body().string();
+
+                    try {
+                        JSONArray array = new JSONArray(json);
+
+                        if (array.length() == 0) {
+                            callback.onFailure("Nenhum dado encontrado.");
+                            return;
+                        }
+
+                        List<AcademicData> dataList = new ArrayList<>();
+
+                        for (int i = 0; i < array.length(); i++) {
+                            JSONObject obj = array.getJSONObject(i);
+
+                            AcademicData data = new AcademicData();
+                            data.setInstitutionName(obj.getString("institutionName"));
+                            data.setCourseName(obj.getString("name"));
+                            data.setPeriod(obj.getString("semester"));
+                            data.setStartDate(obj.getString("startDate"));
+                            data.setEndDate(obj.getString("endDate"));
+                            data.setIsCurrentlyStudying(obj.getInt("isCurrentlyStudying") == 1);
+
+                            dataList.add(data);
+                        }
+
+                        callback.onSuccess(dataList);
+
+                    } catch (JSONException e) {
+                        callback.onFailure("Erro ao processar JSON: " + e.getMessage());
+                    }
+
+                } else {
+                    callback.onFailure("Erro: " + response.code());
+                }
+            }
+        });
+    }
+
+
+
+    public interface FetchAcademicDataCallback {
+        void onSuccess(List<AcademicData> dataList);
+        void onFailure(String errorMessage);
+    }
+
+
+
 
 
 

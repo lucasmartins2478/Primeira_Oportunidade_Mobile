@@ -47,6 +47,13 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
             vacancy = (Vacancy) getArguments().getSerializable("vacancy");
         }
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
+
+        String userType = sharedPreferences.getString("type", "Usuário não encontrado");
+
+
+
+
         // Preenche os dados no layout do BottomSheet
         TextView tvTitle = view.findViewById(R.id.tvTitle);
         TextView tvCompany = view.findViewById(R.id.tvCompany);
@@ -70,6 +77,22 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         btnApply.setOnClickListener(v -> {
             applyForVacancy(vacancy.getId());
         });
+        AppCompatButton btnViewApplications = view.findViewById(R.id.viewApplications);
+        btnViewApplications.setOnClickListener(v -> {
+            ApplicationsBottomSheetFragment applicationsSheet = ApplicationsBottomSheetFragment.newInstance(vacancy.getId());
+            applicationsSheet.show(getParentFragmentManager(), applicationsSheet.getTag());
+            dismiss();
+        });
+
+
+
+        if ("candidate".equals(userType)) {
+            btnApply.setVisibility(View.VISIBLE);
+
+        }
+        if ("company".equals(userType)) {
+            btnViewApplications.setVisibility(View.VISIBLE);
+        }
 
         return view;
     }

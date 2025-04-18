@@ -70,6 +70,44 @@ public class CandidateService {
             }
         }).start();
     }
+    public void fetchCandidateFromApiByCandidateId(int userId, CandidateCallback callback) {
+        new Thread(() -> {
+            try {
+                String url = apiUrl + "Id/" + userId;
+
+
+                Request request = new Request.Builder()
+                        .url(url)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String responseData = response.body().string();
+                        JSONObject candidateJson = new JSONObject(responseData);
+
+                        // Trata curriculumId que pode vir como null
+                        Integer curriculumId = candidateJson.isNull("curriculumId") ? null : candidateJson.getInt("curriculumId");
+
+                        Candidate candidate = new Candidate(
+                                candidateJson.getInt("id"),
+                                candidateJson.getString("name"),
+                                candidateJson.getString("cpf"),
+                                candidateJson.getString("phoneNumber"),
+                                curriculumId,
+                                candidateJson.getInt("userId")
+                        );
+
+
+                        callback.onSuccess(candidate);
+                    } else {
+                        callback.onFailure("Erro ao buscar candidato: " + response.code());
+                    }
+                }
+            } catch (Exception e) {
+                callback.onFailure("Erro ao conectar: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
 

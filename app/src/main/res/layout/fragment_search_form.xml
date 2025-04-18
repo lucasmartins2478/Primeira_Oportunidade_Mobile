@@ -4,23 +4,44 @@
     android:layout_height="match_parent"
     tools:context="com.fragments.SearchFormFragment">
 
-
     <LinearLayout
+        android:id="@+id/mainContainer"
         android:layout_width="match_parent"
-        android:layout_height="122dp"
-        android:background="@color/blue"
-        android:orientation="vertical"
-        android:gravity="center"
-        >
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
 
-        <EditText
-            style="@style/SearchInput"
-            android:hint="@string/search"
-            android:textColorHint="@color/gray"
-            android:layout_width="368dp"
-            android:drawableRight="@drawable/close_icon"
-            android:drawableLeft="@drawable/search_icon"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/searchInput"
+                style="@style/SearchInput"
+                android:hint="@string/search"
+                android:textColorHint="@color/gray"
+                android:drawableRight="@drawable/close_icon"
+                android:drawableLeft="@drawable/search_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_color"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false"
+            />
+
 
     </LinearLayout>
+
+
+
 </FrameLayout>

@@ -15,6 +15,15 @@
         android:theme="@style/Theme.PrimeiraOportunidade"
         tools:targetApi="31">
         <activity
+            android:name=".CandidateDetails"
+            android:exported="false" />
+        <activity
+            android:name=".Companies"
+            android:exported="false" />
+        <activity
+            android:name=".MyApplications"
+            android:exported="false" />
+        <activity
             android:name=".Community"
             android:exported="false" />
         <activity

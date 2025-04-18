@@ -1,0 +1,108 @@
+package com.activities;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.adapters.VacancyAdapter;
+import com.models.Application;
+import com.models.Vacancy;
+import com.services.ApplicationService;
+import com.services.VacancyService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MyApplications extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private VacancyService vacancyService;
+
+    private int candidateId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_my_applications);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        // Pegando o ID do candidato salvo no SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        candidateId = prefs.getInt("candidateId", -1);
+
+        if (candidateId == -1) {
+            Toast.makeText(this, "Erro: ID do candidato não encontrado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        vacancyService = new VacancyService();
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        buscarCandidaturasDoUsuario();
+    }
+
+    private void buscarCandidaturasDoUsuario() {
+        ApplicationService.getAllApplications(this, new ApplicationService.ApplicationsListCallback() {
+            @Override
+            public void onSuccess(List<Application> applications) {
+                // Filtra as candidaturas que são do candidato atual
+                List<Application> minhasCandidaturas = applications.stream()
+                        .filter(app -> app.getUserId() == candidateId)
+                        .collect(Collectors.toList());
+
+                // Extrai todos os vacancyIds únicos dessas candidaturas
+                List<Integer> vacancyIdsCandidatadas = minhasCandidaturas.stream()
+                        .map(Application::getVacancyId)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                buscarVagasECruzarComCandidaturas(vacancyIdsCandidatadas);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                runOnUiThread(() -> Toast.makeText(MyApplications.this, "Erro ao buscar candidaturas: " + errorMessage, Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private void buscarVagasECruzarComCandidaturas(List<Integer> vacancyIdsCandidatadas) {
+        vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {
+            @Override
+            public void onSuccess(ArrayList<Vacancy> vacancies) {
+                // Filtra somente as vagas que estão na lista de IDs das candidaturas
+                List<Vacancy> minhasVagas = vacancies.stream()
+                        .filter(v -> vacancyIdsCandidatadas.contains(v.getId()))
+                        .collect(Collectors.toList());
+
+                runOnUiThread(() -> {
+                    VacancyAdapter adapter = new VacancyAdapter(minhasVagas, MyApplications.this, vaga -> {
+                        // Você pode tratar algo ao clicar na vaga aqui
+                    });
+                    recyclerView.setAdapter(adapter);
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> Toast.makeText(MyApplications.this, "Erro ao buscar vagas: " + error, Toast.LENGTH_SHORT).show());
+            }
+        });
+    }
+}

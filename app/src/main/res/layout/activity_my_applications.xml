@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/blue"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
     android:fitsSystemWindows="true"
 
-    tools:context=".MyVacancies">
+    tools:context=".MyApplications">
 
     <fragment
         android:id="@+id/searchMenuFragment"
@@ -17,6 +18,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -27,16 +30,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchMenuFragment">
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="16dp"/>
-
     </LinearLayout>
 
 
+
+
+
+    <!-- Fragment do menu inferior -->
     <fragment
         android:id="@+id/bottomMenuFragment"
         android:name="com.fragments.BottomMenuFragment"
@@ -45,5 +50,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
