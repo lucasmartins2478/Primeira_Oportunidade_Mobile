@@ -222,6 +222,43 @@ public class ApplicationService {
         }).start();
     }
 
+    public static void cancelApplication(int vacancyId, int userId, ApplicationCallback callback) {
+        new Thread(() -> {
+            try {
+                String urlString = BASE_URL + "/" + userId + "/" + vacancyId;
+                URL url = new URL(urlString);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Accept", "application/json");
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == 200 || responseCode == 204) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    InputStream errorStream = conn.getErrorStream();
+                    if (errorStream != null) {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(errorStream));
+                        StringBuilder errorResponse = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            errorResponse.append(line);
+                        }
+                        reader.close();
+                        System.out.println("Erro do backend: " + errorResponse.toString());
+                    }
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            callback.onFailure("Erro ao cancelar candidatura. Código: " + responseCode));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() ->
+                        callback.onFailure("Erro ao cancelar candidatura: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+
 
 
 

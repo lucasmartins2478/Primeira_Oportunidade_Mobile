@@ -49,9 +49,9 @@ public class FormLogin extends AppCompatActivity {
             String userType = sharedPreferences.getString("type", null);
             Intent intent;
             if (userType != null) {
-                if (userType.equals("CANDIDATE")) {
+                if (userType.equals("candidate")) {
                     intent = new Intent(FormLogin.this, Vacancies.class);
-                } else if (userType.equals("COMPANY")) {
+                } else if (userType.equals("company")) {
                     intent = new Intent(FormLogin.this, MyVacancies.class);
                 } else {
                     intent = null;
@@ -64,6 +64,9 @@ public class FormLogin extends AppCompatActivity {
                 }
             }
         }
+
+        Log.d("LOGIN_STATUS", "isLoggedIn: " + isLoggedIn);
+
         loginService = new LoginService();
         candidateService = new CandidateService();
         companyService = new CompanyService();
@@ -104,8 +107,11 @@ public class FormLogin extends AppCompatActivity {
                                     editor.putString("name", candidate.getName());
                                     editor.putString("cpf", candidate.getCpf());
                                     editor.putString("phone", candidate.getPhoneNumber());
-                                    editor.putBoolean("isLoggedIn", true);  // Marca o usuário como logado
-                                    editor.apply();
+                                    editor.putBoolean("isLoggedIn", true);
+                                    editor.commit();  // <- garante que foi salvo antes de redirecionar
+
+                                    Log.d("LOGIN_SAVE", "Login salvo: isLoggedIn = true");
+
 
                                     Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(FormLogin.this, Vacancies.class);
@@ -139,8 +145,11 @@ public class FormLogin extends AppCompatActivity {
                                     editor.putString("uf", company.getUf());
                                     editor.putString("url", company.getWebsite());
                                     editor.putString("logo", company.getLogo());
-                                    editor.putBoolean("isLoggedIn", true);  // Marca o usuário como logado
-                                    editor.apply();
+                                    editor.putBoolean("isLoggedIn", true);
+                                    editor.commit();  // <- garante que foi salvo antes de redirecionar
+
+                                    Log.d("LOGIN_SAVE", "Login salvo: isLoggedIn = true");
+
 
                                     Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(FormLogin.this, MyVacancies.class);

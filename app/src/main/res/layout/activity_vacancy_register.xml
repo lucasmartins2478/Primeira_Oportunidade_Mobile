@@ -352,14 +352,7 @@
                 android:orientation="vertical">
 
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/register_button2"
-                    style="@style/ButtonOrange"
-                    android:layout_width="271dp"
-                    android:layout_height="37dp"
-                    android:onClick="addQuestions"
-                    android:text="@string/add_adictional_questions"
-                    android:textAllCaps="false" />
+
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/register_button"

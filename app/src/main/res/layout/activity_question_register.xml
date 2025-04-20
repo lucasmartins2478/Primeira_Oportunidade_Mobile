@@ -52,24 +52,12 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/questions_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="8dp"/>
 
-            <TextView
-                style="@style/EditTextLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/question" />
-
-            <EditText
-                android:id="@+id/about_company_input"
-                style="@style/EditTextRegister"
-                android:layout_height="90dp"
-                android:gravity="top|start"
-                android:inputType="textMultiLine" />
-        </LinearLayout>
 
 
         <LinearLayout
@@ -80,11 +68,10 @@
 
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/register_button2"
+                android:id="@+id/add_question"
                 style="@style/ButtonOrange"
                 android:layout_width="271dp"
                 android:layout_height="37dp"
-                android:onClick="addQuestions"
                 android:text="@string/add_more_questions"
                 android:textAllCaps="false" />
 

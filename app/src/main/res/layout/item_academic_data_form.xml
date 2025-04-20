@@ -139,7 +139,7 @@
         <LinearLayout
             android:layout_width="176dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="start"
             android:orientation="vertical">
 
             <TextView
@@ -172,6 +172,11 @@
                 style="@style/EditTextRegister"
                 android:layout_width="166dp"
                 android:inputType="number" />
+            <CheckBox
+                android:id="@+id/isCurrentlyStudying"
+                android:layout_width="wrap_content"
+                android:text="estudo atualmente"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.activities.R;
 import com.fragments.ApplicationsBottomSheetFragment;
+import com.fragments.VacancyDetailsFragment;
 import com.models.Vacancy;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
         // Evento de clique para "Ver Mais"
         holder.btnVerMais.setOnClickListener(v -> {
             // Criar o fragmento de candidaturas, passando o ID da vaga
-            ApplicationsBottomSheetFragment fragment = ApplicationsBottomSheetFragment.newInstance(vaga.getId());
+            VacancyDetailsFragment fragment = VacancyDetailsFragment.newInstance(vaga);
             fragment.show(((AppCompatActivity) context).getSupportFragmentManager(), fragment.getTag());
         });
     }

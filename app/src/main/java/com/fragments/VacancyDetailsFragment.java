@@ -20,12 +20,15 @@ import com.activities.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.models.Application;
+import com.models.Candidate;
 import com.models.Vacancy;
 import com.services.ApplicationService;
+import com.services.CandidateService;
 
 
 public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
+    CandidateService candidateService;
     private Vacancy vacancy;
 
     // Cria uma nova instância do fragmento com a vaga que será exibida
@@ -42,12 +45,14 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_vacancy_details, container, false);
 
+        candidateService = new CandidateService();
         // Recupera a vaga passada como argumento
         if (getArguments() != null) {
             vacancy = (Vacancy) getArguments().getSerializable("vacancy");
         }
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
+        int candidateId = sharedPreferences.getInt("candidateId", -1);
 
         String userType = sharedPreferences.getString("type", "Usuário não encontrado");
 
@@ -75,20 +80,54 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         AppCompatButton btnApply = view.findViewById(R.id.apply);
         btnApply.setOnClickListener(v -> {
-            applyForVacancy(vacancy.getId());
+            AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
+
+            bottomSheet.setOnAnswersSubmittedListener(() -> {
+                applyForVacancy(vacancy.getId());
+            });
+
+            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
         });
+
+
         AppCompatButton btnViewApplications = view.findViewById(R.id.viewApplications);
         btnViewApplications.setOnClickListener(v -> {
             ApplicationsBottomSheetFragment applicationsSheet = ApplicationsBottomSheetFragment.newInstance(vacancy.getId());
             applicationsSheet.show(getParentFragmentManager(), applicationsSheet.getTag());
             dismiss();
         });
+        AppCompatButton btnCancelApplication = view.findViewById(R.id.cancelApplication);
+        btnCancelApplication.setOnClickListener(v -> {
+            cancelApplication(vacancy.getId());
+        });
 
 
 
         if ("candidate".equals(userType)) {
-            btnApply.setVisibility(View.VISIBLE);
 
+            ApplicationService.getApplicationsByVacancyId(getContext(), vacancy.getId(), new ApplicationService.ApplicationsListCallback() {
+                @Override
+                public void onSuccess(java.util.List<Application> applications) {
+                    boolean alreadyApplied = false;
+                    for (Application app : applications) {
+                        if (app.getUserId() == candidateId) {
+                            alreadyApplied = true;
+                            break;
+                        }
+                    }
+
+                    if (alreadyApplied) {
+                        btnCancelApplication.setVisibility(View.VISIBLE);
+                    } else {
+                        btnApply.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Toast.makeText(getContext(), "Erro ao verificar candidatura: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         if ("company".equals(userType)) {
             btnViewApplications.setVisibility(View.VISIBLE);
@@ -96,24 +135,54 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         return view;
     }
-    private void applyForVacancy(int vacancyId) {
+    public void applyForVacancy(int vacancyId) {
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
 
-        Application application = new Application(vacancyId,userId);
+        candidateService.fetchCandidateFromApiByCandidateId(userId, new CandidateService.CandidateCallback() {
+            @Override
+            public void onSuccess(Candidate candidate) {
+                if(candidate.getCurriculumId() == userId){
+                    Application application = new Application(vacancyId,userId);
 
 
-        ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+                    ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(getContext(), "Candidatura realizada com sucesso", Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(getContext(), "Você precisa de um currículo para se candidatar", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
+    }
+    public void cancelApplication(int vacancyId){
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = prefs.getInt("candidateId", -1);
+        ApplicationService.cancelApplication(vacancyId, userId, new ApplicationService.ApplicationCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(getContext(), "Candidatura realizada com sucesso", Toast.LENGTH_SHORT).show();
-                dismiss();
+                Toast.makeText(getContext(), "Candidatura cancelada com sucesso!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
-                dismiss();
+                Toast.makeText(getContext(), "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -131,8 +131,14 @@
                 style="@style/EditTextRegister"
                 android:layout_width="151dp"
                 android:inputType="number" />
-        </LinearLayout>
 
+        </LinearLayout>
+        <CheckBox
+            android:id="@+id/isCurrentlyStudying"
+            android:layout_width="wrap_content"
+            android:text="estudo atualmente"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout

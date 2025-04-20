@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -45,6 +46,8 @@ public class AcademicDataRegister extends AppCompatActivity {
 
     private EditText instituitionNameInput, startDateInput, endDateInput, cityInput;
 
+    CheckBox isCurrentlyStudying;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,8 @@ public class AcademicDataRegister extends AppCompatActivity {
         startDateInput = findViewById(R.id.start_date_input);
         endDateInput = findViewById(R.id.end_date_input);
         cityInput = findViewById(R.id.city_input);
+        isCurrentlyStudying = findViewById(R.id.isCurrentlyStudying);
+
 
         startDateInput.addTextChangedListener(MaskEditText.mask(startDateInput, "##/####"));
         endDateInput.addTextChangedListener(MaskEditText.mask(endDateInput, "##/####"));
@@ -102,6 +107,7 @@ public class AcademicDataRegister extends AppCompatActivity {
         String startDate = startDateInput.getText().toString();
         String endDate = endDateInput.getText().toString();
         String city = cityInput.getText().toString();
+        Boolean isChecked = isCurrentlyStudying.isChecked();
 
         if(institutionName.isEmpty()){
             instituitionNameInput.setError("Preencha o nome da intituição de ensino");
@@ -128,7 +134,7 @@ public class AcademicDataRegister extends AppCompatActivity {
         }
 
         Curriculum schoolData = new Curriculum(
-                institutionName, level, city, startDate, endDate, false
+                institutionName, level, city, startDate, endDate, isChecked
         );
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -150,6 +156,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                     EditText endDateInput = form.findViewById(R.id.end_date_input);
                     EditText courseInput = form.findViewById(R.id.course_name_input);
                     EditText cityInput = form.findViewById(R.id.city_input);
+                    CheckBox isStudyingYet = form.findViewById(R.id.isCurrentlyStudying);
 
                     String inst = institutionInput.getText().toString().trim();
                     String lvl = levelSpinner.getSelectedItem().toString();
@@ -158,6 +165,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                     String end = endDateInput.getText().toString();
                     String course = courseInput.getText().toString().trim();
                     String cityDyn = cityInput.getText().toString().trim();
+                    Boolean isStudying = isStudyingYet.isChecked();
 
                     if (inst.isEmpty() || lvl.isEmpty() || per.isEmpty() ||
                             start.isEmpty() || end.isEmpty() || course.isEmpty() || cityDyn.isEmpty()) {
@@ -174,7 +182,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                             per,
                             formattedStartDate,
                             formattedEndDate,
-                            false,
+                            isStudying,
                             inst,
                             lvl,
                             cityDyn,

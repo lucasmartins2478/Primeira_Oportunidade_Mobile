@@ -182,7 +182,57 @@ public class VacancyService {
 
         }).start();
 
+
     }
+
+    public interface RegisterIdCallback {
+        void onSuccess(int vacancyId);
+        void onFailure(String error);
+    }
+
+    public void registerVacancyWithId(Vacancy vacancy, RegisterIdCallback callback) {
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("title", vacancy.getTitle());
+                json.put("description", vacancy.getDescription());
+                json.put("aboutCompany", vacancy.getAboutCompany());
+                json.put("benefits", vacancy.getBenefits());
+                json.put("requirements", vacancy.getRequirements());
+                json.put("modality", vacancy.getModality());
+                json.put("locality", vacancy.getLocality());
+                json.put("uf", vacancy.getUf());
+                json.put("contact", vacancy.getContact());
+                json.put("salary", vacancy.getSalary());
+                json.put("level", vacancy.getLevel());
+                json.put("companyId", vacancy.getCompanyId());
+                json.put("companyName", vacancy.getCompanyName());
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder().url(registerUrl).post(body).build();
+
+                Response response = client.newCall(request).execute();
+
+                if(response.isSuccessful() && response.body() != null){
+                    String responseData = response.body().string();
+                    JSONObject obj = new JSONObject(responseData);
+                    int vacancyId = obj.getInt("id");
+                    callback.onSuccess(vacancyId);
+                }
+                else {
+                    callback.onFailure("Erro ao cadastrar: " + response.message());
+                }
+
+            } catch (Exception e) {
+                callback.onFailure("Erro: " + e.getMessage());
+            }
+        }).start();
+    }
+
 
 
 

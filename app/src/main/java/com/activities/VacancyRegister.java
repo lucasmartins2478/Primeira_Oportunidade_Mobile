@@ -71,10 +71,7 @@ public class VacancyRegister extends AppCompatActivity {
         vacancyService = new VacancyService();
     }
 
-    public void addQuestions (View view){
-        Intent intent = new Intent(VacancyRegister.this, QuestionRegister.class);
-        startActivity(intent);
-    }
+
     public void registerVacancy(View view){
 
         String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
@@ -138,15 +135,15 @@ public class VacancyRegister extends AppCompatActivity {
 
         Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId , false, true, companyName);
 
-        vacancyService.registerVacancy(vacancy, new VacancyService.RegisterCallback() {
+        vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
             @Override
-            public void onSuccess() {
-                runOnUiThread(()->{
+            public void onSuccess(int vacancyId) {
+                runOnUiThread(() -> {
                     Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(VacancyRegister.this, MyVacancies.class);
+                    Intent intent = new Intent(VacancyRegister.this, QuestionRegister.class);
+                    intent.putExtra("vacancyId", vacancyId);
                     startActivity(intent);
                 });
-
             }
 
             @Override

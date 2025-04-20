@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -95,6 +96,7 @@ public class CoursesRegister extends AppCompatActivity {
             EditText durationInput = form.findViewById(R.id.duration_input);
             EditText endDateInput = form.findViewById(R.id.end_date_input);
             EditText institutionName = form.findViewById(R.id.granting_institution_input);
+            CheckBox isStudyingYet = form.findViewById(R.id.isCurrentlyStudying);
 
 
             String inst = institutionName.getText().toString().trim();
@@ -102,6 +104,7 @@ public class CoursesRegister extends AppCompatActivity {
             String duration = durationInput.getText().toString();
             String end = endDateInput.getText().toString();
             String course = courseName.getText().toString().trim();
+            Boolean inProgress = isStudyingYet.isChecked();
 
 
             if (inst.isEmpty() || modality.isEmpty() || duration.isEmpty() || end.isEmpty() || course.isEmpty() ) {
@@ -117,7 +120,7 @@ public class CoursesRegister extends AppCompatActivity {
                     modality,
                     duration,
                     formattedEndDate,
-                    false,
+                    inProgress,
                     inst,
                     curriculumId
 
