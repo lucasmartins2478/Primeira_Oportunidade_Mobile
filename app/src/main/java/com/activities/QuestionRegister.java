@@ -3,6 +3,7 @@ package com.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.EditText;
@@ -59,14 +60,20 @@ public class QuestionRegister extends AppCompatActivity {
     }
 
     public void addQuestionInput() {
-        EditText newInput = new EditText( new ContextThemeWrapper(this, R.style.EditTextRegister),
+        EditText newInput = new EditText(
+                new ContextThemeWrapper(this, R.style.EditTextRegister),
                 null,
-                android.R.attr.editTextStyle);
+                R.style.EditTextRegister
+        );
+
         newInput.setHint("Digite a pergunta");
-        newInput.setMinLines(2);
-        newInput.setMaxLines(4);
         newInput.setPadding(20, 20, 20, 20);
         newInput.setTextColor(ContextCompat.getColor(QuestionRegister.this, R.color.black));
+        newInput.setHintTextColor(ContextCompat.getColor(QuestionRegister.this, R.color.black));
+        newInput.setEnabled(true);
+        newInput.setFocusable(true);
+        newInput.setFocusableInTouchMode(true);
+
         questionsContainer.addView(newInput);
         questionInputs.add(newInput);
     }

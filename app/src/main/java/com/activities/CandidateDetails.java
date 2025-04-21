@@ -1,6 +1,7 @@
 package com.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,15 +15,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.models.AcademicData;
+import com.models.Answer;
 import com.models.Candidate;
 import com.models.CourseData;
 import com.models.Curriculum;
 import com.models.DateUtils;
+import com.models.Question;
 import com.services.AcademicDataService;
+import com.services.AnswerService;
 import com.services.CandidateService;
 import com.services.CompetenceDataService;
 import com.services.CourseDataService;
 import com.services.CurriculumService;
+import com.services.QuestionService;
 
 import java.util.List;
 
@@ -35,6 +40,7 @@ public class CandidateDetails extends AppCompatActivity {
     TextView textCourseName, textCourseInstitution, textCourseModality, textCourseDuration;
     TextView textCompetences;
     LinearLayout academicContainer;
+    String vacancyId;
     LinearLayout coursesContainer, competencesContainer;
 
 
@@ -64,6 +70,8 @@ public class CandidateDetails extends AppCompatActivity {
 
         // Pega o ID enviado pelo Adapter
         candidateId = getIntent().getStringExtra("candidate_id");
+        vacancyId = getIntent().getStringExtra("vacancy_id");  // Recupera o vacancyId
+
 
         fetchCandidateData();
 
@@ -130,6 +138,8 @@ public class CandidateDetails extends AppCompatActivity {
                     fetchAcademicData(candidateId);
                     fetchCourseData(candidateId);
                     fetchCompetences(candidateId);
+                    fetchQuestions(Integer.parseInt(vacancyId)); // Usando o vacancyId
+
                 });
             }
 
@@ -238,6 +248,84 @@ public class CandidateDetails extends AppCompatActivity {
             }
         });
     }
+
+    private void fetchQuestions(int vacancyId) {
+        QuestionService.getQuestionsByVacancyId(CandidateDetails.this, vacancyId, new QuestionService.QuestionListCallback() {
+            @Override
+            public void onSuccess(List<Question> questions) {
+                runOnUiThread(() -> {
+                    if (!questions.isEmpty()) {
+                        // Armazenar as perguntas, para depois buscar as respostas
+                        fetchAnswersForQuestions(questions);
+                    } else {
+                        Toast.makeText(CandidateDetails.this, "Nenhuma pergunta encontrada.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CandidateDetails.this, "Erro ao buscar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+
+
+
+    private void fetchAnswersForQuestions(List<Question> questions) {
+        // Vamos fazer as requisições para pegar as respostas para cada pergunta
+        for (Question question : questions) {
+            AnswerService.getAnswerByCandidateAndQuestionId(question.getId(), Integer.parseInt(candidateId), new AnswerService.FetchAnswerByQuestionCallback() {
+                @Override
+                public void onSuccess(Answer answer) {
+                    runOnUiThread(() -> {
+                        if (answer != null) {
+                            displayAnswer(question, answer);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    runOnUiThread(() -> {
+                        Log.d("Erro", "Erro ao buscar resposta: " + errorMessage);
+                        Toast.makeText(CandidateDetails.this, "Erro ao buscar resposta: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+
+        }
+    }
+
+
+
+    private void displayAnswer(Question question, Answer answer) {
+        LinearLayout answersContainer = findViewById(R.id.answersContainer);
+
+        // Pergunta
+        TextView questionView = new TextView(CandidateDetails.this);
+        questionView.setText("Pergunta: " + question.getQuestion());
+        questionView.setTypeface(null, android.graphics.Typeface.BOLD);
+        questionView.setTextColor(ContextCompat.getColor(CandidateDetails.this, R.color.black));
+
+        // Resposta
+        TextView answerView = new TextView(CandidateDetails.this);
+        answerView.setText("Resposta: " + (answer != null ? answer.getAnswer() : "Sem resposta"));
+        answerView.setTextColor(ContextCompat.getColor(CandidateDetails.this, R.color.black));
+        answerView.setPadding(0, 0, 0, 16);
+
+        // Adiciona as views ao container
+        answersContainer.addView(questionView);
+        answersContainer.addView(answerView);
+    }
+
+
+
+
+
 
     public void onBackPressed(View view){
         finish();

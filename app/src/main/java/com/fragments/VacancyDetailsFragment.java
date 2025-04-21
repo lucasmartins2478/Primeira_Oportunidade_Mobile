@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activities.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.models.Application;
 import com.models.Candidate;
+import com.models.Question;
 import com.models.Vacancy;
 import com.services.ApplicationService;
 import com.services.CandidateService;
+import com.services.QuestionService;
+
+import java.util.List;
 
 
 public class VacancyDetailsFragment extends BottomSheetDialogFragment {
@@ -40,6 +46,24 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        View view = getView();
+        if (view != null) {
+            View parent = (View) view.getParent();
+            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+            int desiredHeight = (int)(getResources().getDisplayMetrics().heightPixels * 0.65); // 65% da tela
+            parent.getLayoutParams().height = desiredHeight;
+            parent.requestLayout();
+
+            parent.requestLayout();
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,11 +77,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
         int candidateId = sharedPreferences.getInt("candidateId", -1);
-
         String userType = sharedPreferences.getString("type", "Usuário não encontrado");
-
-
-
 
         // Preenche os dados no layout do BottomSheet
         TextView tvTitle = view.findViewById(R.id.tvTitle);
@@ -80,13 +100,41 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         AppCompatButton btnApply = view.findViewById(R.id.apply);
         btnApply.setOnClickListener(v -> {
-            AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
+            QuestionService.getQuestionsByVacancyId(getContext(), vacancy.getId(), new QuestionService.QuestionListCallback() {
+                @Override
+                public void onSuccess(List<Question> questionList) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (questionList.isEmpty()) {
+                            // Não tem perguntas → aplicar direto
+                            applyForVacancy(vacancy.getId());
+                            dismiss();
+                        } else {
+                            // Tem perguntas → abre o bottom sheet de respostas
+                            AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
+                            bottomSheet.setOnAnswersSubmittedListener(() -> {
+                                applyForVacancy(vacancy.getId());
+                            });
+                            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
+                            dismiss();
+                        }
+                    });
+                }
 
-            bottomSheet.setOnAnswersSubmittedListener(() -> {
-                applyForVacancy(vacancy.getId());
+                @Override
+                public void onFailure(String errorMessage) {
+                    requireActivity().runOnUiThread(() -> {
+                        if (isExpectedNoQuestionsError(errorMessage)) {
+                            applyForVacancy(vacancy.getId());
+                            dismiss();
+                        } else {
+                            Toast.makeText(getContext(), "Erro ao verificar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+
+                    });
+                }
+
+
             });
-
-            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
         });
 
 
@@ -96,11 +144,11 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
             applicationsSheet.show(getParentFragmentManager(), applicationsSheet.getTag());
             dismiss();
         });
+
         AppCompatButton btnCancelApplication = view.findViewById(R.id.cancelApplication);
         btnCancelApplication.setOnClickListener(v -> {
             cancelApplication(vacancy.getId());
         });
-
 
 
         if ("candidate".equals(userType)) {
@@ -135,30 +183,45 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         return view;
     }
+
     public void applyForVacancy(int vacancyId) {
+        Log.d("ApplyDebug", "Chamou applyForVacancy para vagaId: " + vacancyId);
+
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
 
         candidateService.fetchCandidateFromApiByCandidateId(userId, new CandidateService.CandidateCallback() {
             @Override
             public void onSuccess(Candidate candidate) {
+                Log.d("ApplyDebug", "Candidato retornado: " + candidate.getId() + " | CurriculumId: " + candidate.getCurriculumId());
+
                 if(candidate.getCurriculumId() == userId){
+
                     Application application = new Application(vacancyId,userId);
+                    Log.d("ApplyDebug", "Passou do if, vai tentar aplicar!");
 
 
                     ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
                         @Override
                         public void onSuccess() {
-                            Toast.makeText(getContext(), "Candidatura realizada com sucesso", Toast.LENGTH_SHORT).show();
-                            dismiss();
+                            if (isAdded()) {
+                                Toast.makeText(getContext(), "Aplicação realizada com sucesso!", Toast.LENGTH_SHORT).show();
+                                // Espera o toast aparecer, depois fecha
+                                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> dismiss(), 1500);
+                            }
                         }
 
                         @Override
                         public void onFailure(String errorMessage) {
-                            Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
-                            dismiss();
+                            if (isAdded()) {
+                                Toast.makeText(getContext(), "Erro ao se candidatar: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                dismiss();
+                            }
                         }
                     });
+
+
+
                 }
                 else{
                     Toast.makeText(getContext(), "Você precisa de um currículo para se candidatar", Toast.LENGTH_SHORT).show();
@@ -187,4 +250,11 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         });
 
     }
+    private boolean isExpectedNoQuestionsError(String errorMessage) {
+        return errorMessage == null
+                || errorMessage.trim().isEmpty()
+                || errorMessage.toLowerCase().contains("nenhuma pergunta")
+                || errorMessage.toLowerCase().contains("no questions");
+    }
+
 }

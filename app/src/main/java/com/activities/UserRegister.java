@@ -112,31 +112,35 @@ public class UserRegister extends AppCompatActivity {
 
                 candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
                     @Override
-                    public void onSuccess() {
+                    public void onSuccess(Candidate candidate) {
                         runOnUiThread(() -> {
-
-                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            editor.putInt("candidateId", candidate.getId()); // AGORA OK ✅
                             editor.putString("email", user.getEmail());
                             editor.putString("type", user.getType().getValue());
                             editor.putString("name", candidate.getName());
                             editor.putString("cpf", candidate.getCpf());
                             editor.putString("phone", candidate.getPhoneNumber());
+                            editor.putBoolean("isLoggedIn", true);
                             editor.apply();
+
+                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(UserRegister.this, Vacancies.class);
                             startActivity(intent);
+                            finish();
                         });
                     }
-                    public void onSuccess(Candidate candidate) {
-
-                    }
 
 
+                    @Override
                     public void onFailure(String error) {
-                        runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar usuário: " + error, Toast.LENGTH_SHORT).show());
+                        runOnUiThread(() ->
+                                Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
                     }
                 });
+
             }
 
             @Override

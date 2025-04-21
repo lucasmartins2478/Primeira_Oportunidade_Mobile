@@ -57,6 +57,8 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
 
                     Intent intent = new Intent(v.getContext(), CandidateDetails.class);
                     intent.putExtra("candidate_id", String.valueOf(candidate.getId()));
+                    intent.putExtra("vacancy_id", String.valueOf(app.getVacancyId())); // Passando o vacancyId aqui
+
                     v.getContext().startActivity(intent);
 
                 });

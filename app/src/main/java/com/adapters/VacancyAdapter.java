@@ -50,7 +50,7 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
         Vacancy vaga = listaVagas.get(position);
         holder.tvTitulo.setText(vaga.getTitle());
         holder.tvEmpresa.setText(vaga.getCompanyName());
-        holder.tvLocalizacao.setText(vaga.getLocality());
+        holder.tvModalidade.setText(vaga.getModality());
 
         // Evento de clique para "Ver Mais"
         holder.btnVerMais.setOnClickListener(v -> {
@@ -66,14 +66,14 @@ public class VacancyAdapter extends RecyclerView.Adapter<VacancyAdapter.VagaView
     }
 
     public static class VagaViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitulo, tvEmpresa, tvLocalizacao;
+        TextView tvTitulo, tvEmpresa, tvModalidade;
         AppCompatButton btnVerMais;
 
         public VagaViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitulo = itemView.findViewById(R.id.tvTitulo);
             tvEmpresa = itemView.findViewById(R.id.tvEmpresa);
-            tvLocalizacao = itemView.findViewById(R.id.tvLocalizacao);
+            tvModalidade = itemView.findViewById(R.id.tvModalidade);
             btnVerMais = itemView.findViewById(R.id.seeMoreDetails); // Botão "Ver Mais"
         }
     }

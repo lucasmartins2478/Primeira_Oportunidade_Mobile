@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/vacancy_details_bkg">
 
     <LinearLayout
-        android:id="@+id/answers_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -20,12 +18,18 @@
             android:textSize="16sp"
             android:layout_marginBottom="10dp" />
 
+        <LinearLayout
+            android:id="@+id/answers_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp" />
+
         <Button
             android:id="@+id/btnSubmitAnswers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enviar respostas e candidatar-se"
-            android:layout_marginTop="16dp"
             android:backgroundTint="@color/orange"
             android:textColor="@android:color/white"/>
     </LinearLayout>

@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="5dp"
     android:background="@drawable/vacancy_details_bkg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp">
 
         <androidx.appcompat.widget.AppCompatButton
             style="@style/MenuOrangeBar"
@@ -20,16 +22,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/applications"
+            android:layout_margin="10dp"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_gravity="center"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerApplications"
+        <TextView
+            android:id="@+id/noApplications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            android:text="Parece que não há candidaturas para essa vaga!"
+            android:layout_gravity="center"/>
+
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerApplications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </ScrollView>
 
 
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

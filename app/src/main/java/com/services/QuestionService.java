@@ -83,14 +83,20 @@ public class QuestionService {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
                         Question q = new Question();
+                        q.setId(obj.getInt("id")); // ✅ ID da pergunta
                         q.setQuestion(obj.getString("question"));
-                        q.setVacancyId(obj.getInt("vacancyId"));
-                        q.setVacancyId(obj.getInt("id")); // você vai precisar do ID aqui!
+                        q.setVacancyId(obj.getInt("vacancyId")); // ✅ ID da vaga
+
                         questions.add(q);
                     }
                     callback.onSuccess(questions);
                 } else {
-                    callback.onFailure("Erro ao buscar perguntas: " + response.message());
+                    if (response.code() == 404) {
+                        // Assumimos que não existem perguntas para essa vaga
+                        callback.onSuccess(new ArrayList<>()); // Retorna lista vazia normalmente
+                    } else {
+                        callback.onFailure("Erro ao buscar perguntas: " + response.message());
+                    }
                 }
             } catch (Exception e) {
                 callback.onFailure("Erro: " + e.getMessage());

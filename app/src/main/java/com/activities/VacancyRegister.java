@@ -24,7 +24,7 @@ public class VacancyRegister extends AppCompatActivity {
 
     private VacancyService vacancyService;
 
-    private EditText  vacancyLevelInput, salaryInput, cityInput,  contactInput, aboutCompanyInput, descriptionInput,requirementsInput, benefitsInput, localityInput;
+    private EditText   salaryInput, cityInput,  contactInput, aboutCompanyInput, descriptionInput,requirementsInput, benefitsInput, localityInput;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +36,7 @@ public class VacancyRegister extends AppCompatActivity {
             return insets;
         });
 
-        vacancyLevelInput = findViewById(R.id.level_input);
+
         salaryInput = findViewById(R.id.salary_input);
         cityInput = findViewById(R.id.city_input);
         contactInput = findViewById(R.id.contact_input);
@@ -51,6 +51,12 @@ public class VacancyRegister extends AppCompatActivity {
                 R.array.modality_options, R.layout.spinner_item);
         modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         modalitySpinner.setAdapter(modalityAdapter);
+
+        Spinner levelSpinner = findViewById(R.id.level_spinner);
+        ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(this,
+                R.array.vacancy_level_options, R.layout.spinner_item);
+        levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        levelSpinner.setAdapter(levelAdapter);
 
         Spinner ufSpinner = findViewById(R.id.uf_spinner);
         ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(this,
@@ -75,9 +81,87 @@ public class VacancyRegister extends AppCompatActivity {
     public void registerVacancy(View view){
 
         String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
-        String level = vacancyLevelInput.getText().toString().trim();
         String salary = salaryInput.getText().toString().trim();
         String city = cityInput.getText().toString().trim();
+        String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
+        String contact = contactInput.getText().toString().trim();
+        String modality = ((Spinner) findViewById(R.id.modality_spinner)).getSelectedItem().toString();
+        String level  = ((Spinner) findViewById(R.id.level_spinner)).getSelectedItem().toString();
+        String aboutCompany = aboutCompanyInput.getText().toString().trim();
+        String description = descriptionInput.getText().toString().trim();
+        String requirements = requirementsInput.getText().toString().trim();
+        String benefits = benefitsInput.getText().toString().trim();
+
+
+
+
+        if (salary.isEmpty()) {
+            salaryInput.setError("Preencha o salário");
+            salaryInput.requestFocus();
+            return;
+        }
+        if (city.isEmpty()) {
+            cityInput.setError("Preencha a cidade");
+            cityInput.requestFocus();
+            return;
+        }
+
+        if (aboutCompany.isEmpty()) {
+            aboutCompanyInput.setError("Preencha informações sobre a empresa");
+            aboutCompanyInput.requestFocus();
+            return;
+        }
+        if (description.isEmpty()) {
+            descriptionInput.setError("Preencha a descrição da vaga");
+            descriptionInput.requestFocus();
+            return;
+        }
+        if (requirements.isEmpty()) {
+            requirementsInput.setError("Preencha os requisitos");
+            requirementsInput.requestFocus();
+            return;
+        }
+        if (benefits.isEmpty()) {
+            benefitsInput.setError("Preencha os benefícios");
+            benefitsInput.requestFocus();
+            return;
+        }
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        int companyId = sharedPreferences.getInt("companyId", 0);
+        String locality = sharedPreferences.getString("address", "Nenhum endereço encontrado");
+        String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
+
+
+        Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId , false, true, companyName);
+
+        vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
+            @Override
+            public void onSuccess(int vacancyId) {
+                runOnUiThread(() -> {
+                    Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(VacancyRegister.this, MyVacancies.class);
+                    startActivity(intent);
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(()->{
+                    Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
+                });
+
+            }
+        });
+    }
+
+    public void addQuestion(View view){
+        String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
+        String salary = salaryInput.getText().toString().trim();
+        String city = cityInput.getText().toString().trim();
+        String level = ((Spinner) findViewById(R.id.level_spinner)).getSelectedItem().toString();
         String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
         String contact = contactInput.getText().toString().trim();
         String modality = ((Spinner) findViewById(R.id.modality_spinner)).getSelectedItem().toString();
@@ -88,11 +172,7 @@ public class VacancyRegister extends AppCompatActivity {
 
 
 
-        if (level.isEmpty()) {
-            vacancyLevelInput.setError("Preencha o nível da vaga");
-            vacancyLevelInput.requestFocus();
-            return;
-        }
+
         if (salary.isEmpty()) {
             salaryInput.setError("Preencha o salário");
             salaryInput.requestFocus();

@@ -5,21 +5,29 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.activities.R;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.models.Answer;
+import com.models.Application;
+import com.models.Candidate;
 import com.models.Question;
 import com.services.AnswerService;
+import com.services.ApplicationService;
+import com.services.CandidateService;
 import com.services.QuestionService;
 
 import java.util.ArrayList;
@@ -28,6 +36,8 @@ import java.util.List;
 public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
 
     private int vacancyId;
+    private CandidateService candidateService;
+    private int sentAnswersCount;
     private LinearLayout answersContainer;
     private final List<Question> questions = new ArrayList<>();
     private final List<EditText> answerInputs = new ArrayList<>();
@@ -46,11 +56,29 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
+    public void onStart() {
+        super.onStart();
+
+        View view = getView();
+        if (view != null) {
+            View parent = (View) view.getParent();
+            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+            int desiredHeight = (int)(getResources().getDisplayMetrics().heightPixels * 0.65); // 65% da tela
+            parent.getLayoutParams().height = desiredHeight;
+            parent.requestLayout();
+
+            parent.requestLayout();
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_answer_questions, container, false);
         answersContainer = view.findViewById(R.id.answers_container);
+
+        candidateService = new CandidateService();
 
         if (getArguments() != null) {
             vacancyId = getArguments().getInt("vacancyId", -1);
@@ -91,31 +119,67 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
     }
 
     private void addQuestionView(String questionText) {
-        EditText answerField = new EditText(getContext());
-        answerField.setHint(questionText);
-        answerField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        answerField.setMinLines(2);
-        answerField.setMaxLines(4);
-        answerField.setPadding(20, 20, 20, 20);
+        Context context = getContext();
+        LinearLayout container = new LinearLayout(context);
+        container.setOrientation(LinearLayout.VERTICAL);
+        container.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+        container.setPadding(0, 0, 0, 24); // espaçamento entre perguntas
 
-        answersContainer.addView(answerField);
+        // Título da pergunta
+        TextView title = new TextView(context);
+        title.setText(questionText);
+        title.setTextColor(ContextCompat.getColor(context, R.color.black));
+        title.setTextSize(15f);
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        ));
+
+        // Campo de resposta
+        EditText answerField = new EditText(
+                new ContextThemeWrapper(context, R.style.EditTextRegister),
+                null,
+                R.style.EditTextRegister
+        );
+        answerField.setHint("Digite sua resposta");
+        answerField.setTextColor(ContextCompat.getColor(context, R.color.black));
+        answerField.setHintTextColor(ContextCompat.getColor(context, R.color.black));
+        answerField.setEnabled(true);
+        answerField.setFocusable(true);
+        answerField.setFocusableInTouchMode(true);
+
+        container.addView(title);
+        container.addView(answerField);
+
+        answersContainer.addView(container);
         answerInputs.add(answerField);
     }
+
+
 
     private void submitAnswers() {
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
+        Log.d("submitAnswers", "User ID: " + userId);
 
         boolean allAnswered = true;
         List<Answer> answers = new ArrayList<>();
 
         for (int i = 0; i < questions.size(); i++) {
             String response = answerInputs.get(i).getText().toString().trim();
+            int qId = questions.get(i).getId();
+
+            Log.d("submitAnswers", "Pergunta ID: " + qId + ", Resposta: " + response);
+
             if (response.isEmpty()) {
                 allAnswered = false;
                 break;
             }
-            answers.add(new Answer(response, questions.get(i).getId(), userId));
+            answers.add(new Answer(response, qId, userId));
         }
 
         if (!allAnswered) {
@@ -123,43 +187,91 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
             return;
         }
 
-        // Log para depurar
         Log.d("AnswerBottomSheet", "Respostas enviadas, iniciando envio para o backend.");
 
-        // Envia as respostas individualmente (ou pode fazer em lote se seu backend permitir)
+        // Zera o contador antes de enviar
+        sentAnswersCount = 0;
+
         for (Answer answer : answers) {
             AnswerService.submitAnswer(answer, new AnswerService.AnswerCallback() {
                 @Override
                 public void onSuccess() {
-                    // Log de sucesso
                     Log.d("AnswerBottomSheet", "Resposta enviada com sucesso.");
-                    if (getActivity() != null) {
+
+                    sentAnswersCount++; // Incrementa quando a resposta é enviada com sucesso
+
+                    // Quando todas as respostas forem enviadas, podemos aplicar para a vaga
+                    if (sentAnswersCount == answers.size()) {
+                        applyForVacancy(vacancyId);
+                    }
+
+                    // Exibe mensagem de sucesso
+                    if (isAdded() && getContext() != null) {
                         getActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), "Candidatura finalizada com sucesso", Toast.LENGTH_SHORT).show();
                         });
                     }
-                    // Fechar o fragmento somente após o sucesso
-                    dismiss();
+
+                    dismiss(); // Fechar o fragmento após a candidatura ser registrada
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    // Log de erro
                     Log.d("AnswerBottomSheet", "Erro ao enviar resposta: " + errorMessage);
-                    if (getActivity() != null) {
+                    if (isAdded() && getContext() != null) {
                         getActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), "Erro ao enviar resposta: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }
-                    // Não fechar o fragmento aqui se houve erro
                 }
             });
         }
 
-        // Verifique se a lógica de candidatura está correta
+        // Se você tem um listener, chama a função de candidatura
         if (listener != null) {
-            listener.onAnswersSubmitted();
+            applyForVacancy(vacancyId);
         }
+    }
+
+
+    public void applyForVacancy(int vacancyId) {
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        int userId = prefs.getInt("candidateId", -1);
+
+        candidateService.fetchCandidateFromApiByCandidateId(userId, new CandidateService.CandidateCallback() {
+            @Override
+            public void onSuccess(Candidate candidate) {
+                if(candidate.getCurriculumId() == userId){
+                    Application application = new Application(vacancyId,userId);
+
+
+                    ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            if (isAdded() && getContext() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    Toast.makeText(getContext(), "Candidatura finalizada com sucesso", Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(getContext(), "Você precisa de um currículo para se candidatar", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
     }
 
     public interface OnAnswersSubmittedListener {

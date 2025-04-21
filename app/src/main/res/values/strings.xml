@@ -260,8 +260,13 @@
         <item>Vendedor</item>
         <item>Zelador</item>
     </string-array>
-    <string-array name="level_option">
-
+    <string-array name="vacancy_level_options">
+        <item>Selecione</item>
+        <item>Estágio</item>
+        <item>Aprendiz</item>
+        <item>Júnior</item>
+        <item>Pleno</item>
+        <item>Sênior</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

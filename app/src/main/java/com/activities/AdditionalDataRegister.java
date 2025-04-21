@@ -15,6 +15,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.models.Curriculum;
+import com.services.CandidateService;
+import com.services.CompanyService;
 import com.services.CurriculumService;
 
 public class AdditionalDataRegister extends AppCompatActivity {
@@ -63,9 +65,20 @@ public class AdditionalDataRegister extends AppCompatActivity {
         CurriculumService.additionalData(this, additionalData, new CurriculumService.CurriculumCallback() {
             @Override
             public void onSuccess() {
-                Toast.makeText(AdditionalDataRegister.this, "Dados adicionais enviados. Cadastro finalizado", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(AdditionalDataRegister.this, Vacancies.class);
-                startActivity(intent);
+                CandidateService.addCurriculumToCandidate(AdditionalDataRegister.this, new CompanyService.RegisterCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(AdditionalDataRegister.this, "Dados adicionais enviados. Cadastro finalizado", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AdditionalDataRegister.this, Vacancies.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+
+                    }
+                });
+
             }
 
             @Override

@@ -42,12 +42,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="Empresa: " />
 
             <TextView
                 android:id="@+id/tvEmpresa"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="Nome da Empresa"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -60,13 +62,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
                 android:text="Modalidade: " />
 
             <TextView
-                android:id="@+id/tvLocalizacao"
+                android:id="@+id/tvModalidade"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Localização"
+                android:text="Modalidade"
+                android:textColor="@color/black"
                 android:textSize="14sp" />
         </LinearLayout>
 

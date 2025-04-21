@@ -80,8 +80,25 @@ public class CurriculumService {
                 int responseCode = conn.getResponseCode();
 
                 if (responseCode == 200 || responseCode == 201) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    int curriculumId = jsonResponse.getInt("id"); // ou o nome exato retornado no JSON
+
+                    // Salvar no SharedPreferences
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt("curriculumId", curriculumId);
+                    editor.apply();
+
                     new Handler(Looper.getMainLooper()).post(callback::onSuccess);
-                } else {
+                }
+                else {
                     new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao registrar currículo. Código: " + responseCode));
                 }
 
@@ -153,6 +170,7 @@ public class CurriculumService {
 
                 SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                 int userId = prefs.getInt("candidateId", -1);
+
 
                 if (userId == -1) {
                     throw new Exception("ID do usuário não encontrado");

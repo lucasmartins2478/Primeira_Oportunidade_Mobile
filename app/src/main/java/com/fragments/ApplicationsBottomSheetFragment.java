@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activities.R;
 import com.adapters.ApplicationsAdapter;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.models.Application;
 import com.services.ApplicationService;
@@ -33,6 +35,22 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
         return fragment;
     }
 
+    public void onStart() {
+        super.onStart();
+
+        View view = getView();
+        if (view != null) {
+            View parent = (View) view.getParent();
+            BottomSheetBehavior behavior = BottomSheetBehavior.from(parent);
+            int desiredHeight = (int)(getResources().getDisplayMetrics().heightPixels * 0.65); // 65% da tela
+            parent.getLayoutParams().height = desiredHeight;
+            parent.requestLayout();
+
+            parent.requestLayout();
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+    }
+
     private int vacancyId;
 
     @Nullable
@@ -46,12 +64,20 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerApplications);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        TextView noApplications = view.findViewById(R.id.noApplications);
 
 
         ApplicationService.getApplicationsByVacancyId(getContext(), vacancyId, new ApplicationService.ApplicationsListCallback() {
             @Override
             public void onSuccess(List<Application> applications) {
-                recyclerView.setAdapter(new ApplicationsAdapter(applications));
+
+                if(applications.isEmpty()){
+                    noApplications.setVisibility(View.VISIBLE);
+                }
+                else{
+                    recyclerView.setAdapter(new ApplicationsAdapter(applications));
+
+                }
             }
 
             @Override

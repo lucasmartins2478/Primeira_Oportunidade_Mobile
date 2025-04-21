@@ -147,6 +147,14 @@ public class AcademicDataRegister extends AppCompatActivity {
                 // Mostra mensagem
                 Toast.makeText(AcademicDataRegister.this, "Dados principais enviados com sucesso!", Toast.LENGTH_SHORT).show();
 
+
+                if (formViews.isEmpty()) {
+                    // Se não houver formulários dinâmicos, redireciona para a próxima tela
+                    Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
+                    startActivity(intent);
+                    return; // Retorna para evitar o envio de dados de academicData
+                }
+
                 // Agora percorre os formulários dinâmicos e envia
                 for (View form : formViews) {
                     EditText institutionInput = form.findViewById(R.id.institution_name_input);
@@ -261,9 +269,6 @@ public class AcademicDataRegister extends AppCompatActivity {
     }
 
 
-    public void atalho (View view){
-        Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
-        startActivity(intent);
-    }
+
 
 }

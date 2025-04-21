@@ -6,6 +6,10 @@ public class Answer {
     private int questionId;
     private int userId;
 
+    public Answer() {
+
+    }
+
 
     public String getAnswer() {
         return answer;

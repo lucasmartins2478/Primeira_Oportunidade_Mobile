@@ -88,7 +88,12 @@ public class CoursesRegister extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
         int curriculumId = sharedPreferences.getInt("candidateId", -1);
-
+        if (formViews.isEmpty()) {
+            // Se não houver formulários dinâmicos, redireciona para a próxima tela
+            Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
+            startActivity(intent);
+            return; // Retorna para evitar o envio de dados de academicData
+        }
 
         for (View form : formViews) {
             EditText courseName = form.findViewById(R.id.course_name_input);
@@ -215,10 +220,6 @@ public class CoursesRegister extends AppCompatActivity {
 
 
 
-    public void atalho (View view){
-        Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
-        startActivity(intent);
-    }
 
 
 

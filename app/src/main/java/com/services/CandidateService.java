@@ -39,9 +39,11 @@ public class CandidateService {
     }
 
     public interface registerCallback {
-        void onSuccess();
+        void onSuccess(Candidate candidate); // já tem
         void onFailure(String error);
     }
+
+
 
     public void fetchCandidateFromApi(int userId, CandidateCallback callback) {
         new Thread(() -> {
@@ -137,25 +139,37 @@ public class CandidateService {
                 json.put("cpf", candidate.getCpf());
                 json.put("phoneNumber", candidate.getPhoneNumber());
                 json.put("userId", candidate.getUserId());
-                // Criando corpo da requisição
+
                 RequestBody body = RequestBody.create(
                         json.toString(),
                         MediaType.get("application/json; charset=utf-8")
                 );
 
-                // Criando requisição POST
                 Request request = new Request.Builder()
                         .url(apiUrl)
                         .post(body)
                         .build();
 
-                // Enviando requisição
                 Response response = client.newCall(request).execute();
 
-                if (response.isSuccessful()) {
-                    callback.onSuccess(); // Chamando callback de sucesso
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    JSONObject responseJson = new JSONObject(responseData);
+
+                    // Extrai os dados retornados do backend
+                    int id = responseJson.getInt("id");
+                    String name = responseJson.getString("name");
+                    String cpf = responseJson.getString("cpf");
+                    String phone = responseJson.getString("phoneNumber");
+                    Integer curriculumId = responseJson.isNull("curriculumId") ? null : responseJson.getInt("curriculumId");
+                    int userId = responseJson.getInt("userId");
+
+                    // Cria novo Candidate com dados completos
+                    Candidate createdCandidate = new Candidate(id, name, cpf, phone, curriculumId, userId);
+
+                    callback.onSuccess(createdCandidate);
                 } else {
-                    callback.onFailure("Erro: " + response.message());
+                    callback.onFailure("Erro ao cadastrar candidato: " + response.message());
                 }
 
             } catch (Exception e) {
@@ -164,6 +178,7 @@ public class CandidateService {
         }).start();
     }
 
+
     public static void addCurriculumToCandidate(Context context, CompanyService.RegisterCallback callback){
         new Thread(() -> {
             try {
@@ -171,6 +186,8 @@ public class CandidateService {
 
                 SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                 int userId = prefs.getInt("candidateId", -1);
+                int curriculumId = prefs.getInt("curriculumId", -1);
+
 
                 if (userId == -1) {
                     throw new Exception("ID do usuário não encontrado");
@@ -178,7 +195,7 @@ public class CandidateService {
 
                 JSONObject json = new JSONObject();
 
-                json.put("curriculumId", userId);
+                json.put("curriculumId", curriculumId);
 
 
 
@@ -228,6 +245,7 @@ public class CandidateService {
             }
         }).start();
     }
+
 
 
 }
