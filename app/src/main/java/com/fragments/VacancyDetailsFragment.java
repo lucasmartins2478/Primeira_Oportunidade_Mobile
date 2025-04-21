@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import com.models.Vacancy;
 import com.services.ApplicationService;
 import com.services.CandidateService;
 import com.services.QuestionService;
+import com.services.VacancyService;
 
 import java.util.List;
 
@@ -35,6 +38,7 @@ import java.util.List;
 public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
     CandidateService candidateService;
+    VacancyService vacancyService;
     private Vacancy vacancy;
 
     // Cria uma nova instância do fragmento com a vaga que será exibida
@@ -70,6 +74,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_vacancy_details, container, false);
 
         candidateService = new CandidateService();
+        vacancyService = new VacancyService();
         // Recupera a vaga passada como argumento
         if (getArguments() != null) {
             vacancy = (Vacancy) getArguments().getSerializable("vacancy");
@@ -96,6 +101,10 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         tvBenefits.setText(vacancy.getBenefits()); // Adicionando benefícios
         tvRequirements.setText(vacancy.getRequirements()); // Adicionando requisitos
         tvSalary.setText(vacancy.getSalary()); // Adicionando salário
+
+        RelativeLayout btnCancelContainer = view.findViewById(R.id.delete_vacancy_container);
+        ImageButton btnCancelVacancy = view.findViewById(R.id.remove_vacancy_button);
+        AppCompatButton btnFillVacancy = view.findViewById(R.id.fill_vacancy);
 
 
         AppCompatButton btnApply = view.findViewById(R.id.apply);
@@ -150,6 +159,49 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
             cancelApplication(vacancy.getId());
         });
 
+        btnCancelVacancy.setOnClickListener(v -> {
+            vacancyService.updateIsActiveToFalse(vacancy.getId(), new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    requireActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "Vaga removida!", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    requireActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "Erro ao remover vaga!", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    });
+                }
+            });
+
+        });
+
+        btnFillVacancy.setOnClickListener(v -> {
+            vacancyService.updateIsFilledToTrue(vacancy.getId(), new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    requireActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "Vaga preenchida com sucesso!", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    requireActivity().runOnUiThread(()->{
+                        Toast.makeText(getContext(), "Erro ao preencher vaga!", Toast.LENGTH_SHORT).show();
+                        dismiss();
+                    });
+                }
+            });
+
+        });
+
+
 
         if ("candidate".equals(userType)) {
 
@@ -179,6 +231,9 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         }
         if ("company".equals(userType)) {
             btnViewApplications.setVisibility(View.VISIBLE);
+            btnCancelContainer.setVisibility(View.VISIBLE);
+            btnCancelVacancy.setVisibility(View.VISIBLE);
+            btnFillVacancy.setVisibility(View.VISIBLE);
         }
 
         return view;

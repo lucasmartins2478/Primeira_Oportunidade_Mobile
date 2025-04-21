@@ -4,10 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -40,6 +44,25 @@ public class SearchFormFragment extends Fragment {
         searchInput = view.findViewById(R.id.searchInput);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        Spinner spinnerUf = view.findViewById(R.id.uf_spinner);
+        Spinner spinnerModality = view.findViewById(R.id.modality_spinner);
+        Spinner spinnerLevel = view.findViewById(R.id.level_spinner);
+
+// Adapters
+        ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(getContext(), R.array.uf_options, R.layout.spinner_item);
+        ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerUf.setAdapter(ufAdapter);
+
+        ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(getContext(), R.array.modality_options, R.layout.spinner_item);
+        modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerModality.setAdapter(modalityAdapter);
+
+        ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(getContext(), R.array.vacancy_level_options, R.layout.spinner_item);
+        levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        spinnerLevel.setAdapter(levelAdapter);
+
+
 
         vacancyService = new VacancyService();
 
@@ -84,23 +107,65 @@ public class SearchFormFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) {}
         });
 
+        AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                atualizarLista(searchInput.getText().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        };
+
+        spinnerUf.setOnItemSelectedListener(filterListener);
+        spinnerModality.setOnItemSelectedListener(filterListener);
+        spinnerLevel.setOnItemSelectedListener(filterListener);
+
+
         return view;
     }
 
     private void atualizarLista(String query) {
         String termo = query.toLowerCase().trim();
+
+        Spinner spinnerUf = getView().findViewById(R.id.uf_spinner);
+        Spinner spinnerModality = getView().findViewById(R.id.modality_spinner);
+        Spinner spinnerLevel = getView().findViewById(R.id.level_spinner);
+
+
+        String uf = spinnerUf.getSelectedItem().toString();
+        String modality = spinnerModality.getSelectedItem().toString();
+        String level = spinnerLevel.getSelectedItem().toString();
+
         ArrayList<Vacancy> filtradas = new ArrayList<>();
 
         for (Vacancy v : allVacancies) {
-            if (v.getTitle().toLowerCase().contains(termo)) {
+            boolean match = v.getTitle().toLowerCase().contains(termo);
+
+            if (!uf.equals("Selecione")) {
+                match &= v.getUf().toUpperCase().contains(uf);
+            }
+
+            if (!modality.equals("Selecione")) {
+                Log.d("Filtro", "modalitySelecionada: " + modality + " | banco: " + v.getModality());
+
+                match &= v.getModality().equalsIgnoreCase(modality);
+            }
+
+            if (!level.equals("Selecione")) {
+                match &= v.getLevel().equalsIgnoreCase(level);
+            }
+
+            if (match) {
                 filtradas.add(v);
             }
         }
 
         adapter = new VacancyAdapter(filtradas, getContext(), vaga -> {
-            // Aqui vai a ação do botão "Ver Mais" (se usar)
+            // ação ao clicar na vaga
         });
 
         recyclerView.setAdapter(adapter);
     }
+
 }

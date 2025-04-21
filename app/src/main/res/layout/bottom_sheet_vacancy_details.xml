@@ -15,6 +15,24 @@
             android:layout_width="140dp"
             android:layout_height="6dp"
             android:layout_gravity="center" />
+        <RelativeLayout
+            android:id="@+id/delete_vacancy_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Botão de remover -->
+            <ImageButton
+                android:id="@+id/remove_vacancy_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_trash"
+                android:contentDescription="Remover"
+                android:visibility="visible"
+                />
+        </RelativeLayout>
 
         <!-- Título centralizado -->
         <TextView
@@ -178,6 +196,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/view_applications" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/fill_vacancy"
+            style="@style/ButtonBlue"
+            android:layout_width="268dp"
+            android:visibility="gone"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Preencher Vaga" />
 
     </LinearLayout>
 </ScrollView>

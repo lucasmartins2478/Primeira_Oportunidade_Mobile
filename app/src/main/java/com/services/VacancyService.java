@@ -233,6 +233,70 @@ public class VacancyService {
         }).start();
     }
 
+    public void updateIsActiveToFalse(int vacancyId, RegisterIdCallback callback) {
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("isActive", false);
+
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder().url(registerUrl+"IsActive/"+vacancyId).put(body).build();
+
+                Response response = client.newCall(request).execute();
+
+                if(response.isSuccessful() && response.body() != null){
+                    String responseData = response.body().string();
+                    JSONObject obj = new JSONObject(responseData);
+                    callback.onSuccess(vacancyId);
+                }
+                else {
+                    callback.onFailure("Erro ao cadastrar: " + response.message());
+                }
+
+            } catch (Exception e) {
+                callback.onFailure("Erro: " + e.getMessage());
+            }
+        }).start();
+    }
+    public void updateIsFilledToTrue(int vacancyId, RegisterIdCallback callback) {
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("isFilled", true);
+
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder().url(registerUrl+"IsFilled/"+vacancyId).put(body).build();
+
+                Response response = client.newCall(request).execute();
+
+                if(response.isSuccessful() && response.body() != null){
+                    String responseData = response.body().string();
+                    JSONObject obj = new JSONObject(responseData);
+                    callback.onSuccess(vacancyId);
+                }
+                else {
+                    callback.onFailure("Erro ao cadastrar: " + response.message());
+                }
+
+            } catch (Exception e) {
+                callback.onFailure("Erro: " + e.getMessage());
+            }
+        }).start();
+    }
+
+
+
+
 
 
 
