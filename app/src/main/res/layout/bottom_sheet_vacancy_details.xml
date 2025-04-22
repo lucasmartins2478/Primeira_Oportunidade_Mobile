@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/vacancy_details_bkg">
 
     <LinearLayout
@@ -15,37 +16,55 @@
             android:layout_width="140dp"
             android:layout_height="6dp"
             android:layout_gravity="center" />
-        <RelativeLayout
-            android:id="@+id/delete_vacancy_container"
-            android:visibility="gone"
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- Botão de remover -->
-            <ImageButton
-                android:id="@+id/remove_vacancy_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_alignParentEnd="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_trash"
-                android:contentDescription="Remover"
-                android:visibility="visible"
-                />
-        </RelativeLayout>
-
-        <!-- Título centralizado -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Título da Vaga"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Título da Vaga"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" />
+
+            <ImageView
+                android:id="@+id/ivEditIcon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/edit_icon_black"
+                android:contentDescription="Editar título"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+                app:layout_constraintStart_toEndOf="@id/tvTitle"
+                app:layout_constraintTop_toTopOf="@id/tvTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <TextView
+            android:id="@+id/remove_vacancy_button"
+            android:text="Cancelar Vaga"
+            android:textColor="@color/blue"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:drawableRight="@drawable/close_icon_blue"
+            android:layout_gravity="center"
+            android:paddingLeft="18dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <!-- Nome da empresa -->
         <LinearLayout

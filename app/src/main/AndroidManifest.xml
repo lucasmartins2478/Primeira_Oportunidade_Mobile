@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PrimeiraOportunidade"
         tools:targetApi="31">
         <activity
+            android:name=".Chat"
+            android:exported="false" />
+        <activity
             android:name=".CandidateDetails"
             android:exported="false" />
         <activity

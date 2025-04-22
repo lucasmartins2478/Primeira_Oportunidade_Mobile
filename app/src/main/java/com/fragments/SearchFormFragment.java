@@ -33,6 +33,11 @@ public class SearchFormFragment extends Fragment {
     private ArrayList<Vacancy> allVacancies = new ArrayList<>();
 
     private VacancyService vacancyService;
+    private ArrayList<Integer> candidaturasIds = new ArrayList<>();
+
+
+    private boolean isMyApplicationsScreen = false;
+
 
     public SearchFormFragment() {}
 
@@ -40,6 +45,13 @@ public class SearchFormFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_form, container, false);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            isMyApplicationsScreen = args.getBoolean("isMyApplicationsScreen", false);
+            candidaturasIds = args.getIntegerArrayList("vacancyIdsCandidatadas");
+        }
+
 
         searchInput = view.findViewById(R.id.searchInput);
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -49,18 +61,32 @@ public class SearchFormFragment extends Fragment {
         Spinner spinnerModality = view.findViewById(R.id.modality_spinner);
         Spinner spinnerLevel = view.findViewById(R.id.level_spinner);
 
-// Adapters
-        ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(getContext(), R.array.uf_options, R.layout.spinner_item);
-        ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerUf.setAdapter(ufAdapter);
+        if (isMyApplicationsScreen) {
+            ArrayAdapter<CharSequence> activeAdapter = ArrayAdapter.createFromResource(getContext(), R.array.active_filter_options, R.layout.spinner_item);
+            activeAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerUf.setAdapter(activeAdapter);
 
-        ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(getContext(), R.array.modality_options, R.layout.spinner_item);
-        modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerModality.setAdapter(modalityAdapter);
+            ArrayAdapter<CharSequence> filledAdapter = ArrayAdapter.createFromResource(getContext(), R.array.filled_filter_options, R.layout.spinner_item);
+            filledAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerModality.setAdapter(filledAdapter);
 
-        ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(getContext(), R.array.vacancy_level_options, R.layout.spinner_item);
-        levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerLevel.setAdapter(levelAdapter);
+            ArrayAdapter<CharSequence> dummyAdapter = ArrayAdapter.createFromResource(getContext(), R.array.dummy_filter_options, R.layout.spinner_item);
+            dummyAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerLevel.setAdapter(dummyAdapter);
+        } else {
+            ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(getContext(), R.array.uf_options, R.layout.spinner_item);
+            ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerUf.setAdapter(ufAdapter);
+
+            ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(getContext(), R.array.modality_options, R.layout.spinner_item);
+            modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerModality.setAdapter(modalityAdapter);
+
+            ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(getContext(), R.array.vacancy_level_options, R.layout.spinner_item);
+            levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            spinnerLevel.setAdapter(levelAdapter);
+        }
+
 
 
 
@@ -83,7 +109,17 @@ public class SearchFormFragment extends Fragment {
                     }
                     allVacancies = vagasDaEmpresa;
                 } else {
-                    allVacancies = vacancies; // Candidato: mostra todas
+                    if (isMyApplicationsScreen) {
+                        ArrayList<Vacancy> vagasCandidatadas = new ArrayList<>();
+                        for (Vacancy v : vacancies) {
+                            if (candidaturasIds.contains(v.getId())) {
+                                vagasCandidatadas.add(v);
+                            }
+                        }
+                        allVacancies = vagasCandidatadas;
+                    } else {
+                        allVacancies = vacancies;
+                    }
                 }
 
                 getActivity().runOnUiThread(() -> atualizarLista(""));
@@ -132,7 +168,6 @@ public class SearchFormFragment extends Fragment {
         Spinner spinnerModality = getView().findViewById(R.id.modality_spinner);
         Spinner spinnerLevel = getView().findViewById(R.id.level_spinner);
 
-
         String uf = spinnerUf.getSelectedItem().toString();
         String modality = spinnerModality.getSelectedItem().toString();
         String level = spinnerLevel.getSelectedItem().toString();
@@ -142,18 +177,33 @@ public class SearchFormFragment extends Fragment {
         for (Vacancy v : allVacancies) {
             boolean match = v.getTitle().toLowerCase().contains(termo);
 
-            if (!uf.equals("Selecione")) {
-                match &= v.getUf().toUpperCase().contains(uf);
-            }
+            if (isMyApplicationsScreen) {
+                // Filtro pelo isActive (Agora é booleano)
+                if (!uf.equals("Selecione")) {
+                    if (uf.equals("Ativas")) match &= !v.isActive();  // isActive é true para vagas ativas
+                    else if (uf.equals("Inativas")) match &= v.isActive();  // isActive é false para vagas inativas
+                }
 
-            if (!modality.equals("Selecione")) {
-                Log.d("Filtro", "modalitySelecionada: " + modality + " | banco: " + v.getModality());
+                // Filtro pelo isFilled (Agora é booleano)
+                if (!modality.equals("Selecione")) {
+                    if (modality.equals("Preenchidas")) match &= v.isFilled();  // isFilled é true para vagas preenchidas
+                    else if (modality.equals("Não preenchidas")) match &= !v.isFilled();  // isFilled é false para vagas não preenchidas
+                }
 
-                match &= v.getModality().equalsIgnoreCase(modality);
-            }
+                // O terceiro spinner pode ser ignorado por enquanto, serve só pra manter o layout
+            } else {
+                // Filtro padrão das outras telas
+                if (!uf.equals("Selecione")) {
+                    match &= v.getUf().toUpperCase().contains(uf);
+                }
 
-            if (!level.equals("Selecione")) {
-                match &= v.getLevel().equalsIgnoreCase(level);
+                if (!modality.equals("Selecione")) {
+                    match &= v.getModality().equalsIgnoreCase(modality);
+                }
+
+                if (!level.equals("Selecione")) {
+                    match &= v.getLevel().equalsIgnoreCase(level);
+                }
             }
 
             if (match) {
@@ -167,5 +217,8 @@ public class SearchFormFragment extends Fragment {
 
         recyclerView.setAdapter(adapter);
     }
+
+
+
 
 }

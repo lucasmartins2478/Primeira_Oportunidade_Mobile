@@ -52,6 +52,7 @@ public class VacancyService {
                     String responseData = response.body().string();
                     JSONArray vacanciesJson = new JSONArray(responseData);
 
+
                     ArrayList<Vacancy> vacancies = new ArrayList<>();
 
                     for (int i = 0; i < vacanciesJson.length(); i++) {
@@ -70,8 +71,8 @@ public class VacancyService {
                             obj.getString("salary"),
                             obj.getString("level"),
                             obj.getInt("companyId"),
-                            obj.optBoolean("isActive", false),
-                            obj.optBoolean("isFilled", false),
+                            obj.optBoolean("isActive"),
+                            obj.optBoolean("isFilled"),
                                 obj.getString("companyName")
                         );
                         vacancies.add(vacancy);
@@ -142,48 +143,7 @@ public class VacancyService {
         }).start();
     }
 
-    public void registerVacancy(Vacancy vacancy, RegisterCallback callback){
-        new Thread(()->{
-            try{
-                JSONObject json = new JSONObject();
-                json.put("title", vacancy.getTitle());
-                json.put("description", vacancy.getDescription());
-                json.put("aboutCompany", vacancy.getAboutCompany());
-                json.put("benefits", vacancy.getBenefits());
-                json.put("requirements", vacancy.getRequirements());
-                json.put("modality", vacancy.getModality());
-                json.put("locality", vacancy.getLocality());
-                json.put("uf", vacancy.getUf());
-                json.put("contact", vacancy.getContact());
-                json.put("salary", vacancy.getSalary());
-                json.put("level", vacancy.getLevel());
-                json.put("companyId", vacancy.getCompanyId());
-                json.put("companyName", vacancy.getCompanyName());
 
-                RequestBody body = RequestBody.create(
-                        json.toString(),
-                        MediaType.get("application/json; charset=utf-8")
-                );
-
-                Request request = new Request.Builder().url(registerUrl).post(body).build();
-
-                Response response = client.newCall(request).execute();
-                if(response.isSuccessful()){
-                    callback.onSuccess();
-                }else{
-                    callback.onFailure("Erro :"+response.message());
-                }
-
-
-
-            } catch (Exception e) {
-                callback.onFailure("Falha ao conectar: "+e.getMessage());
-            }
-
-        }).start();
-
-
-    }
 
     public interface RegisterIdCallback {
         void onSuccess(int vacancyId);
@@ -214,6 +174,45 @@ public class VacancyService {
                 );
 
                 Request request = new Request.Builder().url(registerUrl).post(body).build();
+
+                Response response = client.newCall(request).execute();
+
+                if(response.isSuccessful() && response.body() != null){
+                    String responseData = response.body().string();
+                    JSONObject obj = new JSONObject(responseData);
+                    int vacancyId = obj.getInt("id");
+                    callback.onSuccess(vacancyId);
+                }
+                else {
+                    callback.onFailure("Erro ao cadastrar: " + response.message());
+                }
+
+            } catch (Exception e) {
+                callback.onFailure("Erro: " + e.getMessage());
+            }
+        }).start();
+    }
+    public void updateVacancy(Vacancy vacancy, RegisterIdCallback callback) {
+        new Thread(() -> {
+            try {
+                JSONObject json = new JSONObject();
+                json.put("title", vacancy.getTitle());
+                json.put("description", vacancy.getDescription());
+                json.put("aboutCompany", vacancy.getAboutCompany());
+                json.put("benefits", vacancy.getBenefits());
+                json.put("requirements", vacancy.getRequirements());
+                json.put("modality", vacancy.getModality());
+                json.put("locality", vacancy.getLocality());
+                json.put("uf", vacancy.getUf());
+                json.put("contact", vacancy.getContact());
+                json.put("salary", vacancy.getSalary());
+                json.put("level", vacancy.getLevel());
+                json.put("companyId", vacancy.getCompanyId());
+                json.put("companyName", vacancy.getCompanyName());
+
+                RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString());
+
+                Request request = new Request.Builder().url(registerUrl+"/"+vacancy.getId()).put(body).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -294,17 +293,6 @@ public class VacancyService {
         }).start();
     }
 
-
-
-
-
-
-
-
-    public interface RegisterCallback {
-        void onSuccess();
-        void onFailure(String error);
-    }
     public interface VacancyCallback {
         void onSuccess(ArrayList<Vacancy> vacancies);
         void onFailure(String error);

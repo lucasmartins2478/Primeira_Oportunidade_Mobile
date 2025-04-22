@@ -1,6 +1,8 @@
 package com.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,11 @@ public class Community extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+
+    public void openChat(View view){
+        Intent intent = new Intent(Community.this, Chat.class);
+        startActivity(intent);
     }
 }

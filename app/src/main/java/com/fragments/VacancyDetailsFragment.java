@@ -1,6 +1,7 @@
 package com.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -15,11 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activities.R;
+import com.activities.VacancyRegister;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -102,8 +105,10 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         tvRequirements.setText(vacancy.getRequirements()); // Adicionando requisitos
         tvSalary.setText(vacancy.getSalary()); // Adicionando salário
 
-        RelativeLayout btnCancelContainer = view.findViewById(R.id.delete_vacancy_container);
-        ImageButton btnCancelVacancy = view.findViewById(R.id.remove_vacancy_button);
+        ImageView ivEditIcon = view.findViewById(R.id.ivEditIcon);
+
+
+        TextView btnCancelVacancy = view.findViewById(R.id.remove_vacancy_button);
         AppCompatButton btnFillVacancy = view.findViewById(R.id.fill_vacancy);
 
 
@@ -158,6 +163,14 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         btnCancelApplication.setOnClickListener(v -> {
             cancelApplication(vacancy.getId());
         });
+
+        ivEditIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), VacancyRegister.class);
+            intent.putExtra("vacancyToEdit", vacancy); // a classe Vacancy precisa implementar Serializable ou Parcelable
+
+            startActivity(intent);
+        });
+
 
         btnCancelVacancy.setOnClickListener(v -> {
             vacancyService.updateIsActiveToFalse(vacancy.getId(), new VacancyService.RegisterIdCallback() {
@@ -231,9 +244,10 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         }
         if ("company".equals(userType)) {
             btnViewApplications.setVisibility(View.VISIBLE);
-            btnCancelContainer.setVisibility(View.VISIBLE);
             btnCancelVacancy.setVisibility(View.VISIBLE);
             btnFillVacancy.setVisibility(View.VISIBLE);
+            ivEditIcon.setVisibility(View.VISIBLE);
+
         }
 
         return view;

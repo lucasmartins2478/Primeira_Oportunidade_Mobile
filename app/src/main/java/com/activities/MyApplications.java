@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapters.VacancyAdapter;
+import com.fragments.SearchFormFragment;
 import com.models.Application;
 import com.models.Vacancy;
 import com.services.ApplicationService;
@@ -27,6 +28,7 @@ public class MyApplications extends AppCompatActivity {
     private RecyclerView recyclerView;
     private VacancyService vacancyService;
 
+private ArrayList<Integer> vacancyIdsCandidatadas;
     private int candidateId;
 
     @Override
@@ -40,6 +42,8 @@ public class MyApplications extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
 
         // Pegando o ID do candidato salvo no SharedPreferences
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -55,6 +59,7 @@ public class MyApplications extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         buscarCandidaturasDoUsuario();
+
     }
 
     private void buscarCandidaturasDoUsuario() {
@@ -67,12 +72,24 @@ public class MyApplications extends AppCompatActivity {
                         .collect(Collectors.toList());
 
                 // Extrai todos os vacancyIds únicos dessas candidaturas
-                List<Integer> vacancyIdsCandidatadas = minhasCandidaturas.stream()
+                ArrayList<Integer> vacancyIdsCandidatadas = minhasCandidaturas.stream()
                         .map(Application::getVacancyId)
                         .distinct()
-                        .collect(Collectors.toList());
+                        .collect(Collectors.toCollection(ArrayList::new));
 
-                buscarVagasECruzarComCandidaturas(vacancyIdsCandidatadas);
+                // Agora sim, cria o fragmento e passa a lista
+                runOnUiThread(() -> {
+                    SearchFormFragment fragment = new SearchFormFragment();
+                    Bundle args = new Bundle();
+                    args.putBoolean("isMyApplicationsScreen", true);
+                    args.putIntegerArrayList("vacancyIdsCandidatadas", vacancyIdsCandidatadas);
+                    fragment.setArguments(args);
+
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.searchMenuFragmentContainer, fragment)
+                            .commit();
+                });
             }
 
             @Override
@@ -81,6 +98,7 @@ public class MyApplications extends AppCompatActivity {
             }
         });
     }
+
 
     private void buscarVagasECruzarComCandidaturas(List<Integer> vacancyIdsCandidatadas) {
         vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {

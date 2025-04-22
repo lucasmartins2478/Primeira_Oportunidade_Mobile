@@ -4,163 +4,189 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@color/background_color"
     android:layout_height="match_parent"
+    android:background="@color/blue"
     tools:context=".Community">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="320dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/card_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+    <!-- ScrollView com todo o conteúdo (menos o fragment) -->
+    <ScrollView
+        android:id="@+id/scrollContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/background_color"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomMenuFragment"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/tips_creating_curriculum"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center_horizontal">
 
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/CardButton"
-            android:layout_width="211dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/see_more_informations"
-            android:textAllCaps="false" />
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/wellcome_community"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/gray"
 
-    <LinearLayout
-        android:layout_width="320dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/card_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+                android:text="@string/know_our_sections" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/know_competences"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <!-- Cards -->
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="320dp"
+                android:layout_height="115dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/card_background"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/CardButton"
-            android:layout_width="211dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/see_more_informations"
-            android:textAllCaps="false" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_creating_curriculum"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-    </LinearLayout>
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/CardButton"
+                    android:layout_width="211dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/see_more_informations"
+                    android:textAllCaps="false" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="320dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/card_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="320dp"
+                android:layout_height="115dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/card_background"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/tips_to_enterviews"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_of_courses"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/CardButton"
-            android:layout_width="211dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/see_more_informations"
-            android:textAllCaps="false" />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/CardButton"
+                    android:layout_width="211dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/see_more_informations"
+                    android:textAllCaps="false" />
+            </LinearLayout>
 
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="320dp"
+                android:layout_height="115dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/card_background"
+                android:gravity="center"
+                android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="320dp"
-        android:layout_height="115dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/card_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tips_to_enterviews"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/tips_of_courses"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/CardButton"
+                    android:layout_width="211dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/see_more_informations"
+                    android:textAllCaps="false" />
+            </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/CardButton"
-            android:layout_width="211dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="@string/see_more_informations"
-            android:textAllCaps="false" />
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="320dp"
+                android:layout_height="115dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/card_background"
+                android:gravity="center"
+                android:orientation="vertical">
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/know_competences"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:text="@string/wellcome_community"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/CardButton"
+                    android:layout_width="211dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/see_more_informations"
+                    android:textAllCaps="false" />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="42dp"
-        android:text="@string/know_our_sections"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+            <!-- Chat -->
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="Chat"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="299dp"
+                android:layout_height="78dp"
+                android:textColor="@color/gray"
+                android:layout_marginTop="10dp"
+                android:text="Seja bem-vindo ao nosso chat, aqui você pode se conectar com outros candidatos, tirar dúvidas e compartilhar experiências."
+                android:textAlignment="center"
+                android:textSize="15sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/open_chat"
+                style="@style/ButtonOrange"
+                android:layout_width="132dp"
+                android:layout_height="53dp"
+                android:layout_marginTop="16dp"
+                android:drawableLeft="@drawable/link_redirection"
+                android:onClick="openChat"
+                android:padding="15dp"
+                android:text="Abrir" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Fragment fixo no fundo -->
     <fragment
         android:id="@+id/bottomMenuFragment"
         android:name="com.fragments.BottomMenuFragment"
@@ -169,5 +195,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

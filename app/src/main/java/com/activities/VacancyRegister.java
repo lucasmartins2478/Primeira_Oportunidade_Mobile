@@ -3,6 +3,7 @@ package com.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -23,6 +25,9 @@ import com.services.VacancyService;
 public class VacancyRegister extends AppCompatActivity {
 
     private VacancyService vacancyService;
+    private Vacancy vacancyToEdit;
+    private boolean isEditMode = false;
+
 
     private EditText   salaryInput, cityInput,  contactInput, aboutCompanyInput, descriptionInput,requirementsInput, benefitsInput, localityInput;
     @Override
@@ -35,6 +40,10 @@ public class VacancyRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+
+
 
 
         salaryInput = findViewById(R.id.salary_input);
@@ -71,7 +80,22 @@ public class VacancyRegister extends AppCompatActivity {
         nameSpinner.setAdapter(nameAdapter);
 
 
+        if (vacancyToEdit != null) {
+            isEditMode = true;
+            preencherCamposComVacancy(vacancyToEdit);
+            AppCompatButton registerBtn = findViewById(R.id.register_button);
+            registerBtn.setText("Salvar Alterações"); // muda o texto do botão
+        }
 
+        vacancyToEdit = (Vacancy) getIntent().getSerializableExtra("vacancyToEdit");
+
+        if (vacancyToEdit != null) {
+            isEditMode = true;
+            preencherCamposComVacancy(vacancyToEdit);
+
+            AppCompatButton registerBtn = findViewById(R.id.register_button);
+            registerBtn.setText("Salvar alterações");
+        }
 
 
         vacancyService = new VacancyService();
@@ -135,26 +159,58 @@ public class VacancyRegister extends AppCompatActivity {
         String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
 
 
-        Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId , false, true, companyName);
+        if (isEditMode) {
+            vacancyToEdit.setTitle(vacancyName);
+            vacancyToEdit.setSalary(salary);
+            vacancyToEdit.setLocality(city);
+            vacancyToEdit.setUf(uf);
+            vacancyToEdit.setContact(contact);
+            vacancyToEdit.setModality(modality);
+            vacancyToEdit.setLevel(level);
+            vacancyToEdit.setAboutCompany(aboutCompany);
+            vacancyToEdit.setDescription(description);
+            vacancyToEdit.setRequirements(requirements);
+            vacancyToEdit.setBenefits(benefits);
 
-        vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
-            @Override
-            public void onSuccess(int vacancyId) {
-                runOnUiThread(() -> {
-                    Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(VacancyRegister.this, MyVacancies.class);
-                    startActivity(intent);
-                });
-            }
+            vacancyService.updateVacancy(vacancyToEdit, new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Vaga atualizada com sucesso", Toast.LENGTH_SHORT).show();
+                        finish(); // ou redirecionar de volta pra lista
+                    });
+                }
 
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(()->{
-                    Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
-                });
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Log.e("VacancyRegister", "Erro ao cadastrar/atualizar vaga: " + error);
 
-            }
-        });
+                        Toast.makeText(VacancyRegister.this, "Erro ao atualizar vaga: " + error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        } else {
+            // Modo cadastro (já está pronto)
+            Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level, companyId , false, true, companyName);
+
+            vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(VacancyRegister.this, MyVacancies.class));
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        }
     }
 
     public void addQuestion(View view){
@@ -207,34 +263,104 @@ public class VacancyRegister extends AppCompatActivity {
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-
         int companyId = sharedPreferences.getInt("companyId", 0);
         String locality = sharedPreferences.getString("address", "Nenhum endereço encontrado");
         String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
 
 
-        Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level,companyId , false, true, companyName);
+        if (isEditMode) {
+            vacancyToEdit.setTitle(vacancyName);
+            vacancyToEdit.setSalary(salary);
+            vacancyToEdit.setLocality(city);
+            vacancyToEdit.setUf(uf);
+            vacancyToEdit.setContact(contact);
+            vacancyToEdit.setModality(modality);
+            vacancyToEdit.setLevel(level);
+            vacancyToEdit.setAboutCompany(aboutCompany);
+            vacancyToEdit.setDescription(description);
+            vacancyToEdit.setRequirements(requirements);
+            vacancyToEdit.setBenefits(benefits);
 
-        vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
-            @Override
-            public void onSuccess(int vacancyId) {
-                runOnUiThread(() -> {
-                    Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(VacancyRegister.this, QuestionRegister.class);
-                    intent.putExtra("vacancyId", vacancyId);
-                    startActivity(intent);
-                });
-            }
+            vacancyService.updateVacancy(vacancyToEdit, new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Vaga atualizada com sucesso", Toast.LENGTH_SHORT).show();
+                        finish(); // ou redirecionar de volta pra lista
+                    });
+                }
 
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(()->{
-                    Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
-                });
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Log.e("VacancyRegister", "Erro ao cadastrar/atualizar vaga: " + error);
 
-            }
-        });
+                        Toast.makeText(VacancyRegister.this, "Erro ao atualizar vaga: " + error, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        } else {
+            // Modo cadastro (já está pronto)
+            Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level, companyId , false, true, companyName);
+
+            vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
+                @Override
+                public void onSuccess(int vacancyId) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(VacancyRegister.this, MyVacancies.class));
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            });
+        }
     }
+    private void preencherCamposComVacancy(Vacancy vacancy) {
+        salaryInput.setText(vacancy.getSalary());
+        cityInput.setText(vacancy.getLocality());
+        contactInput.setText(vacancy.getContact());
+        aboutCompanyInput.setText(vacancy.getAboutCompany());
+        descriptionInput.setText(vacancy.getDescription());
+        requirementsInput.setText(vacancy.getRequirements());
+        benefitsInput.setText(vacancy.getBenefits());
+
+        Spinner modalitySpinner = findViewById(R.id.modality_spinner);
+        Spinner levelSpinner = findViewById(R.id.level_spinner);
+        Spinner ufSpinner = findViewById(R.id.uf_spinner);
+        Spinner nameSpinner = findViewById(R.id.vacancy_name_spinner);
+
+        ArrayAdapter modalityAdapter = (ArrayAdapter) modalitySpinner.getAdapter();
+        int modalityPosition = modalityAdapter.getPosition(vacancy.getModality());
+        modalitySpinner.setSelection(modalityPosition);
+
+        ArrayAdapter levelAdapter = (ArrayAdapter) levelSpinner.getAdapter();
+        int levelPosition = levelAdapter.getPosition(vacancy.getLevel());
+        levelSpinner.setSelection(levelPosition);
+
+        ArrayAdapter ufAdapter = (ArrayAdapter) ufSpinner.getAdapter();
+        int ufPosition = ufAdapter.getPosition(vacancy.getUf());
+        ufSpinner.setSelection(ufPosition);
+
+        ArrayAdapter nameAdapter = (ArrayAdapter) nameSpinner.getAdapter();
+        int namePosition = nameAdapter.getPosition(vacancy.getTitle());
+        nameSpinner.setSelection(namePosition);
+    }
+
+    private void setSpinnerValue(int spinnerId, String value) {
+        Spinner spinner = findViewById(spinnerId);
+        ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
+        int position = adapter.getPosition(value);
+        if (position >= 0) {
+            spinner.setSelection(position);
+        }
+    }
+
     public void onBackPressed(View view){
         finish();
     }

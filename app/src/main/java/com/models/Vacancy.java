@@ -70,6 +70,24 @@ public class Vacancy implements Serializable {
         this.isFilled = isFilled;
         this.companyName = companyName; // <- isso tava faltando
     }
+    public Vacancy(int id, String title, String description, String aboutCompany, String benefits, String requirements, String modality, String locality, String uf, String contact, String salary, String level, int companyId, int isActive, int isFilled, String companyName) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.aboutCompany = aboutCompany;
+        this.benefits = benefits;
+        this.requirements = requirements;
+        this.modality = modality;
+        this.locality = locality;
+        this.uf = uf;
+        this.contact = contact;
+        this.salary = salary;
+        this.level = level;
+        this.companyId = companyId;
+        this.isActive = (isActive == 1);  // Converte 1 para true e 0 para false
+        this.isFilled = (isFilled == 1);  // Converte 1 para true e 0 para false
+        this.companyName = companyName;
+    }
 
 
     public int getId() {

@@ -66,6 +66,44 @@ public class QuestionService {
             }
         }).start();
     }
+    public void updateQuestion(Context context, Question question, QuestionCallback callback) {
+        new Thread(() -> {
+            Response response = null;
+            try {
+                JSONObject json = new JSONObject();
+                json.put("question", question.getQuestion());
+                json.put("vacancyId", question.getVacancyId());
+
+
+
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.parse("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder()
+                        .url("https://backend-po.onrender.com/vacancy/"+question.getVacancyId()+"/questions/"+question.getId())
+                        .put(body)
+                        .build();
+
+                response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    callback.onSuccess();
+                } else {
+                    callback.onFailure("Erro: " + response.message());
+                }
+
+            } catch (Exception e) {
+                try {
+                    callback.onFailure("Erro: " + response.code() + " - " + response.body().string());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }).start();
+    }
 
 
     public static void getQuestionsByVacancyId(Context context, int vacancyId, QuestionListCallback callback) {
