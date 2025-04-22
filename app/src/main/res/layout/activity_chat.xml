@@ -12,13 +12,15 @@
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:gravity="center"
         android:background="@color/background_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:src="@drawable/logo" />
     </LinearLayout>
@@ -30,7 +32,6 @@
     <FrameLayout
         android:id="@+id/containerSearchMessages"
         android:layout_width="411dp"
-        android:background="@color/blue"
         android:layout_height="1253dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,38 +39,39 @@
 
     <LinearLayout
         android:id="@+id/linearLayoutInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_width="412dp"
+        android:layout_height="103dp"
         android:background="@color/background_color"
+        android:orientation="horizontal"
+        android:gravity="start"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <!-- Campo de digitação -->
         <EditText
             android:id="@+id/inputMessage"
+            style="@style/EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Digite sua mensagem"
+            android:maxLines="1"
             android:padding="10dp"
-            android:textSize="16sp"
-            style="@style/EditText"
-            android:maxLines="1"/>
+            android:textSize="16sp" />
 
         <!-- Botão para enviar -->
         <ImageView
             android:id="@+id/sendMessageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Enviar mensagem"
-            android:layout_gravity="center_vertical"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/edit_icon_black"
             android:clickable="true"
-            android:focusable="true"/>
+            android:layout_marginTop="17dp"
+            android:contentDescription="Enviar mensagem"
+            android:focusable="true"
+            android:src="@drawable/edit_icon_black" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

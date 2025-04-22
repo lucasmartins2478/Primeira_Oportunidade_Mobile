@@ -23,12 +23,12 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewMessages"
+
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingTop="8dp"
-            android:background="@android:color/white" />
+            android:paddingTop="8dp" />
 
     </LinearLayout>
 

@@ -9,7 +9,7 @@
         android:id="@+id/messageContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#1976D2"
+        android:background="@drawable/message_sent_background"
         android:textColor="@android:color/white"
         android:padding="10dp"
         android:text="Enviada" />

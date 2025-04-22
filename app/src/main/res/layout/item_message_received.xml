@@ -18,7 +18,7 @@
         android:id="@+id/messageContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#E0E0E0"
+        android:background="@drawable/message_received_background"
         android:textColor="@android:color/black"
         android:padding="10dp"
         android:text="Recebida" />
