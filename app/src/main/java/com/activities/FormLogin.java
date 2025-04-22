@@ -101,6 +101,7 @@ public class FormLogin extends AppCompatActivity {
                             @Override
                             public void onSuccess(Candidate candidate) {
                                 runOnUiThread(() -> {
+                                    editor.putInt("userId", user.getId());
                                     editor.putInt("candidateId", candidate.getId());
                                     editor.putString("email", user.getEmail());
                                     editor.putString("type", user.getType().getValue());
@@ -130,6 +131,7 @@ public class FormLogin extends AppCompatActivity {
                             @Override
                             public void onSuccess(Company company) {
                                 runOnUiThread(() -> {
+                                    editor.putInt("userId", user.getId());
                                     editor.putInt("companyId", company.getId());
                                     editor.putString("email", user.getEmail());
                                     editor.putString("type", user.getType().getValue());

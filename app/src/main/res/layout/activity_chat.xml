@@ -71,7 +71,7 @@
             android:layout_marginTop="17dp"
             android:contentDescription="Enviar mensagem"
             android:focusable="true"
-            android:src="@drawable/edit_icon_black" />
+            android:src="@drawable/send_icon" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

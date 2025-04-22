@@ -197,6 +197,7 @@ public class CompanyRegister extends AppCompatActivity {
 
                                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                             SharedPreferences.Editor editor = sharedPreferences.edit();
+                                            editor.putInt("userId", userId);
                                             editor.putInt("companyId", fullCompany.getId()); // <-- Aqui está o ID que você precisa
                                             editor.putString("email", user.getEmail());
                                             editor.putString("type", user.getType().getValue());

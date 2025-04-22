@@ -36,9 +36,6 @@ public class CandidateDetails extends AppCompatActivity {
     TextView textCandidateName, textCandidateCpf, textCandidatePhone;
     TextView textBirthDate, textGender, textCity, textAbout, textInterest;
 
-    TextView textAcademicInstitution, textAcademicCourse, textAcademicPeriod, textAcademicDates;
-    TextView textCourseName, textCourseInstitution, textCourseModality, textCourseDuration;
-    TextView textCompetences;
     LinearLayout academicContainer;
     String vacancyId;
     LinearLayout coursesContainer, competencesContainer;

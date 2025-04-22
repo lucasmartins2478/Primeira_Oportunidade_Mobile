@@ -116,7 +116,7 @@ public class UserRegister extends AppCompatActivity {
                         runOnUiThread(() -> {
                             SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-
+                            editor.putInt("userId", userId);
                             editor.putInt("candidateId", candidate.getId()); // AGORA OK ✅
                             editor.putString("email", user.getEmail());
                             editor.putString("type", user.getType().getValue());

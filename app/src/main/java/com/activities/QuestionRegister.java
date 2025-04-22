@@ -103,75 +103,11 @@ public class QuestionRegister extends AppCompatActivity {
     }
 
     // Método para registrar as perguntas (salvar novas ou atualizar as existentes)
-    public void registerVacancy() {
-        QuestionService service = new QuestionService();
-        int total = questionInputs.size();
-        AtomicInteger completed = new AtomicInteger(0);
 
-        if (total == 0) {
-            Toast.makeText(this, "Adicione pelo menos uma pergunta.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        for (EditText input : questionInputs) {
-            String questionText = input.getText().toString().trim();
-            if (!questionText.isEmpty()) {
-                Object tag = input.getTag();
-
-                // Verifica se já existe um objeto Question associado à entrada (para edição)
-                if (tag instanceof Question) {
-                    Question question = (Question) tag;
-                    question.setQuestion(questionText); // Atualiza a pergunta
-
-                    service.updateQuestion(this, question, new QuestionService.QuestionCallback() {
-                        @Override
-                        public void onSuccess() {
-                            if (completed.incrementAndGet() == total) {
-                                runOnUiThread(() -> {
-                                    Toast.makeText(QuestionRegister.this, "Perguntas salvas com sucesso!", Toast.LENGTH_SHORT).show();
-                                    finish(); // Finaliza a activity
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(String errorMessage) {
-                            runOnUiThread(() -> {
-                                Toast.makeText(QuestionRegister.this, "Erro ao salvar pergunta: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    });
-                } else {
-                    // Cria uma nova pergunta
-                    Question newQuestion = new Question(questionText, vacancyId);
-
-                    service.registerQuestion(this, newQuestion, new QuestionService.QuestionCallback() {
-                        @Override
-                        public void onSuccess() {
-                            if (completed.incrementAndGet() == total) {
-                                runOnUiThread(() -> {
-                                    Toast.makeText(QuestionRegister.this, "Perguntas salvas com sucesso!", Toast.LENGTH_SHORT).show();
-                                    finish(); // Finaliza a activity
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(String errorMessage) {
-                            runOnUiThread(() -> {
-                                Toast.makeText(QuestionRegister.this, "Erro ao salvar pergunta: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    });
-                }
-            } else {
-                completed.incrementAndGet(); // Ignora perguntas vazias
-            }
-        }
-    }
 
     // Volta para a tela anterior
     public void onBackPressed() {
+        super.onBackPressed();
         Intent intent = new Intent(QuestionRegister.this, MyVacancies.class);
         startActivity(intent);
     }
