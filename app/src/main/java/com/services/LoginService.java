@@ -119,6 +119,57 @@ public class LoginService {
         }).start();
     }
 
+    public void updateUser(User user, UserCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando JSON do usuário
+                JSONObject json = new JSONObject();
+                json.put("email", user.getEmail());
+                json.put("password", user.getPassword());
+                json.put("type", user.getType().getValue());
+
+                Log.d("UserRegisterJSON", json.toString());
+
+
+                // Criando corpo da requisição
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                // Criando requisição POST
+                Request request = new Request.Builder()
+                        .url(apiUrl+"/"+user.getId())
+                        .put(body)
+                        .build();
+
+                // Enviando requisição
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    try {
+                        String responseData = response.body().string();
+                        Log.d("UserRegisterResponse", "Dados recebidos: " + responseData);
+
+                        JSONObject jsonResponse = new JSONObject(responseData);
+                        int userId = jsonResponse.getInt("id");
+
+                        callback.onSuccess(userId);
+                    } catch (Exception e) {
+                        Log.e("UserRegisterParseError", "Erro ao ler resposta: ", e);
+                        callback.onFailure("Erro ao processar resposta do servidor.");
+                    }
+                } else {
+                    callback.onFailure("Erro ao cadastrar o usuário: " + response.message());
+                }
+
+
+            } catch (Exception e) {
+                callback.onFailure("Falha ao conectar: " + e.getMessage());
+            }
+        }).start();
+    }
+
 
     public void login(String email, String password, LoginCallback callback) {
         new Thread(() -> {

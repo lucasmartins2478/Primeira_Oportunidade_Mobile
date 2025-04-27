@@ -2,6 +2,7 @@ package com.models;
 
 public class AcademicData {
 
+    private int id;
     private String institutionName;
     private String level;
     private String period;
@@ -13,6 +14,14 @@ public class AcademicData {
     private boolean isCurrentlyStudying;
 
     private int curriculumId;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public AcademicData(String courseName, String period, String startDate, String endDate, boolean isCurrentlyStudying, String institutionName, String level, String city, int curriculumId) {
         this.courseName = courseName;

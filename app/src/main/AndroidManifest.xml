@@ -15,6 +15,12 @@
         android:theme="@style/Theme.PrimeiraOportunidade"
         tools:targetApi="31">
         <activity
+            android:name=".AptitudeTests"
+            android:exported="false" />
+        <activity
+            android:name=".CurriculumAnalysis"
+            android:exported="false" />
+        <activity
             android:name=".Chat"
             android:exported="false" />
         <activity

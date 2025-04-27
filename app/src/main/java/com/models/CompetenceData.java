@@ -1,13 +1,19 @@
 package com.models;
 
 public class CompetenceData {
+    private int id;
     private String competence;
 
     private int curriculumId;
 
 
+    public int getId() {
+        return id;
+    }
 
-
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public CompetenceData(String competence, int curriculumId) {
         this.competence = competence;

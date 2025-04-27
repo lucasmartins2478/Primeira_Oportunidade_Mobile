@@ -302,6 +302,16 @@
             android:layout_gravity="bottom|center_horizontal"
             android:onClick="curriculumData"
             android:text="@string/register_curriculum" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/analize_curriculum"
+            style="@style/ButtonBlue"
+            android:layout_width="202dp"
+            android:visibility="gone"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:onClick="analize"
+            android:text="Analisar currículo" />
+
     </LinearLayout>
     </ScrollView>
     <fragment

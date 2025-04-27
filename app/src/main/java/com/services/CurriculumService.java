@@ -109,6 +109,83 @@ public class CurriculumService {
         }).start();
     }
 
+    public static void updateCurriculum(Context context, Curriculum curriculum, CurriculumCallback callback) {
+        new Thread(() -> {
+            try {
+                // Recuperar o userId do SharedPreferences
+                SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                int userId = prefs.getInt("candidateId", -1);
+
+                if (userId == -1) {
+                    throw new Exception("ID do usuário não encontrado");
+                }
+
+
+
+                JSONObject json = new JSONObject();
+
+                json.put("id", userId);
+                String isoDate = convertToIsoDate(curriculum.getBirthDate());
+                json.put("dateOfBirth", isoDate);
+                json.put("age", Integer.parseInt(curriculum.getAge()));
+                json.put("gender", curriculum.getGender());
+                json.put("race", curriculum.getRace());
+                json.put("city", curriculum.getCity());
+                json.put("attached", "");
+                json.put("description", "");
+                json.put("address", curriculum.getAddress());
+                json.put("addressNumber", curriculum.getAddressNumber());
+                json.put("cep", curriculum.getCep());
+                json.put("uf", curriculum.getUf());
+
+
+
+                System.out.println("JSON enviado para o backend: " + json.toString());
+
+
+                // Fazer a requisição HTTP
+                URL url = new URL(BASE_URL+"/"+curriculum.getId());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("PUT");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                os.write(json.toString().getBytes("UTF-8"));
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == 200 || responseCode == 201) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    int curriculumId = jsonResponse.getInt("id"); // ou o nome exato retornado no JSON
+
+                    // Salvar no SharedPreferences
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putInt("curriculumId", curriculumId);
+                    editor.apply();
+
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                }
+                else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao registrar currículo. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+
     public static void addSchoolData(Context context, Curriculum curriculum, CurriculumCallback callback){
         new Thread(() -> {
             try {

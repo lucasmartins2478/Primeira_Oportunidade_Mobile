@@ -177,6 +177,53 @@ public class CandidateService {
             }
         }).start();
     }
+    public void updateCandidate(Candidate candidate, registerCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando JSON do candidato
+                JSONObject json = new JSONObject();
+                json.put("name", candidate.getName());
+                json.put("cpf", candidate.getCpf());
+                json.put("phoneNumber", candidate.getPhoneNumber());
+                json.put("userId", candidate.getUserId());
+
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Request request = new Request.Builder()
+                        .url(apiUrl+"/"+candidate.getId())
+                        .put(body)
+                        .build();
+
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    JSONObject responseJson = new JSONObject(responseData);
+
+                    // Extrai os dados retornados do backend
+                    int id = responseJson.getInt("id");
+                    String name = responseJson.getString("name");
+                    String cpf = responseJson.getString("cpf");
+                    String phone = responseJson.getString("phoneNumber");
+                    Integer curriculumId = responseJson.isNull("curriculumId") ? null : responseJson.getInt("curriculumId");
+                    int userId = responseJson.getInt("userId");
+
+                    // Cria novo Candidate com dados completos
+                    Candidate createdCandidate = new Candidate(id, name, cpf, phone, curriculumId, userId);
+
+                    callback.onSuccess(createdCandidate);
+                } else {
+                    callback.onFailure("Erro ao cadastrar candidato: " + response.message());
+                }
+
+            } catch (Exception e) {
+                callback.onFailure("Falha ao conectar: " + e.getMessage());
+            }
+        }).start();
+    }
 
 
     public static void addCurriculumToCandidate(Context context, CompanyService.RegisterCallback callback){

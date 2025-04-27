@@ -1,6 +1,8 @@
 package com.models;
 
 public class Curriculum {
+
+    private int id;
     private String birthDate;
     private String age;
     private String gender;
@@ -24,8 +26,15 @@ public class Curriculum {
 
     private String interestArea;
 
+    public int getId() {
+        return id;
+    }
 
-    public Curriculum( String attached, String aboutYou, String interestArea) {
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Curriculum(String attached, String aboutYou, String interestArea) {
         this.attached = attached;
         this.aboutYou = aboutYou;
         this.interestArea = interestArea;

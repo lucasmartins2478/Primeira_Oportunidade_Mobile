@@ -150,6 +150,32 @@
                     android:text="@string/see_more_informations"
                     android:textAllCaps="false" />
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout5"
+                android:layout_width="320dp"
+                android:layout_height="115dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/card_background"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Testes de Aptidão"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    style="@style/CardButton"
+                    android:onClick="openAptitudeTests"
+                    android:layout_width="211dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Realizar testes"
+                    android:textAllCaps="false" />
+            </LinearLayout>
 
             <!-- Chat -->
             <TextView

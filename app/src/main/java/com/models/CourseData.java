@@ -1,6 +1,7 @@
 package com.models;
 
 public class CourseData {
+    private int id;
     private String courseName;
     private String modality;
     private String duration;
@@ -10,6 +11,14 @@ public class CourseData {
     private boolean inProgress;
 
     private int curriculumId;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getCourseName() {
         return courseName;

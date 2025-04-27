@@ -1,6 +1,5 @@
 package com.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,13 +9,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class Community extends AppCompatActivity {
+public class AptitudeTests extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_community);
+        setContentView(R.layout.activity_aptitude_tests);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -24,13 +23,8 @@ public class Community extends AppCompatActivity {
         });
     }
 
+    public void onBackPressed(View view){
+        finish();
+    }
 
-    public void openChat(View view){
-        Intent intent = new Intent(Community.this, Chat.class);
-        startActivity(intent);
-    }
-    public void openAptitudeTests(View view){
-        Intent intent = new Intent(Community.this, AptitudeTests.class);
-        startActivity(intent);
-    }
 }

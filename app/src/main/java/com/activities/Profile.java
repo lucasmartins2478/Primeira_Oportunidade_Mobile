@@ -35,7 +35,7 @@ public class Profile extends AppCompatActivity {
     TextView   textCity;
     CompanyService companyService;
     String email;
-    AppCompatButton btnAddCurriculum;
+    AppCompatButton btnAddCurriculum, btnAnalysis;
     LinearLayout academicContainer;
     LinearLayout coursesContainer, competencesContainer;
 
@@ -69,7 +69,7 @@ public class Profile extends AppCompatActivity {
 
         companyService = new CompanyService();
 
-
+        btnAnalysis = findViewById(R.id.analize_curriculum);
         academicContainer = findViewById(R.id.academicContainer);
         academicContainerTitle = findViewById(R.id.textAcademicTitle);
         competencesContainer = findViewById(R.id.competencesContainer);
@@ -92,6 +92,7 @@ public class Profile extends AppCompatActivity {
         txtAddress = findViewById(R.id.txt_address);
         txtAddressNumber = findViewById(R.id.txt_address_number);
 
+
         btnAddCurriculum = findViewById(R.id.add_curriculum);
 
         coursesContainer = findViewById(R.id.coursesContainer);
@@ -108,7 +109,7 @@ public class Profile extends AppCompatActivity {
             courseContainerTitle.setVisibility(View.VISIBLE);
             coursesContainer.setVisibility(View.VISIBLE);
             btnAddCurriculum.setVisibility(View.VISIBLE);
-
+            btnAnalysis.setVisibility(View.VISIBLE);
 
             fetchCurriculumData(candidateId);
 
@@ -299,5 +300,10 @@ public class Profile extends AppCompatActivity {
 
         txtName.setText(name);
 
+    }
+
+    public void analize(View view){
+        Intent intent = new Intent(Profile.this, CurriculumAnalysis.class);
+        startActivity(intent);
     }
 }

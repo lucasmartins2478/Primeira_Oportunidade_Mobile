@@ -124,4 +124,51 @@ public class CompanyService {
         }).start();
 
     }
+    public void updateCompany(Company company, RegisterCallback callback){
+
+        new Thread(()->{
+            try{
+                JSONObject json = new JSONObject();
+                json.put("name", company.getCompanyName());
+                json.put("cnpj", company.getCnpj());
+                json.put("segment", company.getSegment());
+                json.put("responsible", company.getResponsible());
+                json.put("phoneNumber", company.getPhoneNumber());
+                json.put("city", company.getCity());
+                json.put("cep", company.getCep());
+                json.put("address", company.getAddress());
+                json.put("addressNumber", company.getAddressNumber());
+                json.put("uf", company.getUf());
+                json.put("url", company.getWebsite());
+                json.put("logo", company.getLogo());
+                json.put("userId", company.getUserId());
+
+
+                RequestBody body =  RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                Log.d("CompanyRegisterJSON", json.toString());
+
+
+                Request request = new Request.Builder().url(apiUrl+"/"+company.getId()).put(body).build();
+
+                Response response = client.newCall(request).execute();
+
+                if(response.isSuccessful()){
+                    callback.onSuccess();
+                }
+                else{
+                    String errorBody = response.body() != null ? response.body().string() : "sem corpo";
+                    Log.e("CompanyRegisterError", "Erro: " + response.code() + " - " + errorBody);
+                    callback.onFailure("Erro: " + response.message());                }
+
+
+            }catch (Exception e){
+                callback.onFailure("Faha ao conectar: "+e.getMessage());
+            }
+        }).start();
+
+    }
 }
