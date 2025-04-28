@@ -11,15 +11,6 @@ public class Candidate {
 
     private int userId;
 
-    
-
-    public Candidate(String name, String cpf, String phoneNumber, Integer curriculumId, int userId) {
-        this.name = name;
-        this.cpf = cpf;
-        this.phoneNumber = phoneNumber;
-        this.curriculumId = curriculumId;
-        this.userId = userId;
-    }
 
     public Candidate(int id,String name,String cpf, String phoneNumber, Integer curriculumId,int userId    ) {
         this.userId = userId;
@@ -37,6 +28,15 @@ public class Candidate {
         this.userId = userId;
 
     }
+
+    public Candidate(int userId, String name, String cpf, String phone) {
+        this.userId = userId;
+        this.name = name;
+        this.cpf = cpf;
+        this.phoneNumber = phone;
+
+    }
+
     public int getId(){
         return id;
     }

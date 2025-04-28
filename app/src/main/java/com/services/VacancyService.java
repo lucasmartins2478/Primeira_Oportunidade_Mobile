@@ -1,6 +1,7 @@
 package com.services;
 
 import com.models.Vacancy;
+import com.models.VacancyScore;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -292,6 +293,72 @@ public class VacancyService {
             }
         }).start();
     }
+
+    public void recomendVacancies(
+            JSONObject candidato,
+            JSONArray cursos,
+            JSONArray competencias,
+            VacancyCallback callback
+    ) {
+        fetchVacanciesFromApi(new VacancyCallback() {
+            @Override
+            public void onSuccess(ArrayList<Vacancy> allVagas) {
+                ArrayList<VacancyScore> scoredVagas = new ArrayList<>();
+
+                for (Vacancy vaga : allVagas) {
+                    if (!vaga.isActive() || vaga.isFilled()) continue;
+
+                    int score = 0;
+
+                    // Localidade
+                    if (vaga.getUf().equalsIgnoreCase(candidato.optString("uf"))) {
+                        score += 2;
+                    }
+
+                    // Interesse na área
+                    String interesse = candidato.optString("interestArea").toLowerCase();
+                    if (vaga.getTitle().toLowerCase().contains(interesse) || vaga.getDescription().toLowerCase().contains(interesse)) {
+                        score += 3;
+                    }
+
+                    // Competências
+                    for (int i = 0; i < competencias.length(); i++) {
+                        String comp = competencias.optJSONObject(i).optString("name", "").toLowerCase();
+                        if (vaga.getRequirements().toLowerCase().contains(comp) || vaga.getDescription().toLowerCase().contains(comp)) {
+                            score += 3;
+                        }
+                    }
+
+                    // Cursos
+                    for (int i = 0; i < cursos.length(); i++) {
+                        String curso = cursos.optJSONObject(i).optString("name", "").toLowerCase();
+                        if (vaga.getRequirements().toLowerCase().contains(curso) || vaga.getDescription().toLowerCase().contains(curso)) {
+                            score += 2;
+                        }
+                    }
+
+                    scoredVagas.add(new VacancyScore(vaga, score));
+                }
+
+                // Ordenar pela pontuação
+                scoredVagas.sort((a, b) -> Integer.compare(b.score, a.score));
+
+                // Extrair só as vagas
+                ArrayList<Vacancy> recomendadas = new ArrayList<>();
+                for (VacancyScore vs : scoredVagas) {
+                    recomendadas.add(vs.vaga);
+                }
+
+                callback.onSuccess(recomendadas);
+            }
+
+            @Override
+            public void onFailure(String error) {
+                callback.onFailure(error);
+            }
+        });
+    }
+
 
     public interface VacancyCallback {
         void onSuccess(ArrayList<Vacancy> vacancies);

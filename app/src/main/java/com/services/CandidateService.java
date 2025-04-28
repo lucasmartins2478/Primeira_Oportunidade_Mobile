@@ -185,7 +185,6 @@ public class CandidateService {
                 json.put("name", candidate.getName());
                 json.put("cpf", candidate.getCpf());
                 json.put("phoneNumber", candidate.getPhoneNumber());
-                json.put("userId", candidate.getUserId());
 
                 RequestBody body = RequestBody.create(
                         json.toString(),
@@ -193,7 +192,7 @@ public class CandidateService {
                 );
 
                 Request request = new Request.Builder()
-                        .url(apiUrl+"/"+candidate.getId())
+                        .url(apiUrl+"/"+candidate.getUserId())
                         .put(body)
                         .build();
 
@@ -204,19 +203,18 @@ public class CandidateService {
                     JSONObject responseJson = new JSONObject(responseData);
 
                     // Extrai os dados retornados do backend
-                    int id = responseJson.getInt("id");
+                    int id = responseJson.getInt("userId");
                     String name = responseJson.getString("name");
                     String cpf = responseJson.getString("cpf");
                     String phone = responseJson.getString("phoneNumber");
-                    Integer curriculumId = responseJson.isNull("curriculumId") ? null : responseJson.getInt("curriculumId");
-                    int userId = responseJson.getInt("userId");
+
 
                     // Cria novo Candidate com dados completos
-                    Candidate createdCandidate = new Candidate(id, name, cpf, phone, curriculumId, userId);
+                    Candidate createdCandidate = new Candidate(id, name, cpf, phone);
 
                     callback.onSuccess(createdCandidate);
                 } else {
-                    callback.onFailure("Erro ao cadastrar candidato: " + response.message());
+                    callback.onFailure("Erro ao atualizar candidato: " + response.message());
                 }
 
             } catch (Exception e) {

@@ -1,5 +1,12 @@
 package com.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,18 +19,36 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.activities.MainActivity;
+import com.activities.Profile;
 import com.activities.R;
+import com.activities.Vacancies;
 import com.adapters.VacancyAdapter;
+import com.models.AcademicData;
+import com.models.CourseData;
+import com.models.Curriculum;
+import com.models.DateUtils;
 import com.models.Vacancy;
+import com.services.AcademicDataService;
+import com.services.CompetenceDataService;
+import com.services.CourseDataService;
+import com.services.CurriculumService;
+import com.services.VacancyRecomender;
 import com.services.VacancyService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SearchFormFragment extends Fragment {
 
@@ -34,6 +59,12 @@ public class SearchFormFragment extends Fragment {
 
     private VacancyService vacancyService;
     private ArrayList<Integer> candidaturasIds = new ArrayList<>();
+
+    private Curriculum meuCurriculo;
+    private List<AcademicData> dadosAcademicos = new ArrayList<>();
+    private List<CourseData> dadosCursos = new ArrayList<>();
+    private List<String> competencias = new ArrayList<>();
+
 
 
     private boolean isMyApplicationsScreen = false;
@@ -51,6 +82,15 @@ public class SearchFormFragment extends Fragment {
             isMyApplicationsScreen = args.getBoolean("isMyApplicationsScreen", false);
             candidaturasIds = args.getIntegerArrayList("vacancyIdsCandidatadas");
         }
+        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        int candidateId = prefs.getInt("candidateId", -1);
+
+        if (candidateId != -1) {
+            fetchCurriculumData(candidateId);
+        } else {
+
+        }
+
 
 
         searchInput = view.findViewById(R.id.searchInput);
@@ -174,49 +214,224 @@ public class SearchFormFragment extends Fragment {
 
         ArrayList<Vacancy> filtradas = new ArrayList<>();
 
+
+        // Passo 2: Filtragem das vagas baseadas no termo de busca e nos filtros selecionados
         for (Vacancy v : allVacancies) {
             boolean match = v.getTitle().toLowerCase().contains(termo);
 
-            if (isMyApplicationsScreen) {
-                // Filtro pelo isActive (Agora é booleano)
-                if (!uf.equals("Selecione")) {
-                    if (uf.equals("Ativas")) match &= !v.isActive();  // isActive é true para vagas ativas
-                    else if (uf.equals("Inativas")) match &= v.isActive();  // isActive é false para vagas inativas
-                }
 
-                // Filtro pelo isFilled (Agora é booleano)
-                if (!modality.equals("Selecione")) {
-                    if (modality.equals("Preenchidas")) match &= v.isFilled();  // isFilled é true para vagas preenchidas
-                    else if (modality.equals("Não preenchidas")) match &= !v.isFilled();  // isFilled é false para vagas não preenchidas
-                }
 
-                // O terceiro spinner pode ser ignorado por enquanto, serve só pra manter o layout
+            // Se for uma empresa (meuCurriculo é null), filtre apenas pelo companyId
+            if (meuCurriculo == null) {
+                SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", getContext().MODE_PRIVATE);
+                int companyId = prefs.getInt("companyId", -1);
+
+                // Verifica se o companyId é válido e se a vaga pertence à empresa
+                if (companyId != -1) {
+                    match &= v.getCompanyId() == companyId;
+                }
             } else {
-                // Filtro padrão das outras telas
-                if (!uf.equals("Selecione")) {
-                    match &= v.getUf().toUpperCase().contains(uf);
-                }
+                // Filtro para candidatos
+                if (isMyApplicationsScreen) {
+                    if (!uf.equals("Selecione")) {
+                        if (uf.equals("Ativas")) match &= !v.isActive();
+                        else if (uf.equals("Inativas")) match &= v.isActive();
+                    }
 
-                if (!modality.equals("Selecione")) {
-                    match &= v.getModality().equalsIgnoreCase(modality);
-                }
+                    if (!modality.equals("Selecione")) {
+                        if (modality.equals("Preenchidas")) match &= v.isFilled();
+                        else if (modality.equals("Não preenchidas")) match &= !v.isFilled();
+                    }
+                } else {
+                    if (!uf.equals("Selecione")) {
+                        match &= v.getUf().toUpperCase().contains(uf);
+                    }
 
-                if (!level.equals("Selecione")) {
-                    match &= v.getLevel().equalsIgnoreCase(level);
+                    if (!modality.equals("Selecione")) {
+                        match &= v.getModality().equalsIgnoreCase(modality);
+                    }
+
+                    if (!level.equals("Selecione")) {
+                        match &= v.getLevel().equalsIgnoreCase(level);
+                    }
                 }
             }
 
             if (match) {
                 filtradas.add(v);
+            } else {
+
             }
         }
 
-        adapter = new VacancyAdapter(filtradas, getContext(), vaga -> {
-            // ação ao clicar na vaga
-        });
+        if (filtradas.isEmpty()) {
+        }
 
-        recyclerView.setAdapter(adapter);
+        // Se meuCurriculo não for null, faça o cálculo do score
+        if (meuCurriculo != null) {
+            // Calcular o score e ordenar as vagas
+            ArrayList<Vacancy> vagasComScore = new ArrayList<>();
+            for (Vacancy vaga : filtradas) {
+                int score = calcularScore(vaga);  // Calcula o score da vaga
+                vaga.setScore(score);  // Adiciona o score à vaga
+
+                // Se o score for alto o suficiente, envie a notificação
+                calcularEEnviarNotificacao(vaga);  // Chama a função para enviar a notificação
+
+                vagasComScore.add(vaga);
+            }
+
+            // Ordenar por score
+            Collections.sort(vagasComScore, (vaga1, vaga2) -> Integer.compare(vaga2.getScore(), vaga1.getScore()));
+
+            getActivity().runOnUiThread(() -> {
+                adapter = new VacancyAdapter(vagasComScore, getContext(), vaga -> {
+                    // Ação ao clicar na vaga
+                });
+
+                recyclerView.setAdapter(adapter);
+            });
+        } else {
+            // Se meuCurriculo for null, apenas exibe as vagas filtradas
+            getActivity().runOnUiThread(() -> {
+                adapter = new VacancyAdapter(filtradas, getContext(), vaga -> {
+                    // Ação ao clicar na vaga
+                });
+
+                recyclerView.setAdapter(adapter);
+            });
+        }
     }
+
+
+
+    public void enviarNotificacao(Context context, Vacancy vaga) {
+        // Crie um Intent que será disparado quando o usuário clicar na notificação
+        Intent intent = new Intent(context, Vacancies.class);  // Ou a Activity que contém o Fragment
+        intent.putExtra("vacancy", vaga);  // Passe os dados da vaga para o Fragment
+
+        // Crie um PendingIntent para abrir a Activity/Fragment
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Crie a notificação
+        Notification notification = new NotificationCompat.Builder(context, "CANAL_VAGAS")
+                .setContentTitle("Vaga Compatível Encontrada!")
+                .setContentText("Uma vaga pode ser interessante para você! Clique para ver os detalhes.")
+                .setSmallIcon(R.drawable.my_applications_icon)  // Defina um ícone para a notificação
+                .setContentIntent(pendingIntent)  // Associe o PendingIntent à notificação
+                .setAutoCancel(true)  // A notificação desaparece quando clicada
+                .build();
+
+        // Envie a notificação
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);  // ID única para a notificação
+    }
+
+
+
+
+    private void calcularEEnviarNotificacao(Vacancy vaga) {
+        // Verificar se o usuário já se candidatou à vaga
+        if (candidaturasIds.contains(vaga.getId())) {
+            // Se o usuário já se candidatou, não envie a notificação
+            return;
+        }
+
+        // Lógica do cálculo de score
+        int score = calcularScore(vaga);
+
+        // Se o score for maior que 7, enviar a notificação
+        if (score >= 7) {
+            enviarNotificacao(getContext(), vaga);  // Envia a notificação
+        }
+    }
+
+
+    private int calcularScore(Vacancy vaga) {
+        // Verifique se a função do VacancyRecomender está retornando um valor adequado
+        int score = VacancyRecomender.calculateJobScore(vaga, meuCurriculo, dadosAcademicos, dadosCursos, competencias);
+        Log.d("Score", "Vaga: " + vaga.getTitle() + ", Score: " + score);  // Adicione um log para depurar o valor do score
+        return score;
+    }
+
+
+
+
+
+
+
+    private void fetchCurriculumData(int candidateId) {
+        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+            @Override
+            public void onSuccess(Curriculum curriculum) {
+                meuCurriculo = curriculum;
+                fetchAcademicData(candidateId);
+                fetchCourseData(candidateId);
+                fetchCompetences(candidateId);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchAcademicData(int curriculumId) {
+        AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
+            @Override
+            public void onSuccess(List<AcademicData> dataList) {
+                dadosAcademicos = dataList;
+                checkIfDataLoaded();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchCourseData(int curriculumId) {
+        CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
+            @Override
+            public void onSuccess(List<CourseData> courseDataList) {
+                dadosCursos = courseDataList;
+                checkIfDataLoaded();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Erro ao buscar cursos: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void fetchCompetences(int curriculumId) {
+        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
+            @Override
+            public void onSuccess(List<String> competencesList) {
+                competencias = competencesList;
+                checkIfDataLoaded();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Toast.makeText(getContext(), "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkIfDataLoaded() {
+        if (meuCurriculo != null && !dadosAcademicos.isEmpty() && !dadosCursos.isEmpty() && !competencias.isEmpty()) {
+            // Todos os dados estão carregados, então podemos atualizar a lista
+            atualizarLista(searchInput.getText().toString());
+        }
+    }
+
+
+
+
 
 
 

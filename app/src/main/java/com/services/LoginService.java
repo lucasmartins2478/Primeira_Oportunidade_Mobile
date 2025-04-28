@@ -2,6 +2,7 @@ package com.services;
 
 import android.util.Log;
 
+import com.models.Candidate;
 import com.models.User;
 import com.models.UserType;
 
@@ -60,6 +61,47 @@ public class LoginService {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public void fetchUsersFromApiByUserId(int userId, FetchCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando a requisição GET
+                Request request = new Request.Builder()
+                        .url(apiUrl+"/"+userId)
+                        .build();
+
+                // Enviando requisição
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+                    JSONObject userJson = new JSONObject(responseData);
+
+
+                    User user = new User(
+                            userJson.getInt("id"),
+                            userJson.getString("email"),
+                            userJson.getString("password"),
+                            UserType.valueOf(userJson.getString("type").toUpperCase())
+                    );
+
+
+                    callback.onSuccess(user);
+
+
+                }
+            } catch (Exception e) {
+                callback.onFailure("Erro ao buscar usuário");
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public  interface FetchCallback{
+        void onSuccess(User user);
+
+        void onFailure(String error);
     }
 
     public interface UserCallback{

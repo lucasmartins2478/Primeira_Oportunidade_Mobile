@@ -302,6 +302,11 @@ public class Profile extends AppCompatActivity {
 
     }
 
+    public void updateUser(View view){
+        Intent intent = new Intent(Profile.this, UserRegister.class);
+        startActivity(intent);
+    }
+
     public void analize(View view){
         Intent intent = new Intent(Profile.this, CurriculumAnalysis.class);
         startActivity(intent);

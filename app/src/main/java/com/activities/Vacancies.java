@@ -2,6 +2,10 @@ package com.activities;
 
 import static java.security.AccessController.getContext;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -15,18 +19,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adapters.VacancyAdapter;
+import com.fragments.VacancyDetailsFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.models.Vacancy;
 import com.services.VacancyService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Vacancies extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private VacancyAdapter vagaAdapter;
-    private VacancyService vacancyService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,34 +43,42 @@ public class Vacancies extends AppCompatActivity {
             return insets;
         });
 
-        vacancyService = new VacancyService();
+
+        if (getIntent().hasExtra("vacancy")) {
+            Vacancy vacancy = (Vacancy) getIntent().getSerializableExtra("vacancy");
+
+            if (vacancy != null) {
+                // Exibir o Fragment com os detalhes da vaga
+                VacancyDetailsFragment fragment = VacancyDetailsFragment.newInstance(vacancy);
+                fragment.show(getSupportFragmentManager(), fragment.getTag());
+            }
+        }
+
+        criarCanalDeNotificacao();
+
+
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {
-            @Override
-            public void onSuccess(ArrayList<Vacancy> vacancies) {
-                runOnUiThread(() -> {
-                    // Agora, passamos a função para o adapter
-                    VacancyAdapter adapter = new VacancyAdapter(vacancies, Vacancies.this, new VacancyAdapter.OnVerMaisClickListener() {
-                        @Override
-                        public void onVerMaisClick(Vacancy vaga) {
-                            // Aqui você pode tratar o clique no botão "Ver Mais" caso precise de algo mais
-                            // Por exemplo, você pode exibir detalhes em outro lugar ou fazer outra ação.
-                        }
-                    });
 
-                    recyclerView.setAdapter(adapter);
-
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(() -> {
-                    Toast.makeText(Vacancies.this, error, Toast.LENGTH_LONG).show();
-                });
-            }
-        });
     }
+
+
+    private void criarCanalDeNotificacao() {
+        // Verifica se a versão do Android é 8.0 (API 26) ou superior
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Canal de Vagas";
+            String description = "Notificações sobre vagas compatíveis";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            // Cria o canal de notificação
+            NotificationChannel channel = new NotificationChannel("CANAL_VAGAS", name, importance);
+            channel.setDescription(description);
+
+            // Registra o canal no sistema
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }

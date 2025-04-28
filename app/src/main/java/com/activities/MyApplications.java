@@ -100,27 +100,4 @@ private ArrayList<Integer> vacancyIdsCandidatadas;
     }
 
 
-    private void buscarVagasECruzarComCandidaturas(List<Integer> vacancyIdsCandidatadas) {
-        vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {
-            @Override
-            public void onSuccess(ArrayList<Vacancy> vacancies) {
-                // Filtra somente as vagas que estão na lista de IDs das candidaturas
-                List<Vacancy> minhasVagas = vacancies.stream()
-                        .filter(v -> vacancyIdsCandidatadas.contains(v.getId()))
-                        .collect(Collectors.toList());
-
-                runOnUiThread(() -> {
-                    VacancyAdapter adapter = new VacancyAdapter(minhasVagas, MyApplications.this, vaga -> {
-                        // Você pode tratar algo ao clicar na vaga aqui
-                    });
-                    recyclerView.setAdapter(adapter);
-                });
-            }
-
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(() -> Toast.makeText(MyApplications.this, "Erro ao buscar vagas: " + error, Toast.LENGTH_SHORT).show());
-            }
-        });
-    }
 }

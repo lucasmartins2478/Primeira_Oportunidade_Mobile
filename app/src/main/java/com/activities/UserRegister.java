@@ -3,11 +3,17 @@ package com.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,10 +28,14 @@ import com.services.LoginService;
 public class UserRegister extends AppCompatActivity {
 
     private CandidateService candidateService;
-
     private LoginService loginService;
+    private Candidate existingCandidate;
+    private TextView haveAccount;
 
+    private int candidateId;
+    private AppCompatButton changePassword, registerBtn;
     private EditText nameInput, phoneInput, cpfInput, emailInput, passwordInput, confirmPasswordInput;
+    private LinearLayout confirmPasswordContainer, passwordContainer;
 
 
 
@@ -39,18 +49,41 @@ public class UserRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         nameInput = findViewById(R.id.name_input);
         phoneInput = findViewById(R.id.phone_number_input);
         cpfInput = findViewById(R.id.cpf_input);
         emailInput = findViewById(R.id.email_input);
         passwordInput = findViewById(R.id.password_input);
         confirmPasswordInput = findViewById(R.id.confirm_password_input);
+        confirmPasswordContainer = findViewById(R.id.confirm_password_container);
+        passwordContainer = findViewById(R.id.password_container);
+        haveAccount = findViewById(R.id.have_account);
+        changePassword = findViewById(R.id.change_password);
+        registerBtn = findViewById(R.id.register_button);
         cpfInput.addTextChangedListener(MaskEditText.mask(cpfInput, "###.###.###-##"));
         phoneInput.addTextChangedListener(MaskEditText.mask(phoneInput, "(##) #####-####"));
 
         candidateService = new CandidateService();
         loginService = new LoginService();
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        candidateId = prefs.getInt("candidateId", -1);
+
+        if (candidateId != -1) {
+            confirmPasswordContainer.setVisibility(View.GONE);
+            passwordContainer.setVisibility(View.GONE);
+            haveAccount.setVisibility(View.GONE);
+            changePassword.setVisibility(View.VISIBLE);
+            registerBtn.setText("Salvar alterações");
+            loadCandidateData(candidateId);
+        }
     }
+
+    public void changePassword(View view){
+
+    }
+
     public void registerUser(View view){
 
         String name = nameInput.getText().toString();
@@ -81,75 +114,135 @@ public class UserRegister extends AppCompatActivity {
             emailInput.requestFocus();
             return;
         }
-        if (password.isEmpty()) {
-            passwordInput.setError("Preencha a senha");
-            passwordInput.requestFocus();
+        if(candidateId == -1){
+            if (password.isEmpty()) {
+                passwordInput.setError("Preencha a senha");
+                passwordInput.requestFocus();
+                return;
+            }
+            if (confirmPassword.isEmpty()){
+                confirmPasswordInput.setError("Confirme a senha");
+                confirmPasswordInput.requestFocus();
+                return;
+            }
             return;
         }
-        if (confirmPassword.isEmpty()) {
-            confirmPasswordInput.setError("Preencha a confirmação de senha");
-            confirmPasswordInput.requestFocus();
-            return;
-        }
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(UserRegister.this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
-            return;
-        }
+
+
+
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        int userId = prefs.getInt("userId", -1);
 
         // Criar o objeto User e Candidate
         User user = new User(email, password, UserType.CANDIDATE);
 
 
-        // Cadastro do candidato e do usuário
+        if (candidateId != -1) {
+            // Atualizar candidato
 
-        loginService.registerUser(user, new LoginService.UserCallback() {
-            @Override
-            public void onSuccess(int userId) {
-                System.out.println(userId);
+            Log.d("Update", "Se mostrou isso entrou no update");
+            Candidate updated = new Candidate(
+                    name,
+                    cpf,
+                    phone,
+                    userId
+            );
 
-                Candidate candidate = new Candidate(name, cpf, phone, userId);
-
-
-                candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
-                    @Override
-                    public void onSuccess(Candidate candidate) {
-                        runOnUiThread(() -> {
-                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putInt("userId", userId);
-                            editor.putInt("candidateId", candidate.getId()); // AGORA OK ✅
-                            editor.putString("email", user.getEmail());
-                            editor.putString("type", user.getType().getValue());
-                            editor.putString("name", candidate.getName());
-                            editor.putString("cpf", candidate.getCpf());
-                            editor.putString("phone", candidate.getPhoneNumber());
-                            editor.putBoolean("isLoggedIn", true);
-                            editor.apply();
-
-                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(UserRegister.this, Vacancies.class);
-                            startActivity(intent);
-                            finish();
-                        });
-                    }
+            Log.d("CandidateUpdate", "Updated Candidate - Name: " + updated.getName() +
+                    ", CPF: " + updated.getCpf() +
+                    ", Phone: " + updated.getPhoneNumber() +
+                    ", UserID: " + updated.getUserId());
 
 
-                    @Override
-                    public void onFailure(String error) {
-                        runOnUiThread(() ->
-                                Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
-                    }
-                });
+            candidateService.updateCandidate(updated, new CandidateService.registerCallback() {
+                @Override
+                public void onSuccess(Candidate candidate) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(UserRegister.this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show();
+                        finish(); // ou voltar pra tela anterior
+                    });
+                }
 
-            }
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() ->
+                            Toast.makeText(UserRegister.this, "Erro ao atualizar: " + error, Toast.LENGTH_SHORT).show());
+                }
+            });
+        } else {
+            loginService.registerUser(user, new LoginService.UserCallback() {
+                @Override
+                public void onSuccess(int userId) {
+                    System.out.println(userId);
 
-            @Override
-            public void onFailure(String error) {
+                    Candidate candidate = new Candidate(name, cpf, phone, userId);
 
-                runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
-            }
-        });
+
+                    candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
+                        @Override
+                        public void onSuccess(Candidate candidate) {
+                            runOnUiThread(() -> {
+                                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putInt("userId", userId);
+                                editor.putInt("candidateId", candidate.getId()); // AGORA OK ✅
+                                editor.putString("email", user.getEmail());
+                                editor.putString("type", user.getType().getValue());
+                                editor.putString("name", candidate.getName());
+                                editor.putString("cpf", candidate.getCpf());
+                                editor.putString("phone", candidate.getPhoneNumber());
+                                editor.putBoolean("isLoggedIn", true);
+                                editor.apply();
+
+                                Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(UserRegister.this, Vacancies.class);
+                                startActivity(intent);
+                                finish();
+                            });
+                        }
+
+
+                        @Override
+                        public void onFailure(String error) {
+                            runOnUiThread(() ->
+                                    Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onFailure(String error) {
+
+                    runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
+                }
+            });
+        }
+
+
     }
+
+    private void loadCandidateData(int candidateId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "Email não encontrado");
+        String name  = sharedPreferences.getString("name", "Nome não encontrado");
+        String phone = sharedPreferences.getString("phone", "Telefone não encontrado");
+        String cpf = sharedPreferences.getString("cpf", "CPF não encontrado");
+
+
+        emailInput.setText(email);
+        nameInput.setText(name);
+        phoneInput.setText(phone);
+        cpfInput.setText(cpf);
+
+
+
+
+
+    }
+
+
 
     // Função para quando o usuário já tiver uma conta
     public void haveAccount(View view){
