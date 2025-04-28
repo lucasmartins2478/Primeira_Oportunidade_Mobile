@@ -1,6 +1,9 @@
 package com.activities;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -76,6 +79,26 @@ public class MyVacancies extends AppCompatActivity {
             });
         }
 
+        criarCanalDeNotificacaoEmpresa();
+
 
     }
+
+    private void criarCanalDeNotificacaoEmpresa() {
+        // Verifica se a versão do Android é 8.0 (API 26) ou superior
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Canal de Vagas da Empresa";
+            String description = "Notificações sobre novos candidatos";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            // Cria o canal de notificação
+            NotificationChannel channel = new NotificationChannel("CANAL_VAGAS_EMPRESA", name, importance);
+            channel.setDescription(description);
+
+            // Registra o canal no sistema
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }

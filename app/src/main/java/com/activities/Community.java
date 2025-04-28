@@ -23,6 +23,22 @@ public class Community extends AppCompatActivity {
             return insets;
         });
     }
+    public void openSection1(View view){
+        Intent intent = new Intent(Community.this, CommunityStep1.class);
+        startActivity(intent);
+    }
+    public void openSection2(View view){
+        Intent intent = new Intent(Community.this, CommunityStep2.class);
+        startActivity(intent);
+    }
+    public void openSection3(View view){
+        Intent intent = new Intent(Community.this, CommunityStep3.class);
+        startActivity(intent);
+    }
+    public void openSection4(View view){
+        Intent intent = new Intent(Community.this, CommunityStep4.class);
+        startActivity(intent);
+    }
 
 
     public void openChat(View view){

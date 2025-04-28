@@ -4,10 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
+    android:background="@color/blue"
     android:layout_height="match_parent"
     tools:context=".CurriculumAnalysis">
 
 
+    <LinearLayout
+        android:background="@color/background_color"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

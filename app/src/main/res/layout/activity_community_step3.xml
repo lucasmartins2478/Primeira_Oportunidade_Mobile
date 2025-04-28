@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:background="@color/blue"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CommunityStep3">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomMenuFragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@color/background_color"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/background_color"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/bottomMenuFragment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageButton
+                android:id="@+id/back_button"
+                style="@style/BackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onBackPressed"
+                android:src="@drawable/back_button"
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tips_to_enterviews"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/back_button" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="344dp"
+                android:layout_height="154dp"
+                android:textColor="@color/black"
+                android:layout_marginTop="36dp"
+                android:text=" A entrevista de trabalho é a sua grande oportunidade de exibir suas
+      habilidades, personalidade e características únicas para o entrevistador.
+      Deve-se preparar corretamente para não cometer erros comuns e conseguir
+      passar uma boa primeira impressão. Vamos analisar as dicas que vão te
+      ajudar a ir tranquilo para sua primeira entrevista:"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="276dp"
+                android:layout_height="260dp"
+                android:src="@drawable/support_operator_helps_to_solve_the_problem"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+
+                android:layout_marginTop="36dp"
+                android:text=" Pesquisa: Alguns dias antes da entrevista, você deve pesquisar sobre a
+      empresa e a área que você está se candidatando. Mostrar o seu conhecimento
+      sobre a empresa vai mostrar ao recrutador que você está interessado e se
+      mantém atualizado a respeito da empresa."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/black"
+
+                android:text=" Conheça a vaga: Familiarize-se com a descrição da vaga e comece a pensar
+      em como você se encaixa no perfil da empresa e para o que consegue
+      contribuir. Se torna uma estratégia muito útil caso o recrutador ou
+      recrutadora pergunte o que você traz de ganho para eles.
+"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/black"
+
+                android:text=" Chegue com respostas prontas para as perguntas conhecidas: Várias
+      perguntas feitas em uma entrevista são feitas na maior parte delas, por
+      exemplo: Fale um pouco sobre você, ou Quais são seus pontos fortes e
+            fracos?, Onde você se vê em cinco anos?, e outras do tipo. Se você
+            estruturar suas respostas de maneira clara e objetiva, irá reduzir o seu
+            nervosismo de tentar formular algo na hora.
+            "
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="  Aja de maneira confiante: Mesmo se você for uma pessoa não tão confiante,
+      venda-se com uma imagem sólida. Mostre-se confortável mas não desleixado,
+      e saiba diferenciar entre confiança e arrogância. Se conseguir, controle
+      sempre o fluxo da conversa equilibradamente, não falando demais e nem se
+      mantendo quieto demais."
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text=" Não minta: Mentiras têm pernas curtas, não minta sobre suas capacidades na
+      entrevista. Não exagere suas habilidades. Não sinta medo de falar que não
+      sabe algo, a entrevista é também para acessar suas capacidades, caso seja
+      acessado incorretamente pode levar à vários problemas. O recrutador ou
+      recrutadora vai apreciar sua capacidade de falar a verdade."
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Faça perguntas: Quase todas as entrevistas encerram com um momento para o
+      candidato perguntar sobre suas dúvidas. Faça perguntas sobre a rotina
+      dentro da empresa, o que as equipes fazem durante as semanas de trabalho,
+      e perguntas que mostrem o seu interesse no contexto da empresa
+      contratando. É melhor não perguntar sobre salário e benefícios em um
+      primeiro momento, a não ser que o entrevistador fale sobre isso de sua
+      própria volição."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textColor="@color/black"
+
+                app:layout_constraintTop_toBottomOf="@+id/textView14" />
+
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="289dp"
+                android:layout_height="237dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/people_in_office_working_on_time_management"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="344dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textColor="@color/black"
+
+                android:text=" Com essas dicas em mente, lembre-se de sempre estar confortável e não
+      demonstrar insegurança, pois uma entrevista não deve ser assustadora e sim
+      interessante! Boa sorte candidato!"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </ScrollView>
+
+
+
+
+
+
+    <fragment
+        android:id="@+id/bottomMenuFragment"
+        android:name="com.fragments.BottomMenuFragment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

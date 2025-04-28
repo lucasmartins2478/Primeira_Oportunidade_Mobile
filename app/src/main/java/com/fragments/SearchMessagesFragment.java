@@ -65,7 +65,8 @@ public class SearchMessagesFragment extends Fragment {
 
     // Método para adicionar uma nova mensagem
     public void adicionarMensagem(Message message) {
-        allMessages.add(0, message); // Adiciona a nova mensagem no início da lista
-        adapter.notifyItemInserted(0); // Notifica que um item foi inserido na posição 0 (início da lista)
+        allMessages.add(message); // Adiciona a nova mensagem no final da lista
+        adapter.notifyItemInserted(allMessages.size() - 1); // Notifica que o item foi inserido na última posição
     }
+
 }
