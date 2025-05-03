@@ -1,5 +1,8 @@
 package com.services;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.models.Candidate;
@@ -9,6 +12,11 @@ import com.models.UserType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +108,12 @@ public class LoginService {
 
     public  interface FetchCallback{
         void onSuccess(User user);
+
+        void onFailure(String error);
+    }
+
+    public interface DeleteCallback{
+        void onSuccess();
 
         void onFailure(String error);
     }
@@ -251,6 +265,47 @@ public class LoginService {
     public interface LoginCallback {
         void onSuccess(User user);
         void onFailure(String errorMessage);
+    }
+
+
+
+    public  void deleteUserData(Context context, int userId, LoginService.DeleteCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL("https://backend-po.onrender.com/user/" + userId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                if (is != null) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    is.close();
+                    System.out.println("Resposta (delete): " + response.toString());
+                }
+
+                if (responseCode == 200 || responseCode == 204) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao excluir usuário. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
     }
 
 }

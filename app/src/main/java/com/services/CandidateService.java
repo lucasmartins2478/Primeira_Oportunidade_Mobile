@@ -43,6 +43,12 @@ public class CandidateService {
         void onFailure(String error);
     }
 
+    public interface  DeleteCallback{
+        void onSuccess();
+
+        void onFailure(String error);
+    }
+
 
 
     public void fetchCandidateFromApi(int userId, CandidateCallback callback) {
@@ -282,6 +288,84 @@ public class CandidateService {
                     new Handler(Looper.getMainLooper()).post(callback::onSuccess);
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao registrar currículo. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    public  void deleteAllCandidateData(Context context, int candidateId, int curriculumId, CandidateService.DeleteCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL("https://backend-po.onrender.com/candidateData/" + candidateId+"/"+curriculumId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                if (is != null) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    is.close();
+                    System.out.println("Resposta (delete): " + response.toString());
+                }
+
+                if (responseCode == 200 || responseCode == 204) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao excluir usuário. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    public  void deleteCandidateData(Context context, int candidateId,  CandidateService.DeleteCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL("https://backend-po.onrender.com/candidate/" + candidateId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                if (is != null) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    is.close();
+                    System.out.println("Resposta (delete): " + response.toString());
+                }
+
+                if (responseCode == 200 || responseCode == 204) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao excluir usuário. Código: " + responseCode));
                 }
 
             } catch (Exception e) {

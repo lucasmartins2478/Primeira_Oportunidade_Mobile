@@ -176,17 +176,18 @@
                 android:layout_width="344dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:textColor="@color/black"
-
                 android:text="  Explore essas opções para adquirir novas competências e se preparar melhor para o
         mercado!"
+
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+
+                android:layout_marginBottom="50dp"
+                app:layout_constraintHorizontal_bias="0.507"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView3" />
-
-
-
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

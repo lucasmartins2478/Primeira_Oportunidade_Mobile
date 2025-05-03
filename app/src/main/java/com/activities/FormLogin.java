@@ -108,6 +108,10 @@ public class FormLogin extends AppCompatActivity {
                                     editor.putString("name", candidate.getName());
                                     editor.putString("cpf", candidate.getCpf());
                                     editor.putString("phone", candidate.getPhoneNumber());
+                                    if(candidate.getCurriculumId() != null){
+                                        editor.putInt("curriculumId", candidate.getCurriculumId());
+
+                                    }
                                     editor.putBoolean("isLoggedIn", true);
                                     editor.commit();  // <- garante que foi salvo antes de redirecionar
 

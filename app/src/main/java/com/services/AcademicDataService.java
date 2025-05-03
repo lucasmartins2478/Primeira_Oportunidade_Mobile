@@ -233,11 +233,13 @@ public class AcademicDataService {
                             JSONObject obj = array.getJSONObject(i);
 
                             AcademicData data = new AcademicData();
+                            data.setId(obj.getInt("id"));
                             data.setInstitutionName(obj.getString("institutionName"));
                             data.setCourseName(obj.getString("name"));
                             data.setPeriod(obj.getString("semester"));
                             data.setStartDate(obj.getString("startDate"));
                             data.setEndDate(obj.getString("endDate"));
+                            data.setCity(obj.getString("city"));
                             data.setIsCurrentlyStudying(obj.getInt("isCurrentlyStudying") == 1);
 
                             dataList.add(data);
@@ -255,6 +257,46 @@ public class AcademicDataService {
             }
         });
     }
+
+    public static void deleteAcademicData(Context context, int academicDataId, AcademicDataCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(BASE_URL + "/" + academicDataId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+                int responseCode = conn.getResponseCode();
+
+                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
+                        ? conn.getInputStream()
+                        : conn.getErrorStream();
+
+                if (is != null) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    is.close();
+                    System.out.println("Resposta (delete): " + response.toString());
+                }
+
+                if (responseCode == 200 || responseCode == 204) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao excluir dado acadêmico. Código: " + responseCode));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+
 
 
 

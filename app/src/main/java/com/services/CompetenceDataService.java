@@ -154,9 +154,32 @@ public class CompetenceDataService {
             }
         }).start();
     }
+    public static void deleteCompetenceData(Context context, int competenceId, CompetenceDataCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(BASE_URL + "/" + competenceId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_NO_CONTENT || responseCode == HttpURLConnection.HTTP_OK) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            callback.onFailure("Erro ao deletar curso. Código: " + responseCode));
+                }
+
+                conn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
 
     public interface FetchCompetencesCallback {
-        void onSuccess(List<String> competences);
+        void onSuccess(List<CompetenceData> competences);
         void onFailure(String errorMessage);
     }
 
@@ -181,31 +204,35 @@ public class CompetenceDataService {
                 }
 
                 String responseData = response.body().string();
-                JSONArray jsonArray = null;
+                List<CompetenceData> competences = new ArrayList<>();
+
                 try {
-                    jsonArray = new JSONArray(responseData);
+                    JSONArray jsonArray = new JSONArray(responseData);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject comp = jsonArray.getJSONObject(i);
+
+                        // Extrai os dados do JSON
+                        int id = comp.getInt("id");
+                        String name = comp.getString("name");
+                        int curriculumId = comp.getInt("curriculumId");
+
+                        // Cria o objeto CompetenceData
+                        CompetenceData data = new CompetenceData();
+                        data.setId(id);
+                        data.setCompetence(name);
+                        data.setCurriculumId(curriculumId);
+
+                        competences.add(data);
+                    }
+
+                    callback.onSuccess(competences);
+
                 } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                    callback.onFailure("Erro ao processar JSON: " + e.getMessage());
                 }
-                List<String> competences = new ArrayList<>();
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject comp = null;
-                    try {
-                        comp = jsonArray.getJSONObject(i);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        competences.add(comp.getString("name"));
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                callback.onSuccess(competences);
             }
         });
     }
+
 
 }

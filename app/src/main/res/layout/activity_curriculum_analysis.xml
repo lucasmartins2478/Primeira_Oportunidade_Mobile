@@ -107,6 +107,7 @@
         android:layout_width="333dp"
         android:layout_height="73dp"
         android:layout_marginTop="44dp"
+        android:textColor="@color/black"
         android:text="Adicione aqui o seu currículo para que possamos fazer uma analise e fazer sugestões de melhorias para tornar seu currículo mais chamativo para as empresas"
         android:textAlignment="center"
         android:textSize="15sp"

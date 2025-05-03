@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -43,6 +44,8 @@ public class AcademicDataRegister extends AppCompatActivity {
 
     LayoutInflater inflater;
     List<View> formViews = new ArrayList<>();
+
+    Spinner levelSpinner;
 
     private EditText instituitionNameInput, startDateInput, endDateInput, cityInput;
 
@@ -84,11 +87,33 @@ public class AcademicDataRegister extends AppCompatActivity {
 
 
 
-        Spinner levelSpinner = findViewById(R.id.level_spinner);
+        levelSpinner = findViewById(R.id.level_spinner);
         ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(this,
                 R.array.level_options, R.layout.spinner_item);
         levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         levelSpinner.setAdapter(levelAdapter);
+
+
+
+        int curriculumId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("curriculumId", -1);
+        if(curriculumId != -1){
+
+            loadCurriculumData(curriculumId);
+
+
+            AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
+                @Override
+                public void onSuccess(List<AcademicData> dataList) {
+                    runOnUiThread(() -> populateAcademicDataForms(dataList));
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    runOnUiThread(() -> Toast.makeText(AcademicDataRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show());
+                }
+            });
+        }
+
 
 
 
@@ -138,14 +163,12 @@ public class AcademicDataRegister extends AppCompatActivity {
         );
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        int curriculumId = sharedPreferences.getInt("candidateId", -1);
+        int curriculumId = sharedPreferences.getInt("curriculumId", -1);
 
 
         CurriculumService.addSchoolData(AcademicDataRegister.this, schoolData, new CurriculumService.CurriculumCallback() {
             @Override
             public void onSuccess() {
-                // Mostra mensagem
-                Toast.makeText(AcademicDataRegister.this, "Dados principais enviados com sucesso!", Toast.LENGTH_SHORT).show();
 
 
                 if (formViews.isEmpty()) {
@@ -185,33 +208,58 @@ public class AcademicDataRegister extends AppCompatActivity {
                     String formattedEndDate = endDateInput.getText().toString().replace("/", "-");
 
 
-                    AcademicData academicData = new AcademicData(
-                            course,
-                            per,
-                            formattedStartDate,
-                            formattedEndDate,
-                            isStudying,
-                            inst,
-                            lvl,
-                            cityDyn,
-                            curriculumId
+                    AcademicData academicData = (AcademicData) form.getTag();
+                    if (academicData == null) {
+                        academicData = new AcademicData(); // novo
+                        Log.d("AcademicDataDebug", "Novo academicData criado. ID: " + academicData.getId());
+                    } else {
+                        Log.d("AcademicDataDebug", "Editando academicData existente. ID: " + academicData.getId());
+                    }
 
-                    );
+                    academicData.setCourseName(course);
+                    academicData.setPeriod(per);
+                    academicData.setStartDate(formattedStartDate);
+                    academicData.setEndDate(formattedEndDate);
+                    academicData.setIsCurrentlyStudying(isStudying);
+                    academicData.setInstitutionName(inst);
+                    academicData.setLevel(lvl);
+                    academicData.setCity(cityDyn);
+                    academicData.setCurriculumId(curriculumId);
 
 
-                    AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
-                        @Override
-                        public void onSuccess() {
-                            Toast.makeText(AcademicDataRegister.this, "Dados da instituição "+ inst + " Enviados", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
-                            startActivity(intent);
-                        }
+                    Log.d("AcademicDataDebug", "Dados finais de academicData: " +
+                            "ID=" + academicData.getId() + ", Curso=" + course + ", Instituição=" + inst);
 
-                        @Override
-                        public void onFailure(String errorMessage) {
 
-                        }
-                    });
+                    if (academicData.getId() != 0) { // Editando
+                        AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(AcademicDataRegister.this, Profile.class);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailure(String errorMessage) {
+                                Toast.makeText(AcademicDataRegister.this, "Erro ao atualizar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else { // Cadastrando novo
+                        AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
+                            @Override
+                            public void onSuccess() {
+                                Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " enviados", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailure(String errorMessage) {
+                                Toast.makeText(AcademicDataRegister.this, "Erro ao registrar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
 
 
 
@@ -257,16 +305,147 @@ public class AcademicDataRegister extends AppCompatActivity {
 
         // Referência ao botão de remover
         ImageButton removeButton = form.findViewById(R.id.remove_form_button);
-
         removeButton.setOnClickListener(v -> {
             containerLayout.removeView(form);
             formViews.remove(form);
         });
 
+
         formViews.add(form);
         containerLayout.addView(form);
 
     }
+
+    private void populateAcademicDataForms(List<AcademicData> academicDataList) {
+        for (AcademicData data : academicDataList) {
+            View form = inflater.inflate(R.layout.item_academic_data_form, containerLayout, false);
+
+            EditText courseInput = form.findViewById(R.id.course_name_input);
+            EditText startDateInput = form.findViewById(R.id.start_date_input);
+            EditText endDateInput = form.findViewById(R.id.end_date_input);
+            EditText cityInput = form.findViewById(R.id.city_input);
+            EditText institutionInput = form.findViewById(R.id.institution_name_input);
+            CheckBox isStudyingYet = form.findViewById(R.id.isCurrentlyStudying);
+
+            Spinner levelSpinner = form.findViewById(R.id.level_spinner);
+            Spinner periodSpinner = form.findViewById(R.id.period_spinner);
+
+            // Adapters dos spinners
+            ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.level_options, R.layout.spinner_item);
+            levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            levelSpinner.setAdapter(levelAdapter);
+
+            ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.period_options, R.layout.spinner_item);
+            periodAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            periodSpinner.setAdapter(periodAdapter);
+
+            // Preenche os campos
+            courseInput.setText(data.getCourseName());
+            cityInput.setText(data.getCity());
+            institutionInput.setText(data.getInstitutionName());
+            startDateInput.setText(data.getStartDate().replace("-", "/"));
+            endDateInput.setText(data.getEndDate().replace("-", "/"));
+            isStudyingYet.setChecked(data.getIsCurrentlyStudying());
+
+            // Seleciona valores nos spinners
+            if (data.getLevel() != null) {
+                int levelPosition = levelAdapter.getPosition(data.getLevel());
+                levelSpinner.setSelection(levelPosition);
+            }
+            if (data.getPeriod() != null) {
+                int periodPosition = periodAdapter.getPosition(data.getPeriod());
+                periodSpinner.setSelection(periodPosition);
+            }
+
+            // Máscara para datas
+            startDateInput.addTextChangedListener(MaskEditText.mask(startDateInput, "##/####"));
+            endDateInput.addTextChangedListener(MaskEditText.mask(endDateInput, "##/####"));
+
+            // Botão de remover
+            ImageButton removeButton = form.findViewById(R.id.remove_form_button);
+            removeButton.setOnClickListener(v -> {
+                Log.d("Delete", "Clique no botão de remover registrado");
+
+                if (data != null && data.getId() > 0) {
+                    // Exclusão no backend
+                    AcademicDataService.deleteAcademicData(AcademicDataRegister.this, data.getId(), new AcademicDataService.AcademicDataCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> {
+                                Toast.makeText(AcademicDataRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
+                                containerLayout.removeView(form);
+                                formViews.remove(form);
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(AcademicDataRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                } else {
+                    Log.d("Delete", "ID não válido ou null, removendo apenas da interface.");
+                    containerLayout.removeView(form);
+                    formViews.remove(form);
+                }
+            });
+
+            form.setTag(data); // Salva o AcademicData na View
+
+            formViews.add(form);
+            containerLayout.addView(form);
+        }
+    }
+
+    private void loadCurriculumData(int candidateId) {
+        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+            @Override
+            public void onSuccess(Curriculum curriculum) {
+                runOnUiThread(() -> {
+
+                    instituitionNameInput.setText(safeText(curriculum.getSchoolName()));
+                    startDateInput.setText(safeText(curriculum.getSchoolStartDate()).replace("-", "/"));
+                    endDateInput.setText(safeText(curriculum.getSchoolEndDate()).replace("-", "/"));
+                    cityInput.setText(safeText(curriculum.getSchoolCity()));
+
+
+                    isCurrentlyStudying.setChecked(Boolean.TRUE.equals(curriculum.isCurrentlyStudying()));
+
+                    if (curriculum.getSchoolYear() != null) {
+                        levelSpinner.post(() -> {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) levelSpinner.getAdapter();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                if (curriculum.getSchoolYear().equalsIgnoreCase(adapter.getItem(i).toString())) {
+                                    levelSpinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+
+
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                runOnUiThread(() -> {
+                    Toast.makeText(AcademicDataRegister.this, "Erro ao carregar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private String safeText(String value) {
+        return (value == null || value.equalsIgnoreCase("null")) ? "" : value;
+    }
+
+
 
 
 

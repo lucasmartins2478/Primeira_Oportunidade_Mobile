@@ -8,11 +8,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -29,6 +32,14 @@ public class CompanyRegister extends AppCompatActivity {
     private CompanyService companyService;
     private LoginService loginService;
 
+    private int companyId;
+    private TextView haveAccount;
+
+    private LinearLayout confirmPasswordContainer, passwordContainer;
+
+    AppCompatButton registerBtn, changePassword;
+
+
     private EditText companyNameInput, cnpjInput, emailInput, phoneInput, responsibleInput, websiteInput, cityInput, cepInput, addressInput, addressNumberInput, passwordInput, confirmPasswordInput;
 
     @Override
@@ -42,6 +53,13 @@ public class CompanyRegister extends AppCompatActivity {
             return insets;
         });
 
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        companyId = prefs.getInt("companyId", -1);
+        Log.d("CompanyID", "companyId: "+companyId);
+
+        registerBtn = findViewById(R.id.register_button);
+
+
         companyNameInput = findViewById(R.id.compay_name_input);
         cnpjInput = findViewById(R.id.cnpj_input);
         emailInput = findViewById(R.id.email_input);
@@ -50,11 +68,15 @@ public class CompanyRegister extends AppCompatActivity {
         websiteInput = findViewById(R.id.website_input);
         cityInput = findViewById(R.id.city_input);
         cepInput = findViewById(R.id.cep_input);
+        changePassword = findViewById(R.id.change_password);
+        confirmPasswordContainer = findViewById(R.id.confirm_password_container);
+        passwordContainer = findViewById(R.id.password_container);
 
         addressInput = findViewById(R.id.address_input);
         addressNumberInput = findViewById(R.id.address_number_input);
         passwordInput = findViewById(R.id.password_input);
         confirmPasswordInput = findViewById(R.id.confirm_password_input);
+        haveAccount = findViewById(R.id.have_account);
 
         phoneInput.addTextChangedListener(MaskEditText.mask(phoneInput, "(##) #####-####"));
         cnpjInput.addTextChangedListener(MaskEditText.mask(cnpjInput, "##.###.###/####-##"));
@@ -77,11 +99,24 @@ public class CompanyRegister extends AppCompatActivity {
 
 
 
+        if(companyId != -1){
+            changePassword.setVisibility(View.VISIBLE);
+            confirmPasswordContainer.setVisibility(View.GONE);
+            passwordContainer.setVisibility(View.GONE);
+            registerBtn.setText("Salvar alterações");
+            haveAccount.setVisibility(View.GONE);
+            loadCompanyData();
+
+        }
+
 
         companyService = new CompanyService();
         loginService = new LoginService();
     }
 
+    public void changePassword(View view){
+
+    }
 
     public void registerCompany(View view) {
 
@@ -153,107 +188,209 @@ public class CompanyRegister extends AppCompatActivity {
         }
         int addressNumberInt = Integer.parseInt(addressNumber);
 
-        if (password.isEmpty()) {
-            passwordInput.setError("Preencha a senha");
-            passwordInput.requestFocus();
-            return;
-        }
-        if (confirmPassword.isEmpty()) {
-            confirmPasswordInput.setError("Preencha a confirmação de senha");
-            confirmPasswordInput.requestFocus();
-            return;
-        }
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
-            return;
+
+        if(companyId == -1){
+            if (password.isEmpty()) {
+                passwordInput.setError("Preencha a senha");
+                passwordInput.requestFocus();
+                return;
+            }
+            if (confirmPassword.isEmpty()) {
+                confirmPasswordInput.setError("Preencha a confirmação de senha");
+                confirmPasswordInput.requestFocus();
+                return;
+            }
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        int userId = prefs.getInt("userId", -1);
 
         User user = new User(email, password, UserType.COMPANY);
 
-        loginService.registerUser(user, new LoginService.UserCallback() {
-            @Override
-            public void onSuccess(int userId) {
+
+        if(companyId != -1){
+            Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
+                    city, cep, address, addressNumberInt, uf, website, logo, userId);
 
 
-                Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
-                        city, cep, address, addressNumberInt, uf, website, logo, userId);
 
-                companyService.registerCompany(company, new CompanyService.RegisterCallback() {
-                    @Override
-                    public void onSuccess() {
-                        runOnUiThread(() -> {
-                            // Aqui você já tem o userId (do loginService.registerUser)
-                            companyService.fetchCompanyFromApi(userId, new CompanyService.CompanyCallback() {
-                                @Override
-                                public void onSuccess(Company fetchedCompany) {
-                                    SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putInt("companyId", fetchedCompany.getId()); // SALVANDO companyId agora
-                                    companyService.fetchCompanyFromApi(userId, new CompanyService.CompanyCallback() {
-                                        @Override
-                                        public void onSuccess(Company fullCompany) {
+            companyService.updateCompany(company, new CompanyService.RegisterCallback() {
+                @Override
+                public void onSuccess() {
+                    runOnUiThread(() -> {
+                        Toast.makeText(CompanyRegister.this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show();
+                        finish(); // ou voltar pra tela anterior
+                    });
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() ->
+                            Toast.makeText(CompanyRegister.this, "Erro ao atualizar: " + error, Toast.LENGTH_SHORT).show());
+
+                }
+            });
+        }else if(companyId == -1){
+            loginService.registerUser(user, new LoginService.UserCallback() {
+                @Override
+                public void onSuccess(int userId) {
 
 
-                                            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                                            editor.putInt("userId", userId);
-                                            editor.putInt("companyId", fullCompany.getId()); // <-- Aqui está o ID que você precisa
-                                            editor.putString("email", user.getEmail());
-                                            editor.putString("type", user.getType().getValue());
-                                            editor.putString("name", fullCompany.getCompanyName());
-                                            editor.putString("cnpj", fullCompany.getCnpj());
-                                            editor.putString("segment", fullCompany.getSegment());
-                                            editor.putString("responsible", fullCompany.getResponsible());
-                                            editor.putString("phone", fullCompany.getPhoneNumber());
-                                            editor.putString("city", fullCompany.getCity());
-                                            editor.putString("cep", fullCompany.getCep());
-                                            editor.putString("address", fullCompany.getAddress());
-                                            editor.putInt("addressNumber", fullCompany.getAddressNumber());
-                                            editor.putString("uf", fullCompany.getUf());
-                                            editor.putString("url", fullCompany.getWebsite());
-                                            editor.putString("logo", fullCompany.getLogo());
+                    Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
+                            city, cep, address, addressNumberInt, uf, website, logo, userId);
 
-                                            editor.apply();
+                    companyService.registerCompany(company, new CompanyService.RegisterCallback() {
+                        @Override
+                        public void onSuccess() {
+                            runOnUiThread(() -> {
+                                // Aqui você já tem o userId (do loginService.registerUser)
+                                companyService.fetchCompanyFromApi(userId, new CompanyService.CompanyCallback() {
+                                    @Override
+                                    public void onSuccess(Company fetchedCompany) {
+                                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putInt("companyId", fetchedCompany.getId()); // SALVANDO companyId agora
+                                        companyService.fetchCompanyFromApi(userId, new CompanyService.CompanyCallback() {
+                                            @Override
+                                            public void onSuccess(Company fullCompany) {
 
-                                            Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
-                                            startActivity(intent);
-                                        }
 
-                                        @Override
-                                        public void onFailure(String error) {
-                                            runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao buscar empresa após cadastro: " + error, Toast.LENGTH_SHORT).show());
-                                        }
-                                    });
+                                                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.putInt("userId", userId);
+                                                editor.putInt("companyId", fullCompany.getId()); // <-- Aqui está o ID que você precisa
+                                                editor.putString("email", user.getEmail());
+                                                editor.putString("type", user.getType().getValue());
+                                                editor.putString("name", fullCompany.getCompanyName());
+                                                editor.putString("cnpj", fullCompany.getCnpj());
+                                                editor.putString("segment", fullCompany.getSegment());
+                                                editor.putString("responsible", fullCompany.getResponsible());
+                                                editor.putString("phone", fullCompany.getPhoneNumber());
+                                                editor.putString("city", fullCompany.getCity());
+                                                editor.putString("cep", fullCompany.getCep());
+                                                editor.putString("address", fullCompany.getAddress());
+                                                editor.putInt("addressNumber", fullCompany.getAddressNumber());
+                                                editor.putString("uf", fullCompany.getUf());
+                                                editor.putString("url", fullCompany.getWebsite());
+                                                editor.putString("logo", fullCompany.getLogo());
 
-                                }
+                                                editor.apply();
 
-                                @Override
-                                public void onFailure(String error) {
-                                    Toast.makeText(CompanyRegister.this, "Erro ao recuperar empresa: " + error, Toast.LENGTH_SHORT).show();
-                                }
+                                                loginService.login(email, password, new LoginService.LoginCallback() {
+                                                    @Override
+                                                    public void onSuccess(User user) {
+                                                        Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
+                                                        startActivity(intent);
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(String errorMessage) {
+
+                                                    }
+                                                });
+
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(String error) {
+                                                runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao buscar empresa após cadastro: " + error, Toast.LENGTH_SHORT).show());
+                                            }
+                                        });
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(String error) {
+                                        Toast.makeText(CompanyRegister.this, "Erro ao recuperar empresa: " + error, Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             });
-                        });
-                    }
+                        }
 
-                    @Override
-                    public void onFailure(String error) {
-                        runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
-                    }
-                });
+                        @Override
+                        public void onFailure(String error) {
+                            runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
+                        }
+                    });
 
-            }
+                }
 
-            @Override
-            public void onFailure(String error) {
-                runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
+                @Override
+                public void onFailure(String error) {
+                    runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
 
 
+                }
+            });
+
+        }
+
+    }
+
+
+    private void loadCompanyData() {
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String name = prefs.getString("name", "");
+        String cnpj = prefs.getString("cnpj", "");
+        String email = prefs.getString("email", "");
+        String phone = prefs.getString("phone", "");
+        String responsible = prefs.getString("responsible", "");
+        String website = prefs.getString("url", "");
+        String city = prefs.getString("city", "");
+        String cep = prefs.getString("cep", "");
+        String address = prefs.getString("address", "");
+        int addressNumber = prefs.getInt("addressNumber", -1);
+        String uf = prefs.getString("uf", "");
+        String segment = prefs.getString("segment", "");
+        String logo = prefs.getString("logo", "");
+
+        companyNameInput.setText(name);
+        cnpjInput.setText(cnpj);
+        emailInput.setText(email);
+        phoneInput.setText(phone);
+        responsibleInput.setText(responsible);
+        websiteInput.setText(website);
+        cityInput.setText(city);
+        cepInput.setText(cep);
+        addressInput.setText(address);
+        addressNumberInput.setText(addressNumber != -1 ? String.valueOf(addressNumber) : "");
+
+        EditText logoInput = findViewById(R.id.logo_input);
+        logoInput.setText(logo);
+
+        Spinner segmentSpinner = findViewById(R.id.segment_spinner);
+        Spinner ufSpinner = findViewById(R.id.uf_spinner);
+
+        // Setando valor do Spinner de Segmento
+        segmentSpinner.post(() -> {
+            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) segmentSpinner.getAdapter();
+            for (int i = 0; i < adapter.getCount(); i++) {
+                if (segment.equalsIgnoreCase(adapter.getItem(i).toString())) {
+                    segmentSpinner.setSelection(i);
+                    break;
+                }
             }
         });
 
+        ufSpinner.post(() -> {
+            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) ufSpinner.getAdapter();
+            for (int i = 0; i < adapter.getCount(); i++) {
+                if (uf.equalsIgnoreCase(adapter.getItem(i).toString())) {
+                    ufSpinner.setSelection(i);
+                    break;
+                }
+            }
+        });
 
     }
+
 
 
     public void haveAccount(View view) {

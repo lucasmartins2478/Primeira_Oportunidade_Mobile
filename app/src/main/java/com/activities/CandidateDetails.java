@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.models.AcademicData;
 import com.models.Answer;
 import com.models.Candidate;
+import com.models.CompetenceData;
 import com.models.CourseData;
 import com.models.Curriculum;
 import com.models.DateUtils;
@@ -220,7 +221,7 @@ public class CandidateDetails extends AppCompatActivity {
     private void fetchCompetences(int curriculumId) {
         CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
-            public void onSuccess(List<String> competences) {
+            public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {
                     // Se houver competências
                     if (competences.isEmpty()) {
@@ -229,9 +230,9 @@ public class CandidateDetails extends AppCompatActivity {
                         competencesContainer.addView(noCompetencesMessage);
                     } else {
                         // Adiciona cada competência no layout
-                        for (String competence : competences) {
+                        for (CompetenceData competence : competences) {
                             TextView competenceTextView = new TextView(CandidateDetails.this);
-                            competenceTextView.setText("• " + competence);
+                            competenceTextView.setText("• " + competence.getCompetence());
                             competenceTextView.setTextColor(ContextCompat.getColor(CandidateDetails.this, R.color.black));
                             competencesContainer.addView(competenceTextView);
                         }

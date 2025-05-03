@@ -12,6 +12,21 @@ public class CourseData {
 
     private int curriculumId;
 
+    public CourseData(int id, String name, String modality, String duration, String endDate, boolean isCurrentlyStudying, String institutionName, int curriculumId) {
+        this.id = id;
+        this.courseName = name;
+        this.modality = modality;
+        this.duration = duration;
+        this.endDate = endDate;
+        this.inProgress = isCurrentlyStudying;
+        this.grantingIntitution = institutionName;
+        this.curriculumId = curriculumId;
+    }
+
+    public CourseData() {
+
+    }
+
     public int getId() {
         return id;
     }

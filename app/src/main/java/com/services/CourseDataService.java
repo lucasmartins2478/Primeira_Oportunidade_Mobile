@@ -110,7 +110,9 @@ public class CourseDataService {
                 json.put("name", courseData.getCourseName());
                 json.put("modality", courseData.getModality());
                 json.put("duration", courseData.getDuration());
-                json.put("endDate", convertMonthYearToIso(courseData.getEndDate()));
+                String isoEndDate = convertMonthYearToIso(courseData.getEndDate());
+                System.out.println("Data convertida para ISO: " + isoEndDate);
+                json.put("endDate", isoEndDate);
                 json.put("isCurrentlyStudying", courseData.isInProgress());
                 json.put("institutionName", courseData.getGrantingIntitution());
                 json.put("curriculumId", courseData.getCurriculumId());
@@ -160,22 +162,16 @@ public class CourseDataService {
     }
 
 
-    private static String convertMonthYearToIso(String input) {
-        try {
-            // Defina o padrão de data que corresponde ao formato de entrada
-            SimpleDateFormat inputFormat = new SimpleDateFormat("MM-yyyy", Locale.getDefault());
+    public static String convertMonthYearToIso(String input) throws ParseException {
+        if (input == null || input.isEmpty()) return null;
 
-            // A string de entrada pode ter o formato "MM-yyyy"
-            Date date = inputFormat.parse(input); // Isso agora deve funcionar com "MM-yyyy"
+        SimpleDateFormat inputFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-            // Agora, converta para o formato "yyyy-MM-dd", garantindo que sempre seja o dia 01
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            return outputFormat.format(date); // Isso irá retornar a data no formato correto
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null; // Em caso de erro, retorne null
-        }
+        Date date = inputFormat.parse(input);
+        return outputFormat.format(date);
     }
+
 
     public interface FetchCourseDataCallback {
         void onSuccess(List<CourseData> courseDataList);
@@ -215,6 +211,7 @@ public class CourseDataService {
                             JSONObject courseJson = coursesArray.getJSONObject(i);
 
                             CourseData courseData = new CourseData(
+                                    courseJson.optInt("id"),
                                     courseJson.optString("name"),
                                     courseJson.optString("modality"),
                                     courseJson.optString("duration"),
@@ -242,6 +239,31 @@ public class CourseDataService {
             }
         }).start();
     }
+
+    public static void deleteCourseData(Context context, int courseId, CourseDataCallback callback) {
+        new Thread(() -> {
+            try {
+                URL url = new URL(BASE_URL + "/" + courseId);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("DELETE");
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpURLConnection.HTTP_NO_CONTENT || responseCode == HttpURLConnection.HTTP_OK) {
+                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            callback.onFailure("Erro ao deletar curso. Código: " + responseCode));
+                }
+
+                conn.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
+            }
+        }).start();
+    }
+
 
 
 

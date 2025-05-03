@@ -1,5 +1,7 @@
 package com.activities;
 
+import static com.models.UserType.CANDIDATE;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -29,9 +31,7 @@ public class UserRegister extends AppCompatActivity {
 
     private CandidateService candidateService;
     private LoginService loginService;
-    private Candidate existingCandidate;
     private TextView haveAccount;
-
     private int candidateId;
     private AppCompatButton changePassword, registerBtn;
     private EditText nameInput, phoneInput, cpfInput, emailInput, passwordInput, confirmPasswordInput;
@@ -76,7 +76,7 @@ public class UserRegister extends AppCompatActivity {
             haveAccount.setVisibility(View.GONE);
             changePassword.setVisibility(View.VISIBLE);
             registerBtn.setText("Salvar alterações");
-            loadCandidateData(candidateId);
+            loadCandidateData();
         }
     }
 
@@ -125,7 +125,6 @@ public class UserRegister extends AppCompatActivity {
                 confirmPasswordInput.requestFocus();
                 return;
             }
-            return;
         }
 
 
@@ -135,7 +134,7 @@ public class UserRegister extends AppCompatActivity {
         int userId = prefs.getInt("userId", -1);
 
         // Criar o objeto User e Candidate
-        User user = new User(email, password, UserType.CANDIDATE);
+        User user = new User(email, password, CANDIDATE);
 
 
         if (candidateId != -1) {
@@ -170,11 +169,11 @@ public class UserRegister extends AppCompatActivity {
                             Toast.makeText(UserRegister.this, "Erro ao atualizar: " + error, Toast.LENGTH_SHORT).show());
                 }
             });
-        } else {
+        } else if (candidateId == -1){
             loginService.registerUser(user, new LoginService.UserCallback() {
                 @Override
                 public void onSuccess(int userId) {
-                    System.out.println(userId);
+                    Log.d("UserRegister", "Novo userId: " + userId);
 
                     Candidate candidate = new Candidate(name, cpf, phone, userId);
 
@@ -183,10 +182,11 @@ public class UserRegister extends AppCompatActivity {
                         @Override
                         public void onSuccess(Candidate candidate) {
                             runOnUiThread(() -> {
+                                // Tudo o que você tem aqui
                                 SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putInt("userId", userId);
-                                editor.putInt("candidateId", candidate.getId()); // AGORA OK ✅
+                                editor.putInt("candidateId", candidate.getId());
                                 editor.putString("email", user.getEmail());
                                 editor.putString("type", user.getType().getValue());
                                 editor.putString("name", candidate.getName());
@@ -195,11 +195,27 @@ public class UserRegister extends AppCompatActivity {
                                 editor.putBoolean("isLoggedIn", true);
                                 editor.apply();
 
-                                Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(UserRegister.this, Vacancies.class);
-                                startActivity(intent);
-                                finish();
+                                // Agora chama o login
+                                loginService.login(email, password, new LoginService.LoginCallback() {
+                                    @Override
+                                    public void onSuccess(User user) {
+                                        runOnUiThread(() -> {
+                                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(UserRegister.this, Vacancies.class);
+                                            startActivity(intent);
+                                            finish();
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onFailure(String errorMessage) {
+                                        runOnUiThread(() ->
+                                                Toast.makeText(UserRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show()
+                                        );
+                                    }
+                                });
                             });
+
                         }
 
 
@@ -223,7 +239,7 @@ public class UserRegister extends AppCompatActivity {
 
     }
 
-    private void loadCandidateData(int candidateId) {
+    private void loadCandidateData() {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "Email não encontrado");
         String name  = sharedPreferences.getString("name", "Nome não encontrado");

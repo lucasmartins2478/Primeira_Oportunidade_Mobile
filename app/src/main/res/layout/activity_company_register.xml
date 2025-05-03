@@ -330,6 +330,7 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/password_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -348,6 +349,7 @@
                     />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/confirm_password_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -393,6 +395,18 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical">
+
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/change_password"
+                    style="@style/ButtonOrange"
+                    android:layout_width="268dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:onClick="changePassword"
+                    android:text="Alterar senha"
+                    android:visibility="gone"
+            />
 
 
                 <androidx.appcompat.widget.AppCompatButton

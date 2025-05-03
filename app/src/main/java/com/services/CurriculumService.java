@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.models.Curriculum;
@@ -115,6 +116,7 @@ public class CurriculumService {
                 // Recuperar o userId do SharedPreferences
                 SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
                 int userId = prefs.getInt("candidateId", -1);
+                int curriculumId = prefs.getInt("curriculumId", -1);
 
                 if (userId == -1) {
                     throw new Exception("ID do usuário não encontrado");
@@ -131,20 +133,20 @@ public class CurriculumService {
                 json.put("gender", curriculum.getGender());
                 json.put("race", curriculum.getRace());
                 json.put("city", curriculum.getCity());
-                json.put("attached", "");
-                json.put("description", "");
                 json.put("address", curriculum.getAddress());
                 json.put("addressNumber", curriculum.getAddressNumber());
                 json.put("cep", curriculum.getCep());
                 json.put("uf", curriculum.getUf());
 
 
+                Log.d("UpdateCurriculum", "JSON Enviado: " + json.toString());
 
-                System.out.println("JSON enviado para o backend: " + json.toString());
+
+
 
 
                 // Fazer a requisição HTTP
-                URL url = new URL(BASE_URL+"/"+curriculum.getId());
+                URL url = new URL(BASE_URL+"/"+curriculumId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -166,7 +168,6 @@ public class CurriculumService {
                     reader.close();
 
                     JSONObject jsonResponse = new JSONObject(response.toString());
-                    int curriculumId = jsonResponse.getInt("id"); // ou o nome exato retornado no JSON
 
                     // Salvar no SharedPreferences
                     SharedPreferences.Editor editor = prefs.edit();
@@ -349,7 +350,7 @@ public class CurriculumService {
 
                 int responseCode = conn.getResponseCode();
 
-                if (responseCode == 200) {
+                if (responseCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuilder response = new StringBuilder();
                     String line;
@@ -378,9 +379,18 @@ public class CurriculumService {
                     curriculum.setAboutYou(json.optString("description"));
                     curriculum.setInterestArea(json.optString("interestArea"));
 
+                    // Novos campos educacionais
+                    curriculum.setSchoolName(json.optString("schoolName"));
+                    curriculum.setSchoolYear(json.optString("schoolYear"));
+                    curriculum.setSchoolCity(json.optString("schoolCity"));
+                    curriculum.setSchoolStartDate(json.optString("schoolStartDate"));
+                    curriculum.setSchoolEndDate(json.optString("schoolEndDate"));
+                    curriculum.setCurrentlyStudying(json.optInt("isCurrentlyStudying") == 1);
+
                     callback.onSuccess(curriculum);
+
                 } else {
-                    callback.onFailure("Erro: " + responseCode);
+                    callback.onFailure("Erro na resposta HTTP: " + responseCode);
                 }
 
             } catch (Exception e) {
@@ -389,6 +399,7 @@ public class CurriculumService {
             }
         }).start();
     }
+
 
 
 

@@ -6,6 +6,10 @@ public class CompetenceData {
 
     private int curriculumId;
 
+    public CompetenceData() {
+
+    }
+
 
     public int getId() {
         return id;

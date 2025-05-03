@@ -3,6 +3,7 @@ package com.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,14 +19,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.models.AcademicData;
 import com.models.Company;
+import com.models.CompetenceData;
 import com.models.CourseData;
 import com.models.Curriculum;
 import com.models.DateUtils;
 import com.services.AcademicDataService;
+import com.services.CandidateService;
 import com.services.CompanyService;
 import com.services.CompetenceDataService;
 import com.services.CourseDataService;
 import com.services.CurriculumService;
+import com.services.LoginService;
 
 import java.util.List;
 
@@ -35,10 +39,14 @@ public class Profile extends AppCompatActivity {
     TextView   textCity;
     CompanyService companyService;
     String email;
+    int  candidateId, companyId, curriculumId, userId;
     AppCompatButton btnAddCurriculum, btnAnalysis;
     LinearLayout academicContainer;
     LinearLayout coursesContainer, competencesContainer;
 
+    LoginService loginService;
+
+    CandidateService candidateService;
 
 
     @Override
@@ -54,8 +62,10 @@ public class Profile extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        int candidateId = sharedPreferences.getInt("candidateId", -1);
-        int companyId = sharedPreferences.getInt("userId", -1);
+        candidateId = sharedPreferences.getInt("candidateId", -1);
+        companyId = sharedPreferences.getInt("companyId", -1);
+        userId = sharedPreferences.getInt("userId", -1);
+        curriculumId = sharedPreferences.getInt("curriculumId", -1);
         email = sharedPreferences.getString("email", "Email não encontrado");
 
 
@@ -68,6 +78,8 @@ public class Profile extends AppCompatActivity {
         textCity = findViewById(R.id.txt_city);
 
         companyService = new CompanyService();
+        loginService = new LoginService();
+        candidateService = new CandidateService();
 
         btnAnalysis = findViewById(R.id.analize_curriculum);
         academicContainer = findViewById(R.id.academicContainer);
@@ -110,8 +122,12 @@ public class Profile extends AppCompatActivity {
             coursesContainer.setVisibility(View.VISIBLE);
             btnAddCurriculum.setVisibility(View.VISIBLE);
             btnAnalysis.setVisibility(View.VISIBLE);
+            if(curriculumId != -1){
+                btnAddCurriculum.setText("Editar currículo");
+            }
 
             fetchCurriculumData(candidateId);
+
 
 
 
@@ -131,7 +147,7 @@ public class Profile extends AppCompatActivity {
             txtUf.setVisibility(View.VISIBLE);
             txtAddress.setVisibility(View.VISIBLE);
             txtAddressNumber.setVisibility(View.VISIBLE);
-            fetchCompanyData(companyId);
+            fetchCompanyData(userId);
         }
 
 
@@ -154,14 +170,14 @@ public class Profile extends AppCompatActivity {
                     fetchCourseData(candidateId);
                     fetchCompetences(candidateId);
 
+
+
                 });
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() ->
-                        Toast.makeText(Profile.this, "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show()
-                );
+
             }
         });
     }
@@ -194,7 +210,6 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() -> Toast.makeText(Profile.this, "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -226,9 +241,7 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() ->
-                        Toast.makeText(Profile.this, "Erro ao buscar curso complementar: " + errorMessage, Toast.LENGTH_SHORT).show()
-                );
+
             }
         });
     }
@@ -236,7 +249,7 @@ public class Profile extends AppCompatActivity {
     private void fetchCompetences(int curriculumId) {
         CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
-            public void onSuccess(List<String> competences) {
+            public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {
                     // Se houver competências
                     if (competences.isEmpty()) {
@@ -245,9 +258,9 @@ public class Profile extends AppCompatActivity {
                         competencesContainer.addView(noCompetencesMessage);
                     } else {
                         // Adiciona cada competência no layout
-                        for (String competence : competences) {
+                        for (CompetenceData competence : competences) {
                             TextView competenceTextView = new TextView(Profile.this);
-                            competenceTextView.setText("• " + competence);
+                            competenceTextView.setText("• " + competence.getCompetence());
                             competenceTextView.setTextColor(ContextCompat.getColor(Profile.this, R.color.black));
                             competencesContainer.addView(competenceTextView);
                         }
@@ -257,7 +270,6 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() -> Toast.makeText(Profile.this, "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -303,12 +315,81 @@ public class Profile extends AppCompatActivity {
     }
 
     public void updateUser(View view){
-        Intent intent = new Intent(Profile.this, UserRegister.class);
+        if(candidateId != -1){
+            Intent intent = new Intent(Profile.this, UserRegister.class);
+            startActivity(intent);
+        }
+        else{
+            Intent intent = new Intent(Profile.this, CompanyRegister.class);
+            startActivity(intent);
+        }
+
+    }
+    public void updateAcademicData(View view){
+        Intent intent = new Intent(Profile.this, AcademicDataRegister.class);
         startActivity(intent);
     }
+    public void updateCoursesData(View view){
+        Intent intent = new Intent(Profile.this, CoursesRegister.class);
+        startActivity(intent);
+    }
+    public void updateCompetencesData(View view){
+        Intent intent = new Intent(Profile.this, CoursesRegister.class);
+        startActivity(intent);
+    }
+
 
     public void analize(View view){
         Intent intent = new Intent(Profile.this, CurriculumAnalysis.class);
         startActivity(intent);
+    }
+
+    public void deleteAllData(View view){
+        if(candidateId != -1){
+
+
+            candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId, new CandidateService.DeleteCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
+                    logout();
+
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+        }else{
+            Log.d("Delete (empresa) :", "companyId: "+companyId);
+            companyService.deleteAllCompanyData(Profile.this, userId, new CompanyService.RegisterCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
+                    logout();
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void logout() {
+        // 🔹 Apagar os dados do usuário do SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+
+        // 🔹 Redirecionar para a tela de login
+        Intent intent = new Intent(Profile.this, FormLogin.class);
+        startActivity(intent);
+        finish(); // Fecha a Activity principal para evitar que o usuário volte ao pressionar "Voltar"
     }
 }

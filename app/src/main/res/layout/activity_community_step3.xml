@@ -193,11 +193,14 @@
                 android:layout_width="344dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:textColor="@color/black"
-
                 android:text=" Com essas dicas em mente, lembre-se de sempre estar confortável e não
       demonstrar insegurança, pois uma entrevista não deve ser assustadora e sim
       interessante! Boa sorte candidato!"
+
+                android:textColor="@color/black"
+
+                android:layout_marginBottom="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView3" />

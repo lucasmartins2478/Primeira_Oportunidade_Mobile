@@ -30,14 +30,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <androidx.appcompat.widget.AppCompatButton
-            style="@style/SectionTitle"
-            android:layout_width="281dp"
-            android:layout_height="wrap_content"
-            android:text="@string/your_profile"
-            android:elevation="6dp"
-            android:translationZ="6dp"
-            android:textColor="@color/black" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.AppCompatButton
+                style="@style/SectionTitle"
+                android:layout_width="281dp"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:text="@string/your_profile"
+                android:textColor="@color/black"
+                android:translationZ="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/background_color"
+                android:src="@drawable/ic_trash"
+                android:onClick="deleteAllData"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
             android:layout_width="146dp"
@@ -94,15 +114,16 @@
             android:id="@+id/textAcademicTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableRight="@drawable/edit_icon"
-            android:textColor="@color/blue"
             android:layout_marginLeft="15dp"
-            android:visibility="gone"
             android:layout_marginRight="15dp"
+            android:drawableRight="@drawable/edit_icon"
+            android:onClick="updateAcademicData"
+            android:paddingTop="16dp"
             android:text="Formação Acadêmica:"
-            android:textStyle="bold"
+            android:textColor="@color/blue"
             android:textSize="16sp"
-            android:paddingTop="16dp" />
+            android:textStyle="bold"
+            android:visibility="gone" />
         <TextView
             android:id="@+id/textCompanyDataTitle"
             android:layout_width="match_parent"
@@ -247,16 +268,17 @@
             android:id="@+id/textCoursesLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cursos Complementares:"
-            android:visibility="gone"
-            android:drawableRight="@drawable/edit_icon"
-
-            android:textColor="@color/blue"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="15dp"
+
+            android:drawableRight="@drawable/edit_icon"
+            android:onClick="updateCoursesData"
+            android:text="Cursos Complementares:"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/coursesContainer"
@@ -268,19 +290,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="8dp"/>
+
         <TextView
             android:id="@+id/textCompetencesLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:visibility="gone"
-            android:drawableRight="@drawable/edit_icon"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="15dp"
+            android:drawableRight="@drawable/edit_icon"
+            android:onClick="updateCompetencesData"
             android:text="Competências:"
+            android:textColor="@color/blue"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginTop="20dp"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/competencesContainer"
@@ -312,6 +336,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:onClick="analize"
             android:text="Analisar currículo" />
+
 
     </LinearLayout>
     </ScrollView>

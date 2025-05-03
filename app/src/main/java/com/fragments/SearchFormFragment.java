@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.activities.R;
 import com.activities.Vacancies;
 import com.adapters.VacancyAdapter;
 import com.models.AcademicData;
+import com.models.CompetenceData;
 import com.models.CourseData;
 import com.models.Curriculum;
 import com.models.DateUtils;
@@ -64,6 +67,7 @@ public class SearchFormFragment extends Fragment {
     private List<AcademicData> dadosAcademicos = new ArrayList<>();
     private List<CourseData> dadosCursos = new ArrayList<>();
     private List<String> competencias = new ArrayList<>();
+    private boolean isFilterOpen;
 
 
 
@@ -91,6 +95,16 @@ public class SearchFormFragment extends Fragment {
 
         }
 
+        isFilterOpen = false;
+
+        ImageView filterIcon = view.findViewById(R.id.filterIcon);
+        LinearLayout filtersContainer = view.findViewById(R.id.filtersContainer);
+
+        filterIcon.setOnClickListener(v -> {
+            isFilterOpen = !isFilterOpen;
+            filtersContainer.setVisibility(isFilterOpen ? View.VISIBLE : View.GONE);
+        });
+
 
 
         searchInput = view.findViewById(R.id.searchInput);
@@ -114,15 +128,15 @@ public class SearchFormFragment extends Fragment {
             dummyAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             spinnerLevel.setAdapter(dummyAdapter);
         } else {
-            ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(getContext(), R.array.uf_options, R.layout.spinner_item);
+            ArrayAdapter<CharSequence> ufAdapter = ArrayAdapter.createFromResource(getContext(), R.array.uf_options, R.layout.spinner_item_white);
             ufAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             spinnerUf.setAdapter(ufAdapter);
 
-            ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(getContext(), R.array.modality_options, R.layout.spinner_item);
+            ArrayAdapter<CharSequence> modalityAdapter = ArrayAdapter.createFromResource(getContext(), R.array.modality_options, R.layout.spinner_item_white);
             modalityAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             spinnerModality.setAdapter(modalityAdapter);
 
-            ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(getContext(), R.array.vacancy_level_options, R.layout.spinner_item);
+            ArrayAdapter<CharSequence> levelAdapter = ArrayAdapter.createFromResource(getContext(), R.array.vacancy_level_options, R.layout.spinner_item_white);
             levelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
             spinnerLevel.setAdapter(levelAdapter);
         }
@@ -305,6 +319,9 @@ public class SearchFormFragment extends Fragment {
 
 
 
+
+
+
     public void enviarNotificacao(Context context, Vacancy vaga) {
         // Crie um Intent que será disparado quando o usuário clicar na notificação
         Intent intent = new Intent(context, Vacancies.class);  // Ou a Activity que contém o Fragment
@@ -372,7 +389,7 @@ public class SearchFormFragment extends Fragment {
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -387,8 +404,7 @@ public class SearchFormFragment extends Fragment {
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
+                           }
         });
     }
 
@@ -402,25 +418,28 @@ public class SearchFormFragment extends Fragment {
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Erro ao buscar cursos: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
+                         }
         });
     }
 
     private void fetchCompetences(int curriculumId) {
         CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
-            public void onSuccess(List<String> competencesList) {
-                competencias = competencesList;
+            public void onSuccess(List<CompetenceData> competencesList) {
+                // Cria uma lista de strings contendo apenas os textos das competências
+                competencias.clear();  // Limpa a lista antes de adicionar novos itens
+                for (CompetenceData competence : competencesList) {
+                    competencias.add(competence.getCompetence());  // Adiciona apenas o texto da competência
+                }
                 checkIfDataLoaded();
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
+                        }
         });
     }
+
 
     private void checkIfDataLoaded() {
         if (meuCurriculo != null && !dadosAcademicos.isEmpty() && !dadosCursos.isEmpty() && !competencias.isEmpty()) {

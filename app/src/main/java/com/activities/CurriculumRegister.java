@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,13 +16,16 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.models.Candidate;
 import com.models.Curriculum;
 import com.models.DateValidator;
 import com.models.MaskEditText;
+import com.services.CandidateService;
 import com.services.CurriculumService;
 
 import java.text.ParseException;
@@ -32,6 +36,9 @@ import java.util.Locale;
 public class CurriculumRegister extends AppCompatActivity {
 
     private CurriculumService curriculumService;
+    private CandidateService candidateService;
+    int curriculumId, candidateId, userId;
+    AppCompatButton registerBtn;
     private EditText fullNameInput, birthDateInput, ageInput, cpfInput, genderInput, raceInput, phoneNumberInput, emailInput, cityInput, cepInput, ufInput, addressInput, addressNumberInput;
 
     @Override
@@ -48,20 +55,31 @@ public class CurriculumRegister extends AppCompatActivity {
 
 
         curriculumService = new CurriculumService();
+        candidateService = new CandidateService();
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        curriculumId = sharedPreferences.getInt("curriculumId", -1);
+        candidateId = sharedPreferences.getInt("candidateId", -1);
+        userId = sharedPreferences.getInt("userId", -1);
+
+
+        Log.d("Curriculo", "CurriculumId: "+curriculumId);
 
         String name = sharedPreferences.getString("name", "Usuário não encontrado");
         String email = sharedPreferences.getString("email", "Email não encontrado");
         String phone = sharedPreferences.getString("phone", "Telefone não encontrado");
+        String cpf = sharedPreferences.getString("cpf", "CPF não encontrado");
 
 
 
+        registerBtn = findViewById(R.id.register_button);
         fullNameInput = findViewById(R.id.full_name_input);
         fullNameInput.setText(name);
         birthDateInput = findViewById(R.id.birth_date_input);
         ageInput = findViewById(R.id.age_input);
         cpfInput = findViewById(R.id.cpf_input);
+        cpfInput.setText(cpf);
         phoneNumberInput = findViewById(R.id.phone_number_input);
         phoneNumberInput.setText(phone);
         emailInput = findViewById(R.id.email_input);
@@ -99,6 +117,13 @@ public class CurriculumRegister extends AppCompatActivity {
                 R.array.race_options, R.layout.spinner_item);
         raceAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
         raceSpinner.setAdapter(raceAdapter);
+
+
+
+        if(curriculumId != -1){
+            registerBtn.setText("Salvar alterações");
+            loadCurriculumData(curriculumId);
+        }
 
 
 
@@ -235,6 +260,20 @@ public class CurriculumRegister extends AppCompatActivity {
             return;
         }
 
+        Candidate candidate = new Candidate(fullName, phoneNumber, cpf,userId );
+
+        candidateService.updateCandidate(candidate, new CandidateService.registerCallback() {
+            @Override
+            public void onSuccess(Candidate candidate) {
+
+            }
+
+            @Override
+            public void onFailure(String error) {
+
+            }
+        });
+
         Curriculum curriculum = new Curriculum(
                 birthDate,
                 age,
@@ -247,23 +286,116 @@ public class CurriculumRegister extends AppCompatActivity {
                 addressNumber
         );
 
+        if(curriculumId != -1){
 
-        CurriculumService.registerCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+            curriculumService.updateCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(CurriculumRegister.this, "Currículo atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(CurriculumRegister.this, Profile.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }else if(curriculumId == -1){
+            CurriculumService.registerCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+                @Override
+                public void onSuccess() {
+                    Toast.makeText(CurriculumRegister.this, "Currículo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                    // Vai pra próxima tela
+                    Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+
+
+
+    }
+
+
+
+    private void loadCurriculumData(int candidateId) {
+        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
             @Override
-            public void onSuccess() {
-                Toast.makeText(CurriculumRegister.this, "Currículo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                // Vai pra próxima tela
-                Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
-                startActivity(intent);
+            public void onSuccess(Curriculum curriculum) {
+                runOnUiThread(() -> {
+
+                    birthDateInput.setText(curriculum.getBirthDate());
+                    ageInput.setText(curriculum.getAge());
+                    cityInput.setText(curriculum.getCity());
+                    cepInput.setText(curriculum.getCep());
+                    addressInput.setText(curriculum.getAddress());
+                    addressNumberInput.setText(curriculum.getAddressNumber());
+
+                    // Preenche spinners de forma segura
+                    Spinner ufSpinner = findViewById(R.id.uf_spinner);
+                    Spinner genderSpinner = findViewById(R.id.gender_spinner);
+                    Spinner raceSpinner = findViewById(R.id.race_spinner);
+
+                    String uf = curriculum.getUf();
+                    String gender = curriculum.getGender();
+                    String race = curriculum.getRace();
+
+                    if (uf != null) {
+                        ufSpinner.post(() -> {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) ufSpinner.getAdapter();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                if (uf.equalsIgnoreCase(adapter.getItem(i).toString())) {
+                                    ufSpinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+                    if (gender != null) {
+                        genderSpinner.post(() -> {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) genderSpinner.getAdapter();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                if (gender.equalsIgnoreCase(adapter.getItem(i).toString())) {
+                                    genderSpinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+
+                    if (race != null) {
+                        raceSpinner.post(() -> {
+                            ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) raceSpinner.getAdapter();
+                            for (int i = 0; i < adapter.getCount(); i++) {
+                                if (race.equalsIgnoreCase(adapter.getItem(i).toString())) {
+                                    raceSpinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        });
+                    }
+                });
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+                runOnUiThread(() -> {
+                    Toast.makeText(CurriculumRegister.this, "Erro ao carregar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
             }
         });
-
     }
+
 
 
 
