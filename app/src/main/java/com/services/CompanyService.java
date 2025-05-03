@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.models.Company;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,6 +15,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -83,6 +86,62 @@ public class CompanyService {
             }
         }).start();
     }
+
+    public interface CompanyListCallback {
+        void onSuccess(List<Company> companies);
+        void onFailure(String error);
+    }
+    public void fetchAllCompanies(CompanyListCallback callback) {
+        new Thread(() -> {
+            Request request = new Request.Builder().url(apiUrl).get().build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseData = response.body().string();
+                    JSONArray jsonArray = new JSONArray(responseData);
+
+                    List<Company> companies = new ArrayList<>();
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject companyJson = jsonArray.getJSONObject(i);
+
+                        int userId = companyJson.optInt("userId", -1); // retorna -1 se null
+
+
+                        Company company = new Company(
+                                companyJson.getString("name"),
+                                companyJson.getString("cnpj"),
+                                companyJson.getString("segment"),
+                                companyJson.getString("responsible"),
+                                companyJson.getString("phoneNumber"),
+                                companyJson.getString("city"),
+                                companyJson.getString("cep"),
+                                companyJson.getString("address"),
+                                companyJson.getInt("addressNumber"),
+                                companyJson.getString("uf"),
+                                companyJson.isNull("url") ? null : companyJson.getString("url"),
+                                companyJson.isNull("logo") ? null : companyJson.getString("logo"),
+                                companyJson.optInt("userId", -1)  // aqui está o fix
+                        );
+
+                        companies.add(company);
+                    }
+
+                    // Postando de volta na thread principal
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onSuccess(companies));
+
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            callback.onFailure("Erro na resposta: " + response.code()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() ->
+                        callback.onFailure("Erro ao conectar: " + e.getMessage()));
+            }
+        }).start();
+    }
+
 
 
 

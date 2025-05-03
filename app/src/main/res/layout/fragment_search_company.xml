@@ -1,0 +1,149 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/searchCompanyFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fragments.SearchCompanyFragment">
+
+    <LinearLayout
+        android:id="@+id/mainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/background_color">
+
+        <!-- Header com campo de busca -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/blue"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/SearchInput"
+                android:hint="Buscar empresa"
+                android:drawableLeft="@drawable/search_icon"
+                android:drawableRight="@drawable/close_icon"
+                android:textColorHint="@color/gray"
+                android:padding="12dp"
+                android:textColor="@color/black" />
+
+            <!-- Ícone de filtro -->
+            <ImageView
+                android:id="@+id/filterIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/filter_icon"
+                android:contentDescription="Abrir filtros" />
+        </LinearLayout>
+
+        <!-- Container de filtros -->
+        <LinearLayout
+            android:id="@+id/filtersContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:visibility="gone"
+            android:paddingVertical="12dp"
+            android:background="@color/blue">
+
+            <!-- UF -->
+            <LinearLayout
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="20dp"
+                    android:text="Estado"
+                    android:textColor="#FFF"
+                    android:textSize="14sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/uf_spinner"
+                        style="@style/SpinnerFilter"
+                        android:layout_width="111dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:spinnerMode="dropdown" />
+
+                    <ImageView
+                        android:id="@+id/uf_spinner_arrow"
+                        android:layout_width="52dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="3dp"
+                        android:padding="8dp"
+                        android:src="@drawable/selection_icon_white" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <!-- Segment Filter -->
+            <LinearLayout
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Segmento"
+                    android:textColor="#FFF"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="14sp"
+                    android:layout_gravity="start" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/segment_spinner"
+                        style="@style/SpinnerFilter"
+                        android:layout_width="111dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:spinnerMode="dropdown" />
+
+                    <ImageView
+                        android:id="@+id/segment_spinner_arrow"
+                        android:layout_width="60dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:padding="8dp"
+                        android:src="@drawable/selection_icon_white" />
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Lista de empresas -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp" />
+
+    </LinearLayout>
+</FrameLayout>
