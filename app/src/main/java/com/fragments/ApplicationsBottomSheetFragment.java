@@ -27,6 +27,8 @@ import java.util.List;
 public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
     private static final String ARG_VACANCY_ID = "vacancyId";
 
+    LoadingDialogFragment loadingDialog;
+
     public static ApplicationsBottomSheetFragment newInstance(int vacancyId) {
         ApplicationsBottomSheetFragment fragment = new ApplicationsBottomSheetFragment();
         Bundle args = new Bundle();
@@ -58,6 +60,10 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_applications, container, false);
 
+        loadingDialog = new LoadingDialogFragment();
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
+
         if (getArguments() != null) {
             vacancyId = getArguments().getInt(ARG_VACANCY_ID);
         }
@@ -85,6 +91,7 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
                 Toast.makeText(getContext(), "Erro: " + error, Toast.LENGTH_SHORT).show();
             }
         });
+        loadingDialog.dismiss();
 
         return view;
     }

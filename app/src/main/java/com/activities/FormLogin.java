@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.Candidate;
 import com.models.Company;
 import com.models.User;
@@ -30,6 +31,9 @@ public class FormLogin extends AppCompatActivity {
 
     private CandidateService candidateService;
 
+    private LoadingDialogFragment loadingDialog;
+
+
     private CompanyService companyService;
 
     @Override
@@ -44,6 +48,9 @@ public class FormLogin extends AppCompatActivity {
         });
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+
+        loadingDialog = new LoadingDialogFragment();
+
 
         if (isLoggedIn) {
             String userType = sharedPreferences.getString("type", null);
@@ -76,6 +83,8 @@ public class FormLogin extends AppCompatActivity {
         startActivity(intent);
     }
     public void login(View view) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         EditText emailInput = findViewById(R.id.email_input);
         String email = emailInput.getText().toString();
         EditText passwordInput = findViewById(R.id.password_input);
@@ -116,6 +125,8 @@ public class FormLogin extends AppCompatActivity {
                                     editor.commit();  // <- garante que foi salvo antes de redirecionar
 
                                     Log.d("LOGIN_SAVE", "Login salvo: isLoggedIn = true");
+                                    loadingDialog.dismiss();
+
 
 
                                     Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
@@ -127,7 +138,12 @@ public class FormLogin extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String error) {
-                                runOnUiThread(() -> Toast.makeText(FormLogin.this, "Erro ao buscar candidato: " + error, Toast.LENGTH_SHORT).show());
+                                runOnUiThread(() -> {
+                                            Toast.makeText(FormLogin.this, "Erro ao buscar candidato: " + error, Toast.LENGTH_SHORT).show();
+                                            loadingDialog.dismiss();
+
+                                        }
+                                );
                             }
                         });
                     } else {
@@ -157,6 +173,8 @@ public class FormLogin extends AppCompatActivity {
                                     Log.d("LOGIN_SAVE", "Login salvo: isLoggedIn = true");
 
 
+                                    loadingDialog.dismiss();
+
                                     Toast.makeText(FormLogin.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(FormLogin.this, MyVacancies.class);
                                     startActivity(intent);
@@ -166,7 +184,11 @@ public class FormLogin extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String error) {
-                                runOnUiThread(() -> Toast.makeText(FormLogin.this, "Erro ao buscar empresa: " + error, Toast.LENGTH_SHORT).show());
+                                runOnUiThread(() -> {
+                                    Toast.makeText(FormLogin.this, "Erro ao buscar empresa: " + error, Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
+
+                                });
                             }
                         });
                     }
@@ -174,7 +196,11 @@ public class FormLogin extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> Toast.makeText(FormLogin.this, errorMessage, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(FormLogin.this, errorMessage, Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+
+                    });
                 }
             });
         }

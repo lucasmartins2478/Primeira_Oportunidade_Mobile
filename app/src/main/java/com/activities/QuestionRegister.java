@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.Question;
 import com.services.QuestionService;
 
@@ -25,6 +26,8 @@ public class QuestionRegister extends AppCompatActivity {
 
     private LinearLayout questionsContainer;
     private List<EditText> questionInputs = new ArrayList<>();
+
+    LoadingDialogFragment loadingDialog;
     private int vacancyId;
 
     @Override
@@ -39,6 +42,8 @@ public class QuestionRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
         vacancyId = getIntent().getIntExtra("vacancyId", -1);
 
@@ -55,8 +60,8 @@ public class QuestionRegister extends AppCompatActivity {
         addQuestion.setOnClickListener(v -> addQuestionInput());
     }
 
-    // Método para carregar as perguntas já registradas
     private void loadQuestions() {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         QuestionService service = new QuestionService();
         service.getQuestionsByVacancyId(this, vacancyId, new QuestionService.QuestionListCallback() {
             @Override
@@ -69,6 +74,7 @@ public class QuestionRegister extends AppCompatActivity {
                             addQuestionInput(q); // Preenche as perguntas existentes no layout
                         }
                     }
+                    loadingDialog.dismiss();
                 });
             }
 
@@ -76,18 +82,17 @@ public class QuestionRegister extends AppCompatActivity {
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
                     Toast.makeText(QuestionRegister.this, "Erro ao carregar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                     addQuestionInput(); // Fallback: adiciona uma pergunta em branco
                 });
             }
         });
     }
 
-    // Método para adicionar uma nova entrada de pergunta
     public void addQuestionInput() {
         addQuestionInput(null); // Passando null para adicionar uma nova pergunta sem texto
     }
 
-    // Método para adicionar uma entrada de pergunta (usado tanto para nova pergunta quanto para editar)
     public void addQuestionInput(Question question) {
         EditText input = new EditText(this);
         input.setPadding(20, 20, 20, 20);
@@ -102,7 +107,6 @@ public class QuestionRegister extends AppCompatActivity {
         questionInputs.add(input);
     }
 
-    // Método para registrar as perguntas (salvar novas ou atualizar as existentes)
 
 
     // Volta para a tela anterior

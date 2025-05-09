@@ -14,6 +14,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.AcademicData;
 import com.models.Answer;
 import com.models.Candidate;
@@ -38,6 +39,7 @@ public class CandidateDetails extends AppCompatActivity {
     TextView textBirthDate, textGender, textCity, textAbout, textInterest;
 
     LinearLayout academicContainer;
+    LoadingDialogFragment loadingDialog;
     String vacancyId;
     LinearLayout coursesContainer, competencesContainer;
 
@@ -59,6 +61,8 @@ public class CandidateDetails extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
 
 
@@ -98,6 +102,8 @@ public class CandidateDetails extends AppCompatActivity {
 
     private void fetchCandidateData() {
 
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         CandidateService candidateService = new CandidateService();
 
         // Usa o método que recebe o ID do candidato
@@ -107,6 +113,7 @@ public class CandidateDetails extends AppCompatActivity {
                     @Override
                     public void onSuccess(Candidate candidate) {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
                             textCandidateName.setText("Nome: " + candidate.getName());
                             textCandidateCpf.setText("CPF: " + candidate.getCpf());
                             textCandidatePhone.setText("Telefone: " + candidate.getPhoneNumber());
@@ -116,6 +123,7 @@ public class CandidateDetails extends AppCompatActivity {
                     @Override
                     public void onFailure(String error) {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
                             textCandidateName.setText("Erro ao buscar candidato");
                         });
                     }
@@ -124,10 +132,14 @@ public class CandidateDetails extends AppCompatActivity {
 
     }
     private void fetchCurriculumData(int candidateId) {
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     textBirthDate.setText("Nascimento: " + DateUtils.formatDate(curriculum.getBirthDate()));
                     textGender.setText("Gênero: " + curriculum.getGender());
                     textCity.setText("Cidade: " + curriculum.getCity());
@@ -143,19 +155,25 @@ public class CandidateDetails extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() ->
-                        Toast.makeText(CandidateDetails.this, "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show()
+                runOnUiThread(() -> {
+                            loadingDialog.dismiss();
+                            Toast.makeText(CandidateDetails.this, "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
+                        }
                 );
             }
         });
     }
 
     private void fetchAcademicData(int curriculumId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
                 runOnUiThread(() -> {
                     academicContainer.removeAllViews(); // limpa antes de adicionar
+
+                    loadingDialog.dismiss();
 
                     for (AcademicData data : dataList) {
                         TextView info = new TextView(CandidateDetails.this);
@@ -179,17 +197,24 @@ public class CandidateDetails extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() -> Toast.makeText(CandidateDetails.this, "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(CandidateDetails.this, "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show();
+
+                });
             }
         });
     }
 
 
     private void fetchCourseData(int curriculumId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     // Exibindo os cursos
                     if (courseDataList.isEmpty()) {
                         TextView noCoursesMessage = new TextView(CandidateDetails.this);
@@ -211,19 +236,24 @@ public class CandidateDetails extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() ->
-                        Toast.makeText(CandidateDetails.this, "Erro ao buscar curso complementar: " + errorMessage, Toast.LENGTH_SHORT).show()
-                );
+                runOnUiThread(() -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(CandidateDetails.this, "Erro ao buscar curso complementar: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
 
     private void fetchCompetences(int curriculumId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
             public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {
-                    // Se houver competências
+                    // Se houver
+
+                    loadingDialog.dismiss();
                     if (competences.isEmpty()) {
                         TextView noCompetencesMessage = new TextView(CandidateDetails.this);
                         noCompetencesMessage.setText("Nenhuma competência informada.");
@@ -242,16 +272,23 @@ public class CandidateDetails extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                runOnUiThread(() -> Toast.makeText(CandidateDetails.this, "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(CandidateDetails.this, "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
 
     private void fetchQuestions(int vacancyId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         QuestionService.getQuestionsByVacancyId(CandidateDetails.this, vacancyId, new QuestionService.QuestionListCallback() {
             @Override
             public void onSuccess(List<Question> questions) {
                 runOnUiThread(() -> {
+
+                    loadingDialog.dismiss();
                     if (!questions.isEmpty()) {
                         // Armazenar as perguntas, para depois buscar as respostas
                         fetchAnswersForQuestions(questions);
@@ -264,6 +301,7 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     Toast.makeText(CandidateDetails.this, "Erro ao buscar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
             }
@@ -274,12 +312,15 @@ public class CandidateDetails extends AppCompatActivity {
 
 
     private void fetchAnswersForQuestions(List<Question> questions) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         // Vamos fazer as requisições para pegar as respostas para cada pergunta
         for (Question question : questions) {
             AnswerService.getAnswerByCandidateAndQuestionId(question.getId(), Integer.parseInt(candidateId), new AnswerService.FetchAnswerByQuestionCallback() {
                 @Override
                 public void onSuccess(Answer answer) {
                     runOnUiThread(() -> {
+                        loadingDialog.dismiss();
                         if (answer != null) {
                             displayAnswer(question, answer);
                         }
@@ -289,6 +330,7 @@ public class CandidateDetails extends AppCompatActivity {
                 @Override
                 public void onFailure(String errorMessage) {
                     runOnUiThread(() -> {
+                        loadingDialog.dismiss();
                         Log.d("Erro", "Erro ao buscar resposta: " + errorMessage);
                         Toast.makeText(CandidateDetails.this, "Erro ao buscar resposta: " + errorMessage, Toast.LENGTH_SHORT).show();
                     });

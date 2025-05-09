@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.AcademicData;
 import com.models.Company;
 import com.models.CompetenceData;
@@ -46,6 +47,8 @@ public class Profile extends AppCompatActivity {
 
     LoginService loginService;
 
+    LoadingDialogFragment loadingDialog;
+
     CandidateService candidateService;
 
 
@@ -59,6 +62,8 @@ public class Profile extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -159,6 +164,7 @@ public class Profile extends AppCompatActivity {
 
 
     private void fetchCurriculumData(int candidateId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
@@ -171,6 +177,7 @@ public class Profile extends AppCompatActivity {
                     fetchCompetences(candidateId);
 
 
+                    loadingDialog.dismiss();
 
                 });
             }
@@ -178,6 +185,7 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
 
+                loadingDialog.dismiss();
             }
         });
     }
@@ -275,6 +283,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void fetchCompanyData(int companyId){
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         companyService.fetchCompanyFromApi(companyId, new CompanyService.CompanyCallback() {
             @Override
             public void onSuccess(Company company) {
@@ -292,6 +301,7 @@ public class Profile extends AppCompatActivity {
                     txtUf.setText("Estado: " + company.getUf());
                     txtAddress.setText("Endereço: " + company.getAddress());
                     txtAddressNumber.setText("Número: " + company.getAddressNumber());
+                    loadingDialog.dismiss();
                 });
             }
 
@@ -300,6 +310,7 @@ public class Profile extends AppCompatActivity {
             public void onFailure(String error) {
                 runOnUiThread(()->{
                     Toast.makeText(Profile.this, "Erro ao buscar dados da empresa: "+error, Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 });
             }
         });
@@ -345,6 +356,8 @@ public class Profile extends AppCompatActivity {
     }
 
     public void deleteAllData(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         if(candidateId != -1){
 
 
@@ -352,6 +365,7 @@ public class Profile extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                     logout();
 
                 }
@@ -359,6 +373,7 @@ public class Profile extends AppCompatActivity {
                 @Override
                 public void onFailure(String error) {
                     Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
 
                 }
             });
@@ -369,12 +384,14 @@ public class Profile extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                     logout();
                 }
 
                 @Override
                 public void onFailure(String error) {
                     Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 }
             });
         }

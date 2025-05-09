@@ -20,6 +20,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.Company;
 import com.models.MaskEditText;
 import com.models.User;
@@ -34,6 +35,8 @@ public class CompanyRegister extends AppCompatActivity {
 
     private int companyId;
     private TextView haveAccount;
+
+    LoadingDialogFragment loadingDialog;
 
     private LinearLayout confirmPasswordContainer, passwordContainer;
 
@@ -52,6 +55,8 @@ public class CompanyRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         companyId = prefs.getInt("companyId", -1);
@@ -119,6 +124,8 @@ public class CompanyRegister extends AppCompatActivity {
     }
 
     public void registerCompany(View view) {
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         String companyName = companyNameInput.getText().toString().trim();
         String cnpj = cnpjInput.getText().toString().trim();
@@ -214,16 +221,31 @@ public class CompanyRegister extends AppCompatActivity {
 
 
         if(companyId != -1){
-            Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
-                    city, cep, address, addressNumberInt, uf, website, logo, userId);
+//            Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
+//                    city, cep, address, addressNumberInt, uf, website, logo, userId);
 
+            Company company = new Company();
 
+            company.setCompanyName(companyName);
+            company.setCnpj(cnpj);
+            company.setSegment(segment);
+            company.setResponsible(responsible);
+            company.setPhoneNumber(phoneNumber);
+            company.setCity(city);
+            company.setCep(cep);
+            company.setAddress(address);
+            company.setAddressNumber(addressNumberInt);
+            company.setUf(uf);
+            company.setWebsite(website);
+            company.setLogo(logo);
+            company.setUserId(userId);
 
             companyService.updateCompany(company, new CompanyService.RegisterCallback() {
                 @Override
                 public void onSuccess() {
                     runOnUiThread(() -> {
                         Toast.makeText(CompanyRegister.this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         finish(); // ou voltar pra tela anterior
                     });
                 }
@@ -232,6 +254,7 @@ public class CompanyRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() ->
                             Toast.makeText(CompanyRegister.this, "Erro ao atualizar: " + error, Toast.LENGTH_SHORT).show());
+                            loadingDialog.dismiss();
 
                 }
             });
@@ -241,8 +264,25 @@ public class CompanyRegister extends AppCompatActivity {
                 public void onSuccess(int userId) {
 
 
-                    Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
-                            city, cep, address, addressNumberInt, uf, website, logo, userId);
+//                    Company company = new Company(companyName, cnpj, segment, responsible, phoneNumber,
+//                            city, cep, address, addressNumberInt, uf, website, logo, userId);
+
+                    Company company = new Company();
+
+                    company.setCompanyName(companyName);
+                    company.setCnpj(cnpj);
+                    company.setSegment(segment);
+                    company.setResponsible(responsible);
+                    company.setPhoneNumber(phoneNumber);
+                    company.setCity(city);
+                    company.setCep(cep);
+                    company.setAddress(address);
+                    company.setAddressNumber(addressNumberInt);
+                    company.setUf(uf);
+                    company.setWebsite(website);
+                    company.setLogo(logo);
+                    company.setUserId(userId);
+
 
                     companyService.registerCompany(company, new CompanyService.RegisterCallback() {
                         @Override
@@ -284,13 +324,23 @@ public class CompanyRegister extends AppCompatActivity {
                                                 loginService.login(email, password, new LoginService.LoginCallback() {
                                                     @Override
                                                     public void onSuccess(User user) {
-                                                        Intent intent = new Intent(CompanyRegister.this, MyVacancies.class);
-                                                        startActivity(intent);
+                                                        runOnUiThread(() -> {
+                                                            loadingDialog.dismiss();
+                                                            Toast.makeText(CompanyRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                                                            Intent intent = new Intent(CompanyRegister.this, Vacancies.class);
+                                                            startActivity(intent);
+
+                                                            finish();
+                                                        });
                                                     }
 
                                                     @Override
                                                     public void onFailure(String errorMessage) {
-
+                                                        runOnUiThread(() -> {
+                                                                    loadingDialog.dismiss();
+                                                                    Toast.makeText(CompanyRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
+                                                                }
+                                                        );
                                                     }
                                                 });
 
@@ -300,6 +350,7 @@ public class CompanyRegister extends AppCompatActivity {
                                             @Override
                                             public void onFailure(String error) {
                                                 runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao buscar empresa após cadastro: " + error, Toast.LENGTH_SHORT).show());
+                                                loadingDialog.dismiss();
                                             }
                                         });
 
@@ -308,6 +359,7 @@ public class CompanyRegister extends AppCompatActivity {
                                     @Override
                                     public void onFailure(String error) {
                                         Toast.makeText(CompanyRegister.this, "Erro ao recuperar empresa: " + error, Toast.LENGTH_SHORT).show();
+                                        loadingDialog.dismiss();
                                     }
                                 });
                             });
@@ -316,6 +368,7 @@ public class CompanyRegister extends AppCompatActivity {
                         @Override
                         public void onFailure(String error) {
                             runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
+                            loadingDialog.dismiss();
                         }
                     });
 
@@ -324,6 +377,7 @@ public class CompanyRegister extends AppCompatActivity {
                 @Override
                 public void onFailure(String error) {
                     runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
+                    loadingDialog.dismiss();
 
 
                 }

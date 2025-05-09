@@ -22,6 +22,7 @@ public class SearchMessagesFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private MessageAdapter adapter;
+    LoadingDialogFragment loadingDialog;
     private ArrayList<Message> allMessages = new ArrayList<>();
 
     public SearchMessagesFragment() {}
@@ -30,6 +31,10 @@ public class SearchMessagesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_messages, container, false);
+
+        loadingDialog = new LoadingDialogFragment();
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
 
         recyclerView = view.findViewById(R.id.recyclerViewMessages);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -44,6 +49,7 @@ public class SearchMessagesFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setAdapter(adapter);
 
+        loadingDialog.dismiss();
         return view;
     }
 

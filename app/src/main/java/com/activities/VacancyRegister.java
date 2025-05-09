@@ -17,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.MaskEditText;
 import com.models.MoneyTextWatcher;
 import com.models.Vacancy;
@@ -26,6 +27,8 @@ public class VacancyRegister extends AppCompatActivity {
 
     private VacancyService vacancyService;
     private Vacancy vacancyToEdit;
+
+    LoadingDialogFragment loadingDialog;
     private boolean isEditMode = false;
 
 
@@ -43,6 +46,7 @@ public class VacancyRegister extends AppCompatActivity {
 
 
 
+        loadingDialog = new LoadingDialogFragment();
 
 
 
@@ -103,6 +107,8 @@ public class VacancyRegister extends AppCompatActivity {
 
 
     public void registerVacancy(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
         String salary = salaryInput.getText().toString().trim();
@@ -177,6 +183,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga atualizada com sucesso", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         finish(); // ou redirecionar de volta pra lista
                     });
                 }
@@ -185,7 +192,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() -> {
                         Log.e("VacancyRegister", "Erro ao cadastrar/atualizar vaga: " + error);
-
+                        loadingDialog.dismiss();
                         Toast.makeText(VacancyRegister.this, "Erro ao atualizar vaga: " + error, Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -199,6 +206,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         startActivity(new Intent(VacancyRegister.this, MyVacancies.class));
                     });
                 }
@@ -207,6 +215,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     });
                 }
             });
@@ -214,6 +223,9 @@ public class VacancyRegister extends AppCompatActivity {
     }
 
     public void addQuestion(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         String vacancyName = ((Spinner) findViewById(R.id.vacancy_name_spinner)).getSelectedItem().toString();
         String salary = salaryInput.getText().toString().trim();
         String city = cityInput.getText().toString().trim();
@@ -286,6 +298,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga atualizada com sucesso", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         finish(); // ou redirecionar de volta pra lista
                     });
                 }
@@ -294,7 +307,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() -> {
                         Log.e("VacancyRegister", "Erro ao cadastrar/atualizar vaga: " + error);
-
+                        loadingDialog.dismiss();
                         Toast.makeText(VacancyRegister.this, "Erro ao atualizar vaga: " + error, Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -308,6 +321,7 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         startActivity(new Intent(VacancyRegister.this, MyVacancies.class));
                     });
                 }
@@ -316,12 +330,14 @@ public class VacancyRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Erro ao cadastrar vaga", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     });
                 }
             });
         }
     }
     private void preencherCamposComVacancy(Vacancy vacancy) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         salaryInput.setText(vacancy.getSalary());
         cityInput.setText(vacancy.getLocality());
         contactInput.setText(vacancy.getContact());
@@ -350,6 +366,7 @@ public class VacancyRegister extends AppCompatActivity {
         ArrayAdapter nameAdapter = (ArrayAdapter) nameSpinner.getAdapter();
         int namePosition = nameAdapter.getPosition(vacancy.getTitle());
         nameSpinner.setSelection(namePosition);
+        loadingDialog.dismiss();
     }
 
     private void setSpinnerValue(int spinnerId, String value) {

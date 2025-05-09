@@ -39,6 +39,8 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
     private CandidateService candidateService;
     private int sentAnswersCount;
     private LinearLayout answersContainer;
+
+    LoadingDialogFragment loadingDialog;
     private final List<Question> questions = new ArrayList<>();
     private final List<EditText> answerInputs = new ArrayList<>();
     private OnAnswersSubmittedListener listener;
@@ -78,6 +80,10 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_answer_questions, container, false);
         answersContainer = view.findViewById(R.id.answers_container);
 
+        loadingDialog = new LoadingDialogFragment();
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
+
         candidateService = new CandidateService();
 
         if (getArguments() != null) {
@@ -88,10 +94,13 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
 
         view.findViewById(R.id.btnSubmitAnswers).setOnClickListener(v -> submitAnswers());
 
+        loadingDialog.dismiss();
         return view;
     }
 
     private void loadQuestions() {
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
         QuestionService.getQuestionsByVacancyId(getContext(), vacancyId, new QuestionService.QuestionListCallback() {
             @Override
             public void onSuccess(List<Question> questionList) {
@@ -103,6 +112,7 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                         }
                     });
                 }
+                loadingDialog.dismiss();
 
             }
 
@@ -111,8 +121,11 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() ->
                             Toast.makeText(getContext(), "Erro ao carregar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show()
+
                     );
                 }
+                loadingDialog.dismiss();
+
                 dismiss();
             }
         });
@@ -162,6 +175,8 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
 
 
     private void submitAnswers() {
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
         Log.d("submitAnswers", "User ID: " + userId);
@@ -211,6 +226,7 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                             Toast.makeText(getContext(), "Candidatura finalizada com sucesso", Toast.LENGTH_SHORT).show();
                         });
                     }
+                    loadingDialog.dismiss();
 
                     dismiss(); // Fechar o fragmento após a candidatura ser registrada
                 }
@@ -221,6 +237,7 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                     if (isAdded() && getContext() != null) {
                         getActivity().runOnUiThread(() -> {
                             Toast.makeText(getContext(), "Erro ao enviar resposta: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            loadingDialog.dismiss();
                         });
                     }
                 }
@@ -229,12 +246,15 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
 
         // Se você tem um listener, chama a função de candidatura
         if (listener != null) {
+            loadingDialog.dismiss();
             applyForVacancy(vacancyId);
         }
     }
 
 
     public void applyForVacancy(int vacancyId) {
+
+        loadingDialog.show(getParentFragmentManager(), "loading");
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
 
@@ -251,6 +271,7 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                             if (isAdded() && getContext() != null) {
                                 getActivity().runOnUiThread(() -> {
                                     Toast.makeText(getContext(), "Candidatura finalizada com sucesso", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
                                 });
                             }
                         }
@@ -258,12 +279,14 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
                         @Override
                         public void onFailure(String errorMessage) {
                             Toast.makeText(getContext(), "Erro ao se candidatar: "+errorMessage, Toast.LENGTH_SHORT).show();
+                            loadingDialog.dismiss();
                             dismiss();
                         }
                     });
                 }
                 else{
                     Toast.makeText(getContext(), "Você precisa de um currículo para se candidatar", Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 }
             }
 

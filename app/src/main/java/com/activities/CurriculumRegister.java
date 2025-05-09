@@ -21,6 +21,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.Candidate;
 import com.models.Curriculum;
 import com.models.DateValidator;
@@ -39,6 +40,7 @@ public class CurriculumRegister extends AppCompatActivity {
     private CandidateService candidateService;
     int curriculumId, candidateId, userId;
     AppCompatButton registerBtn;
+    LoadingDialogFragment loadingDialog;
     private EditText fullNameInput, birthDateInput, ageInput, cpfInput, genderInput, raceInput, phoneNumberInput, emailInput, cityInput, cepInput, ufInput, addressInput, addressNumberInput;
 
     @Override
@@ -51,6 +53,8 @@ public class CurriculumRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
 
 
@@ -179,6 +183,8 @@ public class CurriculumRegister extends AppCompatActivity {
     }
     public void registerCurriculum(View view){
 
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         String fullName = fullNameInput.getText().toString();
         String birthDate = birthDateInput.getText().toString();
         String age = ageInput.getText().toString();
@@ -293,6 +299,7 @@ public class CurriculumRegister extends AppCompatActivity {
                 public void onSuccess() {
                     Toast.makeText(CurriculumRegister.this, "Currículo atualizado com sucesso!", Toast.LENGTH_SHORT).show();
 
+                    loadingDialog.dismiss();
                     Intent intent = new Intent(CurriculumRegister.this, Profile.class);
                     startActivity(intent);
                 }
@@ -300,6 +307,7 @@ public class CurriculumRegister extends AppCompatActivity {
                 @Override
                 public void onFailure(String errorMessage) {
                     Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+                    loadingDialog.dismiss();
 
                 }
             });
@@ -308,7 +316,7 @@ public class CurriculumRegister extends AppCompatActivity {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(CurriculumRegister.this, "Currículo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                    // Vai pra próxima tela
+                    loadingDialog.dismiss();
                     Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
                     startActivity(intent);
                 }
@@ -316,6 +324,7 @@ public class CurriculumRegister extends AppCompatActivity {
                 @Override
                 public void onFailure(String errorMessage) {
                     Toast.makeText(CurriculumRegister.this, "Erro: " + errorMessage, Toast.LENGTH_LONG).show();
+                    loadingDialog.dismiss();
                 }
             });
         }
@@ -328,6 +337,7 @@ public class CurriculumRegister extends AppCompatActivity {
 
 
     private void loadCurriculumData(int candidateId) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
@@ -384,6 +394,8 @@ public class CurriculumRegister extends AppCompatActivity {
                             }
                         });
                     }
+
+                    loadingDialog.dismiss();
                 });
             }
 

@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.AcademicData;
 import com.models.Curriculum;
 import com.models.DateValidator;
@@ -46,6 +47,7 @@ public class AcademicDataRegister extends AppCompatActivity {
     List<View> formViews = new ArrayList<>();
 
     Spinner levelSpinner;
+    LoadingDialogFragment loadingDialog;
 
     private EditText instituitionNameInput, startDateInput, endDateInput, cityInput;
 
@@ -63,7 +65,7 @@ public class AcademicDataRegister extends AppCompatActivity {
         });
 
 
-
+        loadingDialog = new LoadingDialogFragment();
 
 
         containerLayout = findViewById(R.id.forms_container); // <- você vai criar esse id
@@ -97,6 +99,8 @@ public class AcademicDataRegister extends AppCompatActivity {
 
         int curriculumId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("curriculumId", -1);
         if(curriculumId != -1){
+            loadingDialog.show(getSupportFragmentManager(), "loading");
+
 
             loadCurriculumData(curriculumId);
 
@@ -104,12 +108,19 @@ public class AcademicDataRegister extends AppCompatActivity {
             AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
                 @Override
                 public void onSuccess(List<AcademicData> dataList) {
-                    runOnUiThread(() -> populateAcademicDataForms(dataList));
+
+                    runOnUiThread(() -> {
+                        loadingDialog.dismiss();
+                        populateAcademicDataForms(dataList);
+                    });
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> Toast.makeText(AcademicDataRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        loadingDialog.dismiss();
+                        Toast.makeText(AcademicDataRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    });
                 }
             });
         }
@@ -125,6 +136,9 @@ public class AcademicDataRegister extends AppCompatActivity {
         finish();
     }
     public void registerAcademicData(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         List<AcademicData> academicDataList = new ArrayList<>();
 
         String institutionName = instituitionNameInput.getText().toString();
@@ -169,6 +183,7 @@ public class AcademicDataRegister extends AppCompatActivity {
         CurriculumService.addSchoolData(AcademicDataRegister.this, schoolData, new CurriculumService.CurriculumCallback() {
             @Override
             public void onSuccess() {
+
 
 
                 if (formViews.isEmpty()) {
@@ -235,6 +250,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                         AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
+                                loadingDialog.dismiss();
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, Profile.class);
                                 startActivity(intent);
@@ -242,6 +258,7 @@ public class AcademicDataRegister extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String errorMessage) {
+                                loadingDialog.dismiss();
                                 Toast.makeText(AcademicDataRegister.this, "Erro ao atualizar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -249,6 +266,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                         AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
+                                loadingDialog.dismiss();
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " enviados", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
                                 startActivity(intent);
@@ -256,6 +274,7 @@ public class AcademicDataRegister extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String errorMessage) {
+                                loadingDialog.dismiss();
                                 Toast.makeText(AcademicDataRegister.this, "Erro ao registrar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -271,6 +290,7 @@ public class AcademicDataRegister extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
+                loadingDialog.dismiss();
                 Toast.makeText(AcademicDataRegister.this, "Erro ao enviar dados principais: " + errorMessage, Toast.LENGTH_LONG).show();
             }
         });

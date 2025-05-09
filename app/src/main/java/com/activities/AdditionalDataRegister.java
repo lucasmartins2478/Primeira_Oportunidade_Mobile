@@ -15,12 +15,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.Curriculum;
 import com.services.CandidateService;
 import com.services.CompanyService;
 import com.services.CurriculumService;
 
 public class AdditionalDataRegister extends AppCompatActivity {
+
+    LoadingDialogFragment loadingDialog;
 
 
     @Override
@@ -34,6 +37,7 @@ public class AdditionalDataRegister extends AppCompatActivity {
             return insets;
         });
 
+        loadingDialog = new LoadingDialogFragment();
         Spinner interestAreaSpinner = findViewById(R.id.interest_area_spinner);
         ArrayAdapter<CharSequence> interestAreaAdapter = ArrayAdapter.createFromResource(this,
                 R.array.interest_area_options, R.layout.spinner_item);
@@ -50,6 +54,8 @@ public class AdditionalDataRegister extends AppCompatActivity {
 
 
     public void finishCurriculumRegister(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         EditText attachedInput = findViewById(R.id.curriculum_input);
         EditText descriptionInput = findViewById(R.id.about_you_input);
 
@@ -70,6 +76,8 @@ public class AdditionalDataRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
 
+                        loadingDialog.dismiss();
+
 
                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -84,6 +92,7 @@ public class AdditionalDataRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String error) {
 
+                        loadingDialog.dismiss();
                     }
                 });
 

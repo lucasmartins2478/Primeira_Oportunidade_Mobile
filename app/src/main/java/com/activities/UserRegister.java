@@ -19,6 +19,8 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.fragments.LoadingDialogFragment;
 import com.models.Candidate;
 import com.models.MaskEditText;
 import com.models.User;
@@ -33,6 +35,8 @@ public class UserRegister extends AppCompatActivity {
     private LoginService loginService;
     private TextView haveAccount;
     private int candidateId;
+
+    LoadingDialogFragment loadingDialog;
     private AppCompatButton changePassword, registerBtn;
     private EditText nameInput, phoneInput, cpfInput, emailInput, passwordInput, confirmPasswordInput;
     private LinearLayout confirmPasswordContainer, passwordContainer;
@@ -49,6 +53,8 @@ public class UserRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
         nameInput = findViewById(R.id.name_input);
         phoneInput = findViewById(R.id.phone_number_input);
@@ -85,6 +91,8 @@ public class UserRegister extends AppCompatActivity {
     }
 
     public void registerUser(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         String name = nameInput.getText().toString();
         String phone = phoneInput.getText().toString();
@@ -159,6 +167,7 @@ public class UserRegister extends AppCompatActivity {
                 public void onSuccess(Candidate candidate) {
                     runOnUiThread(() -> {
                         Toast.makeText(UserRegister.this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                         finish(); // ou voltar pra tela anterior
                     });
                 }
@@ -167,6 +176,7 @@ public class UserRegister extends AppCompatActivity {
                 public void onFailure(String error) {
                     runOnUiThread(() ->
                             Toast.makeText(UserRegister.this, "Erro ao atualizar: " + error, Toast.LENGTH_SHORT).show());
+                            loadingDialog.dismiss();
                 }
             });
         } else if (candidateId == -1){
@@ -193,6 +203,7 @@ public class UserRegister extends AppCompatActivity {
                                 editor.putString("cpf", candidate.getCpf());
                                 editor.putString("phone", candidate.getPhoneNumber());
                                 editor.putBoolean("isLoggedIn", true);
+
                                 editor.apply();
 
                                 // Agora chama o login
@@ -200,17 +211,21 @@ public class UserRegister extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(User user) {
                                         runOnUiThread(() -> {
+                                            loadingDialog.dismiss();
                                             Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(UserRegister.this, Vacancies.class);
                                             startActivity(intent);
+
                                             finish();
                                         });
                                     }
 
                                     @Override
                                     public void onFailure(String errorMessage) {
-                                        runOnUiThread(() ->
-                                                Toast.makeText(UserRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show()
+                                        runOnUiThread(() -> {
+                                            loadingDialog.dismiss();
+                                                    Toast.makeText(UserRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
+                                                }
                                         );
                                     }
                                 });
@@ -221,8 +236,10 @@ public class UserRegister extends AppCompatActivity {
 
                         @Override
                         public void onFailure(String error) {
-                            runOnUiThread(() ->
-                                    Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
+                            runOnUiThread(() -> {
+                                Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
+                                loadingDialog.dismiss();
+                            });
                         }
                     });
 
@@ -231,7 +248,10 @@ public class UserRegister extends AppCompatActivity {
                 @Override
                 public void onFailure(String error) {
 
-                    runOnUiThread(() -> Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+                    });
                 }
             });
         }
@@ -240,6 +260,7 @@ public class UserRegister extends AppCompatActivity {
     }
 
     private void loadCandidateData() {
+
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "Email não encontrado");
         String name  = sharedPreferences.getString("name", "Nome não encontrado");

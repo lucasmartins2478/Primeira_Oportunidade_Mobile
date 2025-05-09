@@ -23,6 +23,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fragments.LoadingDialogFragment;
 import com.models.AcademicData;
 import com.models.CompetenceData;
 import com.models.CourseData;
@@ -41,6 +42,8 @@ public class CoursesRegister extends AppCompatActivity {
 
     LayoutInflater inflater;
     List<View> formViews = new ArrayList<>();
+
+    LoadingDialogFragment loadingDialog;
     private EditText courseNameInput, modalityInput, durationInput, endDateInput, grantingInstitutionInput;
 
     @Override
@@ -53,6 +56,8 @@ public class CoursesRegister extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        loadingDialog = new LoadingDialogFragment();
 
         containerLayout = findViewById(R.id.forms_container); // <- você vai criar esse id
         inflater = LayoutInflater.from(this);
@@ -82,6 +87,7 @@ public class CoursesRegister extends AppCompatActivity {
 
         int curriculumId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("curriculumId", -1);
         if(curriculumId != -1){
+            loadingDialog.show(getSupportFragmentManager(), "loading");
 
             CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
 
@@ -116,6 +122,7 @@ public class CoursesRegister extends AppCompatActivity {
                     runOnUiThread(() -> Toast.makeText(CoursesRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show());
                 }
             });
+            loadingDialog.dismiss();
         }
 
 
@@ -126,6 +133,8 @@ public class CoursesRegister extends AppCompatActivity {
         finish();
     }
     public void additionalData(View view){
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
 
 
 
@@ -185,6 +194,7 @@ public class CoursesRegister extends AppCompatActivity {
                 CourseDataService.updateCourseData(CoursesRegister.this, courseData, new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
+                        loadingDialog.dismiss();
                         Toast.makeText(CoursesRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CoursesRegister.this, Profile.class);
                         startActivity(intent);
@@ -192,6 +202,7 @@ public class CoursesRegister extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String errorMessage) {
+                        loadingDialog.dismiss();
                         Toast.makeText(CoursesRegister.this, "Erro ao atualizar dados", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -200,6 +211,7 @@ public class CoursesRegister extends AppCompatActivity {
                 CourseDataService.registerCourseData(CoursesRegister.this, courseData, new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
+                        loadingDialog.dismiss();
                         Toast.makeText(CoursesRegister.this, "Dados da instituição "+ inst + " Enviados", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
                         startActivity(intent);
@@ -207,6 +219,7 @@ public class CoursesRegister extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String errorMessage) {
+                        loadingDialog.dismiss();
 
                     }
                 });
@@ -244,6 +257,8 @@ public class CoursesRegister extends AppCompatActivity {
     }
 
     private void addCompetenceItem(String competenceText, LinearLayout container, List<CompetenceData> list) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+
         LayoutInflater inflater = LayoutInflater.from(this);
         View itemView = inflater.inflate(R.layout.competence_item, container, false);
 
@@ -269,6 +284,7 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
                             Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                             container.removeView(itemView); // <- correto!
                         });
@@ -277,11 +293,13 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String errorMessage) {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
                             Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }
                 });
             } else {
+                loadingDialog.dismiss();
                 Log.d("Delete", "ID não válido ou null, removendo apenas da interface.");
                 container.removeView(itemView); // <- correto!
             }
@@ -293,12 +311,14 @@ public class CoursesRegister extends AppCompatActivity {
         CompetenceDataService.registerCompetenceData(this, competenceData, new CompetenceDataService.CompetenceDataCallback() {
             @Override
             public void onSuccess() {
+                loadingDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Competência enviada!", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onFailure(String errorMessage) {
+                loadingDialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
 
             }
@@ -306,6 +326,8 @@ public class CoursesRegister extends AppCompatActivity {
     }
 
     private void populateCompetenceDataForms(List<CompetenceData> competenceDataList) {
+
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         LinearLayout competencesContainer = findViewById(R.id.competences_list_container);
 
         for (CompetenceData data : competenceDataList) {
@@ -322,6 +344,7 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
                             competencesContainer.removeView(itemView);
                             Toast.makeText(getApplicationContext(), "Competência removida!", Toast.LENGTH_SHORT).show();
                         });
@@ -330,6 +353,8 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String errorMessage) {
                         runOnUiThread(() -> {
+                            loadingDialog.dismiss();
+
                             Toast.makeText(getApplicationContext(), "Erro ao remover: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }
@@ -343,6 +368,7 @@ public class CoursesRegister extends AppCompatActivity {
 
 
     private void populateCourseDataForms(List<CourseData> courseDataList){
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         for (CourseData data : courseDataList){
             View form = inflater.inflate(R.layout.item_course_data_form, containerLayout, false);
 
@@ -381,6 +407,8 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {
+                                loadingDialog.dismiss();
+
                                 Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                                 containerLayout.removeView(form);
                                 formViews.remove(form);
@@ -390,11 +418,15 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onFailure(String errorMessage) {
                             runOnUiThread(() -> {
+                                loadingDialog.dismiss();
+
                                 Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                             });
                         }
                     });
                 } else {
+                    loadingDialog.dismiss();
+
                     Log.d("Delete", "ID não válido ou null, removendo apenas da interface.");
                     containerLayout.removeView(form);
                     formViews.remove(form);

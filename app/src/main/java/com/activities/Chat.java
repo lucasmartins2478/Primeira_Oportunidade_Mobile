@@ -14,6 +14,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.fragments.LoadingDialogFragment;
 import com.fragments.SearchMessagesFragment;
 import com.models.Message;
 import com.services.ChatService;
@@ -27,6 +28,8 @@ public class Chat extends AppCompatActivity {
     private ChatService chatService;
     private SearchMessagesFragment searchMessagesFragment;
 
+    LoadingDialogFragment loadingDialog;
+
     private static final String TAG = "ChatActivity"; // Tag para logs
 
     @Override
@@ -34,6 +37,8 @@ public class Chat extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
+
+        loadingDialog = new LoadingDialogFragment();
 
         // Inicializando as views
         inputMessage = findViewById(R.id.inputMessage);
@@ -66,15 +71,15 @@ public class Chat extends AppCompatActivity {
         });
     }
 
-    // Método para carregar as mensagens do banco
-    // Método para carregar as mensagens do banco
-    // Método para carregar as mensagens do banco
+
     private void carregarMensagens() {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
         Log.d("ChatActivity", "Iniciando o carregamento de mensagens...");
         chatService.getMessages(new ChatService.MessageCallback() {
             @Override
             public void onSuccess(ArrayList<Message> messages) {
                 // Atualizar o fragmento com as mensagens obtidas
+                loadingDialog.dismiss();
                 if (searchMessagesFragment != null) {
                     Log.d("ChatActivity", "Mensagens carregadas com sucesso. Total: " + messages.size());
                     // Garantir que a atualização da UI seja feita na thread principal
@@ -88,6 +93,7 @@ public class Chat extends AppCompatActivity {
             public void onFailure(String error) {
                 // Exibir erro na UI thread
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     Log.e("ChatActivity", "Erro ao carregar mensagens: " + error);
                     Toast.makeText(Chat.this, "Erro ao carregar mensagens: " + error, Toast.LENGTH_LONG).show();
                 });
@@ -100,6 +106,7 @@ public class Chat extends AppCompatActivity {
 
     // Método para enviar mensagem
     private void enviarMensagem(String messageText) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -114,6 +121,7 @@ public class Chat extends AppCompatActivity {
                 Log.d(TAG, "Mensagem enviada com sucesso: " + message.getContent());
                 // Mensagem enviada com sucesso
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     Toast.makeText(Chat.this, "Mensagem enviada!", Toast.LENGTH_SHORT).show();
                     // Adicionar a nova mensagem à lista no fragmento
                     if (searchMessagesFragment != null) {
@@ -127,6 +135,7 @@ public class Chat extends AppCompatActivity {
                 Log.e(TAG, "Erro ao enviar mensagem: " + error);
                 // Exibir erro na thread principal utilizando runOnUiThread
                 runOnUiThread(() -> {
+                    loadingDialog.dismiss();
                     Toast.makeText(Chat.this, "Erro ao enviar mensagem: " + error, Toast.LENGTH_SHORT).show();
                 });
             }
