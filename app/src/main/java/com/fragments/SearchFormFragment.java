@@ -392,13 +392,15 @@ public class SearchFormFragment extends Fragment {
 
 
     private void fetchCurriculumData(int candidateId) {
-        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
+        CurriculumService.getCurriculumByCandidateId(candidateId,token, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 meuCurriculo = curriculum;
-                fetchAcademicData(candidateId);
-                fetchCourseData(candidateId);
-                fetchCompetences(candidateId);
+                fetchAcademicData(candidateId, token);
+                fetchCourseData(candidateId, token);
+                fetchCompetences(candidateId, token);
             }
 
             @Override
@@ -408,10 +410,8 @@ public class SearchFormFragment extends Fragment {
         });
     }
 
-    private void fetchAcademicData(int curriculumId) {
-        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+    private void fetchAcademicData(int curriculumId, String token) {
 
-        String token = prefs.getString("token", "Nenhum token encontrado");
         AcademicDataService.getAcademicDataByCurriculumId(curriculumId,token,  new AcademicDataService.FetchAcademicDataCallback() {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
@@ -425,8 +425,8 @@ public class SearchFormFragment extends Fragment {
         });
     }
 
-    private void fetchCourseData(int curriculumId) {
-        CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
+    private void fetchCourseData(int curriculumId, String token) {
+        CourseDataService.getCourseDataByCurriculumId(curriculumId, token, new CourseDataService.FetchCourseDataCallback() {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 dadosCursos = courseDataList;
@@ -439,8 +439,8 @@ public class SearchFormFragment extends Fragment {
         });
     }
 
-    private void fetchCompetences(int curriculumId) {
-        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
+    private void fetchCompetences(int curriculumId, String token) {
+        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, token,new CompetenceDataService.FetchCompetencesCallback() {
             @Override
             public void onSuccess(List<CompetenceData> competencesList) {
                 // Cria uma lista de strings contendo apenas os textos das competências

@@ -38,7 +38,7 @@ public class CompetenceDataService {
 
 
 
-    public static void registerCompetenceData(Context context, CompetenceData competenceData, CompetenceDataService.CompetenceDataCallback callback) {
+    public static void registerCompetenceData(Context context, CompetenceData competenceData, String token, CompetenceDataService.CompetenceDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -60,6 +60,7 @@ public class CompetenceDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -96,7 +97,7 @@ public class CompetenceDataService {
             }
         }).start();
     }
-    public static void updateCompetenceData(Context context, CompetenceData competenceData, CompetenceDataService.CompetenceDataCallback callback) {
+    public static void updateCompetenceData(Context context, CompetenceData competenceData, String token, CompetenceDataService.CompetenceDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -118,6 +119,7 @@ public class CompetenceDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -154,12 +156,13 @@ public class CompetenceDataService {
             }
         }).start();
     }
-    public static void deleteCompetenceData(Context context, int competenceId, CompetenceDataCallback callback) {
+    public static void deleteCompetenceData(Context context, int competenceId, String token, CompetenceDataCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL(BASE_URL + "/" + competenceId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 
@@ -183,11 +186,12 @@ public class CompetenceDataService {
         void onFailure(String errorMessage);
     }
 
-    public static void getCompetencesByCurriculumId(int curriculumId, FetchCompetencesCallback callback) {
+    public static void getCompetencesByCurriculumId(int curriculumId, String token, FetchCompetencesCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
                 .url("https://backend-po.onrender.com/competences/" + curriculumId)
+                .addHeader("Authorization", "Bearer " + token)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

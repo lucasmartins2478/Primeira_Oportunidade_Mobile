@@ -136,10 +136,12 @@ public class CandidateDetails extends AppCompatActivity {
 
     }
     private void fetchCurriculumData(int candidateId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
-        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+        CurriculumService.getCurriculumByCandidateId(candidateId,token, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
@@ -149,9 +151,9 @@ public class CandidateDetails extends AppCompatActivity {
                     textCity.setText("Cidade: " + curriculum.getCity());
                     textAbout.setText("Sobre: " + curriculum.getAboutYou());
                     textInterest.setText("Área de interesse: " + curriculum.getInterestArea());
-                    fetchAcademicData(candidateId);
-                    fetchCourseData(candidateId);
-                    fetchCompetences(candidateId);
+                    fetchAcademicData(candidateId, token);
+                    fetchCourseData(candidateId, token);
+                    fetchCompetences(candidateId, token);
                     fetchQuestions(Integer.parseInt(vacancyId)); // Usando o vacancyId
 
                 });
@@ -168,12 +170,10 @@ public class CandidateDetails extends AppCompatActivity {
         });
     }
 
-    private void fetchAcademicData(int curriculumId) {
+    private void fetchAcademicData(int curriculumId, String token) {
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         AcademicDataService.getAcademicDataByCurriculumId(curriculumId, token, new AcademicDataService.FetchAcademicDataCallback() {
             @Override
@@ -215,10 +215,11 @@ public class CandidateDetails extends AppCompatActivity {
     }
 
 
-    private void fetchCourseData(int curriculumId) {
+    private void fetchCourseData(int curriculumId, String token) {
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
-        CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
+
+        CourseDataService.getCourseDataByCurriculumId(curriculumId,token, new CourseDataService.FetchCourseDataCallback() {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 runOnUiThread(() -> {
@@ -252,10 +253,12 @@ public class CandidateDetails extends AppCompatActivity {
         });
     }
 
-    private void fetchCompetences(int curriculumId) {
+    private void fetchCompetences(int curriculumId, String token) {
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
-        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
+
+
+        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, token, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
             public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {

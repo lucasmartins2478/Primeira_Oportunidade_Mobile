@@ -267,7 +267,7 @@ public class CurriculumRegister extends AppCompatActivity {
         }
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        String token = sharedPreferences.getString("token", "nanhum token encontrado");
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         Candidate candidate = new Candidate(fullName, phoneNumber, cpf,userId );
 
@@ -297,7 +297,7 @@ public class CurriculumRegister extends AppCompatActivity {
 
         if(curriculumId != -1){
 
-            curriculumService.updateCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+            curriculumService.updateCurriculum(CurriculumRegister.this, curriculum,token, new CurriculumService.CurriculumCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(CurriculumRegister.this, "Currículo atualizado com sucesso!", Toast.LENGTH_SHORT).show();
@@ -315,7 +315,7 @@ public class CurriculumRegister extends AppCompatActivity {
                 }
             });
         }else if(curriculumId == -1){
-            CurriculumService.registerCurriculum(CurriculumRegister.this, curriculum, new CurriculumService.CurriculumCallback() {
+            CurriculumService.registerCurriculum(CurriculumRegister.this, curriculum,token, new CurriculumService.CurriculumCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(CurriculumRegister.this, "Currículo cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
@@ -340,8 +340,12 @@ public class CurriculumRegister extends AppCompatActivity {
 
 
     private void loadCurriculumData(int candidateId) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         loadingDialog.show(getSupportFragmentManager(), "loading");
-        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+        CurriculumService.getCurriculumByCandidateId(candidateId, token, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {

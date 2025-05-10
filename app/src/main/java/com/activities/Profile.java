@@ -164,17 +164,19 @@ public class Profile extends AppCompatActivity {
 
 
     private void fetchCurriculumData(int candidateId) {
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
         loadingDialog.show(getSupportFragmentManager(), "loading");
-        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+        CurriculumService.getCurriculumByCandidateId(candidateId, token,new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
                     txtAge.setText(curriculum.getAge()+" anos"+", "+DateUtils.formatDate(curriculum.getBirthDate()));
                     textCity.setText( curriculum.getCity()+" - "+ curriculum.getUf());
 
-                    fetchAcademicData(candidateId);
-                    fetchCourseData(candidateId);
-                    fetchCompetences(candidateId);
+                    fetchAcademicData(candidateId, token);
+                    fetchCourseData(candidateId, token);
+                    fetchCompetences(candidateId, token);
 
 
                     loadingDialog.dismiss();
@@ -190,11 +192,9 @@ public class Profile extends AppCompatActivity {
         });
     }
 
-    private void fetchAcademicData(int curriculumId) {
+    private void fetchAcademicData(int curriculumId, String token) {
 
-        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-        String token = prefs.getString("token", "Nenhum token encontrado");
         AcademicDataService.getAcademicDataByCurriculumId(curriculumId, token, new AcademicDataService.FetchAcademicDataCallback() {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
@@ -227,8 +227,8 @@ public class Profile extends AppCompatActivity {
     }
 
 
-    private void fetchCourseData(int curriculumId) {
-        CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
+    private void fetchCourseData(int curriculumId, String token) {
+        CourseDataService.getCourseDataByCurriculumId(curriculumId,token, new CourseDataService.FetchCourseDataCallback() {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 runOnUiThread(() -> {
@@ -258,8 +258,10 @@ public class Profile extends AppCompatActivity {
         });
     }
 
-    private void fetchCompetences(int curriculumId) {
-        CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
+    private void fetchCompetences(int curriculumId, String token) {
+
+
+        CompetenceDataService.getCompetencesByCurriculumId(curriculumId,token, new CompetenceDataService.FetchCompetencesCallback() {
             @Override
             public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {
@@ -287,8 +289,12 @@ public class Profile extends AppCompatActivity {
     }
 
     private void fetchCompanyData(int companyId){
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         loadingDialog.show(getSupportFragmentManager(), "loading");
-        companyService.fetchCompanyFromApi(companyId, new CompanyService.CompanyCallback() {
+        companyService.fetchCompanyFromApi(companyId, token, new CompanyService.CompanyCallback() {
             @Override
             public void onSuccess(Company company) {
                 runOnUiThread(() -> {
@@ -360,13 +366,14 @@ public class Profile extends AppCompatActivity {
     }
 
     public void deleteAllData(View view){
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         loadingDialog.show(getSupportFragmentManager(), "loading");
         if(candidateId != -1){
 
-            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-            String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
 
             candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId,token, new CandidateService.DeleteCallback() {
@@ -387,8 +394,10 @@ public class Profile extends AppCompatActivity {
             });
 
         }else{
+
+
             Log.d("Delete (empresa) :", "companyId: "+companyId);
-            companyService.deleteAllCompanyData(Profile.this, userId, new CompanyService.RegisterCallback() {
+            companyService.deleteAllCompanyData(Profile.this, userId,token, new CompanyService.RegisterCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();

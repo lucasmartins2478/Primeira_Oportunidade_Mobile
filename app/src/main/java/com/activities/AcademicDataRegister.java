@@ -181,10 +181,11 @@ public class AcademicDataRegister extends AppCompatActivity {
         );
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
+        token = sharedPreferences.getString("token", "nanhum token encontrado");
         int curriculumId = sharedPreferences.getInt("curriculumId", -1);
 
 
-        CurriculumService.addSchoolData(AcademicDataRegister.this, schoolData, new CurriculumService.CurriculumCallback() {
+        CurriculumService.addSchoolData(AcademicDataRegister.this, schoolData,token,  new CurriculumService.CurriculumCallback() {
             @Override
             public void onSuccess() {
 
@@ -435,7 +436,10 @@ public class AcademicDataRegister extends AppCompatActivity {
     }
 
     private void loadCurriculumData(int candidateId) {
-        CurriculumService.getCurriculumByCandidateId(candidateId, new CurriculumService.FetchCurriculumCallback() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        token = sharedPreferences.getString("token", "nanhum token encontrado");
+        CurriculumService.getCurriculumByCandidateId(candidateId,token, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {

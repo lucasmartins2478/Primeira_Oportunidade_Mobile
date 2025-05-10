@@ -234,7 +234,7 @@ public class CandidateService {
     }
 
 
-    public static void addCurriculumToCandidate(Context context, CompanyService.RegisterCallback callback){
+    public static void addCurriculumToCandidate(Context context, String token, CompanyService.RegisterCallback callback){
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -264,6 +264,7 @@ public class CandidateService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();

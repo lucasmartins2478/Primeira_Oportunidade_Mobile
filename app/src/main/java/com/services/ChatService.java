@@ -36,10 +36,10 @@ public class ChatService {
     }
 
     // ✅ Buscar mensagens (GET)
-    public void getMessages(MessageCallback callback) {
+    public void getMessages(String token,MessageCallback callback) {
         Log.d(TAG, "Iniciando requisição para buscar mensagens...");
 
-        Request request = new Request.Builder().url(fetchUrl).build();
+        Request request = new Request.Builder().url(fetchUrl).addHeader("Authorization", "Bearer " + token).build();
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -83,7 +83,7 @@ public class ChatService {
     }
 
     // ✅ Enviar mensagem (POST)
-    public void sendMessage(int senderId, String senderName, String content, SendMessageCallback callback) {
+    public void sendMessage(int senderId, String senderName, String content, String token, SendMessageCallback callback) {
         try {
             JSONObject json = new JSONObject();
             json.put("sender_id", senderId);
@@ -100,6 +100,7 @@ public class ChatService {
             Request request = new Request.Builder()
                     .url(registerUrl)
                     .post(body)
+                    .addHeader("Authorization", "Bearer " + token)
                     .build();
 
             client.newCall(request).enqueue(new Callback() {

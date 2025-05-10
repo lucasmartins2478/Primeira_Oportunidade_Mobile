@@ -34,7 +34,7 @@ public class CourseDataService {
     }
 
 
-    public static void registerCourseData(Context context, CourseData courseData, CourseDataService.CourseDataCallback callback) {
+    public static void registerCourseData(Context context, CourseData courseData, String token, CourseDataService.CourseDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -60,6 +60,7 @@ public class CourseDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -96,7 +97,7 @@ public class CourseDataService {
             }
         }).start();
     }
-    public static void updateCourseData(Context context, CourseData courseData, CourseDataService.CourseDataCallback callback) {
+    public static void updateCourseData(Context context, CourseData courseData,String token, CourseDataService.CourseDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -124,6 +125,7 @@ public class CourseDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -178,13 +180,14 @@ public class CourseDataService {
         void onFailure(String errorMessage);
     }
 
-    public static void getCourseDataByCurriculumId(int curriculumId, FetchCourseDataCallback callback) {
+    public static void getCourseDataByCurriculumId(int curriculumId,String token,  FetchCourseDataCallback callback) {
         new Thread(() -> {
             try {
                 // Fazendo a requisição para a URL com curriculumId
                 URL url = new URL("https://backend-po.onrender.com/coursesData" + "/" + curriculumId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.connect();
 
                 int responseCode = conn.getResponseCode();
@@ -240,12 +243,13 @@ public class CourseDataService {
         }).start();
     }
 
-    public static void deleteCourseData(Context context, int courseId, CourseDataCallback callback) {
+    public static void deleteCourseData(Context context, int courseId, String token, CourseDataCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL(BASE_URL + "/" + courseId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 

@@ -149,7 +149,7 @@ public class FormLogin extends AppCompatActivity {
                             }
                         });
                     } else {
-                        companyService.fetchCompanyFromApi(user.getId(), new CompanyService.CompanyCallback() {
+                        companyService.fetchCompanyFromApi(user.getId(), user.getToken(), new CompanyService.CompanyCallback() {
                             @Override
                             public void onSuccess(Company company) {
                                 runOnUiThread(() -> {

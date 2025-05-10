@@ -1,5 +1,8 @@
 package com.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -74,8 +77,12 @@ public class SearchCompanyFragment extends Fragment {
 
     private void fetchCompanies() {
         loadingDialog.show(getParentFragmentManager(), "loading");
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         CompanyService service = new CompanyService();
-        service.fetchAllCompanies(new CompanyService.CompanyListCallback() {
+        service.fetchAllCompanies(token, new CompanyService.CompanyListCallback() {
             @Override
             public void onSuccess(List<Company> companies) {
                 allCompanies = companies;

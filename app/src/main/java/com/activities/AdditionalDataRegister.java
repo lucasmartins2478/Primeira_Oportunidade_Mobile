@@ -59,7 +59,9 @@ public class AdditionalDataRegister extends AppCompatActivity {
         EditText attachedInput = findViewById(R.id.curriculum_input);
         EditText descriptionInput = findViewById(R.id.about_you_input);
 
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
+        String token = sharedPreferences.getString("token", "nanhum token encontrado");
 
         String description = descriptionInput.getText().toString();
         String interestArea = ((Spinner) findViewById(R.id.interest_area_spinner)).getSelectedItem().toString();
@@ -69,10 +71,10 @@ public class AdditionalDataRegister extends AppCompatActivity {
         Curriculum additionalData = new Curriculum("curriculo", description, interestArea );
 
 
-        CurriculumService.additionalData(this, additionalData, new CurriculumService.CurriculumCallback() {
+        CurriculumService.additionalData(this, additionalData, token, new CurriculumService.CurriculumCallback() {
             @Override
             public void onSuccess() {
-                CandidateService.addCurriculumToCandidate(AdditionalDataRegister.this, new CompanyService.RegisterCallback() {
+                CandidateService.addCurriculumToCandidate(AdditionalDataRegister.this,token,  new CompanyService.RegisterCallback() {
                     @Override
                     public void onSuccess() {
 

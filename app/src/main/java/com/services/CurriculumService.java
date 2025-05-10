@@ -33,7 +33,7 @@ public class CurriculumService {
         void onFailure(String errorMessage);
     }
 
-    public static void registerCurriculum(Context context, Curriculum curriculum, CurriculumCallback callback) {
+    public static void registerCurriculum(Context context, Curriculum curriculum,String token, CurriculumCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -72,6 +72,7 @@ public class CurriculumService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -110,7 +111,7 @@ public class CurriculumService {
         }).start();
     }
 
-    public static void updateCurriculum(Context context, Curriculum curriculum, CurriculumCallback callback) {
+    public static void updateCurriculum(Context context, Curriculum curriculum, String token, CurriculumCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -150,6 +151,7 @@ public class CurriculumService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -187,7 +189,7 @@ public class CurriculumService {
         }).start();
     }
 
-    public static void addSchoolData(Context context, Curriculum curriculum, CurriculumCallback callback){
+    public static void addSchoolData(Context context, Curriculum curriculum, String token, CurriculumCallback callback){
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -219,6 +221,7 @@ public class CurriculumService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -241,7 +244,7 @@ public class CurriculumService {
     }
 
 
-    public static void additionalData(Context context, Curriculum curriculum, CurriculumCallback callback){
+    public static void additionalData(Context context, Curriculum curriculum,String token,  CurriculumCallback callback){
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -271,6 +274,7 @@ public class CurriculumService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -340,12 +344,13 @@ public class CurriculumService {
         void onFailure(String errorMessage);
     }
 
-    public static void getCurriculumByCandidateId(int candidateId, FetchCurriculumCallback callback) {
+    public static void getCurriculumByCandidateId(int candidateId,String token,  FetchCurriculumCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL(BASE_URL + "/" + candidateId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.connect();
 
                 int responseCode = conn.getResponseCode();

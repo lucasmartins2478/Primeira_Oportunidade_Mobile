@@ -44,11 +44,11 @@ public class CompanyService {
         void onFailure(String error);
     }
 
-    public void fetchCompanyFromApi(int userId, CompanyCallback callback){
+    public void fetchCompanyFromApi(int userId,String token, CompanyCallback callback){
         new Thread(()->{
             String url = apiUrl + "/" +userId;
 
-            Request request = new Request.Builder().url(url).build();
+            Request request = new Request.Builder().url(url).addHeader("Authorization", "Bearer " + token).build();
 
             try (Response response = client.newCall(request).execute()){
                 if(response.isSuccessful() && response.body() != null){
@@ -91,9 +91,9 @@ public class CompanyService {
         void onSuccess(List<Company> companies);
         void onFailure(String error);
     }
-    public void fetchAllCompanies(CompanyListCallback callback) {
+    public void fetchAllCompanies(String token, CompanyListCallback callback) {
         new Thread(() -> {
-            Request request = new Request.Builder().url(apiUrl).get().build();
+            Request request = new Request.Builder().url(apiUrl).get().addHeader("Authorization", "Bearer " + token).build();
 
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -145,7 +145,7 @@ public class CompanyService {
 
 
 
-    public void registerCompany(Company company, RegisterCallback callback){
+    public void registerCompany(Company company,String token, RegisterCallback callback){
 
         new Thread(()->{
             try{
@@ -173,7 +173,7 @@ public class CompanyService {
                 Log.d("CompanyRegisterJSON", json.toString());
 
 
-                Request request = new Request.Builder().url(apiUrl).post(body).build();
+                Request request = new Request.Builder().url(apiUrl).post(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -192,7 +192,7 @@ public class CompanyService {
         }).start();
 
     }
-    public void updateCompany(Company company, RegisterCallback callback){
+    public void updateCompany(Company company, String token, RegisterCallback callback){
 
         new Thread(()->{
             try{
@@ -219,7 +219,7 @@ public class CompanyService {
                 Log.d("CompanyRegisterJSON", json.toString());
 
 
-                Request request = new Request.Builder().url(apiUrl+"/"+company.getUserId()).put(body).build();
+                Request request = new Request.Builder().url(apiUrl+"/"+company.getUserId()).put(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -238,13 +238,14 @@ public class CompanyService {
         }).start();
 
     }
-    public  void deleteAllCompanyData(Context context, int companyId, CompanyService.RegisterCallback callback) {
+    public  void deleteAllCompanyData(Context context, int companyId, String token, CompanyService.RegisterCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL("https://backend-po.onrender.com/company/" + companyId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 
@@ -277,42 +278,5 @@ public class CompanyService {
         }).start();
     }
 
-    public  void deleteCompanyData(Context context, int companyId, CompanyService.RegisterCallback callback) {
-        new Thread(() -> {
-            try {
-                URL url = new URL("https://backend-po.onrender.com/companies/" + companyId);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("DELETE");
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-                int responseCode = conn.getResponseCode();
-
-                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
-                        ? conn.getInputStream()
-                        : conn.getErrorStream();
-
-                if (is != null) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    reader.close();
-                    is.close();
-                    System.out.println("Resposta (delete): " + response.toString());
-                }
-
-                if (responseCode == 200 || responseCode == 204) {
-                    new Handler(Looper.getMainLooper()).post(callback::onSuccess);
-                } else {
-                    new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro ao excluir empresa. Código: " + responseCode));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                new Handler(Looper.getMainLooper()).post(() -> callback.onFailure("Erro: " + e.getMessage()));
-            }
-        }).start();
-    }
 }

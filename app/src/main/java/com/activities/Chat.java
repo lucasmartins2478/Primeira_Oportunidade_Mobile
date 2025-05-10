@@ -75,7 +75,11 @@ public class Chat extends AppCompatActivity {
     private void carregarMensagens() {
         loadingDialog.show(getSupportFragmentManager(), "loading");
         Log.d("ChatActivity", "Iniciando o carregamento de mensagens...");
-        chatService.getMessages(new ChatService.MessageCallback() {
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = prefs.getString("token", "Nanhum token encontrado");
+        chatService.getMessages(token, new ChatService.MessageCallback() {
             @Override
             public void onSuccess(ArrayList<Message> messages) {
                 // Atualizar o fragmento com as mensagens obtidas
@@ -113,9 +117,10 @@ public class Chat extends AppCompatActivity {
         String name = sharedPreferences.getString("name", "Usuário não encontrado");
         int curriculumId = sharedPreferences.getInt("candidateId", -1);
 
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         Log.d(TAG, "Enviando mensagem: " + messageText + " (ID: " + curriculumId + ", Nome: " + name + ")");
 
-        chatService.sendMessage(curriculumId, name, messageText, new ChatService.SendMessageCallback() {
+        chatService.sendMessage(curriculumId, name, messageText,token, new ChatService.SendMessageCallback() {
             @Override
             public void onSuccess(Message message) {
                 Log.d(TAG, "Mensagem enviada com sucesso: " + message.getContent());

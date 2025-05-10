@@ -84,12 +84,15 @@ public class CoursesRegister extends AppCompatActivity {
         addCourseDataForm(null);
         View formInicial = formViews.get(0); // <- importante: pega o form REAL que foi adicionado
 
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
+
 
         int curriculumId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("curriculumId", -1);
         if(curriculumId != -1){
             loadingDialog.show(getSupportFragmentManager(), "loading");
 
-            CompetenceDataService.getCompetencesByCurriculumId(curriculumId, new CompetenceDataService.FetchCompetencesCallback() {
+            CompetenceDataService.getCompetencesByCurriculumId(curriculumId, token,new CompetenceDataService.FetchCompetencesCallback() {
 
                 @Override
                 public void onSuccess(List<CompetenceData> competences) {
@@ -105,7 +108,7 @@ public class CoursesRegister extends AppCompatActivity {
 
 
 
-            CourseDataService.getCourseDataByCurriculumId(curriculumId, new CourseDataService.FetchCourseDataCallback() {
+            CourseDataService.getCourseDataByCurriculumId(curriculumId, token, new CourseDataService.FetchCourseDataCallback() {
                 public void onSuccess(List<CourseData> dataList) {
                     runOnUiThread(() -> {
                         removeCourse(formInicial); // <- Agora sim: remove o formulário que está na tela
@@ -139,7 +142,7 @@ public class CoursesRegister extends AppCompatActivity {
 
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         int curriculumId = sharedPreferences.getInt("curriculumId", -1);
         if (formViews.isEmpty()) {
             // Se não houver formulários dinâmicos, redireciona para a próxima tela
@@ -191,7 +194,7 @@ public class CoursesRegister extends AppCompatActivity {
 
 
             if(courseData.getId() != 0){
-                CourseDataService.updateCourseData(CoursesRegister.this, courseData, new CourseDataService.CourseDataCallback() {
+                CourseDataService.updateCourseData(CoursesRegister.this, courseData,token, new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
                         loadingDialog.dismiss();
@@ -208,7 +211,7 @@ public class CoursesRegister extends AppCompatActivity {
                 });
 
             }else{
-                CourseDataService.registerCourseData(CoursesRegister.this, courseData, new CourseDataService.CourseDataCallback() {
+                CourseDataService.registerCourseData(CoursesRegister.this, courseData, token,new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
                         loadingDialog.dismiss();
@@ -271,6 +274,7 @@ public class CoursesRegister extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int curriculumId = sharedPreferences.getInt("candidateId", -1);
         CompetenceData competenceData = new CompetenceData(competenceText, curriculumId);
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         list.add(competenceData);
 
         // Listener para deletar
@@ -280,7 +284,7 @@ public class CoursesRegister extends AppCompatActivity {
 
             if (competenceData != null && competenceData.getId() > 0) {
                 // Exclusão no backend
-                CourseDataService.deleteCourseData(CoursesRegister.this, competenceData.getId(), new CourseDataService.CourseDataCallback() {
+                CourseDataService.deleteCourseData(CoursesRegister.this, competenceData.getId(),token, new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
@@ -308,7 +312,7 @@ public class CoursesRegister extends AppCompatActivity {
         container.addView(itemView);
 
 
-        CompetenceDataService.registerCompetenceData(this, competenceData, new CompetenceDataService.CompetenceDataCallback() {
+        CompetenceDataService.registerCompetenceData(this, competenceData,token, new CompetenceDataService.CompetenceDataCallback() {
             @Override
             public void onSuccess() {
                 loadingDialog.dismiss();
@@ -327,6 +331,9 @@ public class CoursesRegister extends AppCompatActivity {
 
     private void populateCompetenceDataForms(List<CompetenceData> competenceDataList) {
 
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
+
         loadingDialog.show(getSupportFragmentManager(), "loading");
         LinearLayout competencesContainer = findViewById(R.id.competences_list_container);
 
@@ -340,7 +347,7 @@ public class CoursesRegister extends AppCompatActivity {
 
             // Listener para deletar
             deleteButton.setOnClickListener(v -> {
-                CompetenceDataService.deleteCompetenceData(this, data.getId(), new CompetenceDataService.CompetenceDataCallback() {
+                CompetenceDataService.deleteCompetenceData(this, data.getId(), token, new CompetenceDataService.CompetenceDataCallback() {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
@@ -369,6 +376,9 @@ public class CoursesRegister extends AppCompatActivity {
 
     private void populateCourseDataForms(List<CourseData> courseDataList){
         loadingDialog.show(getSupportFragmentManager(), "loading");
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
         for (CourseData data : courseDataList){
             View form = inflater.inflate(R.layout.item_course_data_form, containerLayout, false);
 
@@ -403,7 +413,7 @@ public class CoursesRegister extends AppCompatActivity {
 
                 if (data != null && data.getId() > 0) {
                     // Exclusão no backend
-                    CourseDataService.deleteCourseData(CoursesRegister.this, data.getId(), new CourseDataService.CourseDataCallback() {
+                    CourseDataService.deleteCourseData(CoursesRegister.this, data.getId(),token,  new CourseDataService.CourseDataCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {
