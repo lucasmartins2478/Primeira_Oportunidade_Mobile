@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.activities.Chatbot;
 import com.activities.Community;
 import com.activities.Companies;
 import com.activities.FormLogin;
@@ -56,6 +57,7 @@ public class BottomMenuFragment extends Fragment {
         Button btnCompanies = view.findViewById(R.id.btnCompanies);
         Button btnCommunity = view.findViewById(R.id.btnComunity);
         Button btnMyApplications = view.findViewById(R.id.btnMyApplications);
+        Button btnChatbot = view.findViewById(R.id.btnChatbot);
 
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
@@ -83,6 +85,11 @@ public class BottomMenuFragment extends Fragment {
                 startActivity(intent);
             }
 
+        });
+        btnChatbot.setOnClickListener(v -> {
+            bottomSheetDialog.dismiss();
+            Intent intent = new Intent(getContext(), Chatbot.class);
+            startActivity(intent);
         });
 
         btnProfile.setOnClickListener(v -> {

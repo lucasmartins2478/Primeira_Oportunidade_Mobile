@@ -16,6 +16,9 @@
         android:theme="@style/Theme.PrimeiraOportunidade"
         tools:targetApi="31">
         <activity
+            android:name=".Chatbot"
+            android:exported="false" />
+        <activity
             android:name=".CommunityStep4"
             android:exported="false" />
         <activity

@@ -21,6 +21,7 @@
         android:paddingLeft="30dp"
         android:text="@string/home_menu_option"
         android:textAlignment="viewStart" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnComunity"
         style="@style/MenuOptionButton"
@@ -76,7 +77,16 @@
         android:paddingLeft="30dp"
         android:text="@string/vacancy_register_menu"
         android:textAlignment="viewStart" />
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnChatbot"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/chatbot_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="Chatbot"
+        android:textAlignment="viewStart" />
 
 
     <androidx.appcompat.widget.AppCompatButton

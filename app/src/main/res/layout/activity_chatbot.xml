@@ -1,0 +1,76 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".Chatbot">
+
+    <!-- Seção superior com logo -->
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:gravity="center"
+        android:background="@color/background_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/blue"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutInput"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayoutInput"
+        android:layout_width="412dp"
+        android:layout_height="103dp"
+        android:background="@color/background_color"
+        android:orientation="horizontal"
+        android:gravity="start"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Campo de digitação -->
+        <EditText
+            android:id="@+id/inputMessage"
+            style="@style/EditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Digite sua mensagem"
+            android:maxLines="1"
+            android:padding="10dp"
+            android:textSize="16sp" />
+
+        <!-- Botão para enviar -->
+        <ImageView
+            android:id="@+id/sendMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:clickable="true"
+            android:layout_marginTop="17dp"
+            android:contentDescription="Enviar mensagem"
+            android:focusable="true"
+            android:src="@drawable/send_icon" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
