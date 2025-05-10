@@ -153,8 +153,12 @@ public class SearchFormFragment extends Fragment {
 
         vacancyService = new VacancyService();
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+
         // 1. Carrega todas as vagas ao abrir
-        vacancyService.fetchVacanciesFromApi(new VacancyService.VacancyCallback() {
+        vacancyService.fetchVacanciesFromApi(token, new VacancyService.VacancyCallback() {
             @Override
             public void onSuccess(ArrayList<Vacancy> vacancies) {
                 // Recupera o companyId (se estiver logado como empresa)

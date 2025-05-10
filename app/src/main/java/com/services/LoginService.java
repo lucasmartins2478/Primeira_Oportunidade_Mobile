@@ -1,6 +1,7 @@
 package com.services;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -10,6 +11,7 @@ import com.models.User;
 import com.models.UserType;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -157,7 +159,8 @@ public class LoginService {
                         Log.d("UserRegisterResponse", "Dados recebidos: " + responseData);
 
                         JSONObject jsonResponse = new JSONObject(responseData);
-                        int userId = jsonResponse.getInt("id");
+                        JSONObject userJson = jsonResponse.getJSONObject("user");
+                        int userId = userJson.getInt("id");
 
                         callback.onSuccess(userId);
                     } catch (Exception e) {
@@ -229,32 +232,47 @@ public class LoginService {
 
     public void login(String email, String password, LoginCallback callback) {
         new Thread(() -> {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("email", email);
+                json.put("password", password);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
+            Log.d("UserLoginJSON", json.toString());
+
+            RequestBody body = RequestBody.create(
+                    json.toString(),
+                    MediaType.get("application/json; charset=utf-8")
+            );
+
             Request request = new Request.Builder()
-                    .url(apiUrl + "s") // /users
+                    .url("https://backend-po.onrender.com/login")
+                    .post(body)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
                 if (response.isSuccessful() && response.body() != null) {
                     String responseData = response.body().string();
-                    JSONArray usersArray = new JSONArray(responseData);
+                    JSONObject responseJson = new JSONObject(responseData);
 
-                    for (int i = 0; i < usersArray.length(); i++) {
-                        JSONObject userJson = usersArray.getJSONObject(i);
-                        String userEmail = userJson.getString("email");
-                        String userPassword = userJson.getString("password");
+                    // Captura o token da resposta
+                    String token = responseJson.getString("token");
 
-                        if (email.equals(userEmail) && password.equals(userPassword)) {
-                            int id = userJson.getInt("id");
-                            String type = userJson.getString("type");
+                    // Captura os dados do usuário
+                    JSONObject userJson = responseJson.getJSONObject("user");
+                    int id = userJson.getInt("id");
+                    String userEmail = userJson.getString("email");
+                    String type = userJson.getString("type");
 
-                            User user = new User(id, userEmail, userPassword, UserType.valueOf(type.toUpperCase()));
-                            callback.onSuccess(user);
-                            return;
-                        }
-                    }
-                    callback.onFailure("Email ou senha inválidos");
+                    // Cria objeto User sem senha (ou salva a que foi enviada)
+                    User user = new User(id, userEmail, password, UserType.valueOf(type.toUpperCase()));
+                    user.setToken(token); // seu User precisa ter esse campo
+
+                    callback.onSuccess(user);
                 } else {
-                    callback.onFailure("Erro ao buscar usuários: " + response.message());
+                    callback.onFailure("Email ou senha inválidos");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -262,6 +280,8 @@ public class LoginService {
             }
         }).start();
     }
+
+
     public interface LoginCallback {
         void onSuccess(User user);
         void onFailure(String errorMessage);

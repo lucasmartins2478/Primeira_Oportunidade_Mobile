@@ -141,6 +141,7 @@ public class UserRegister extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("userId", -1);
 
+
         // Criar o objeto User e Candidate
         User user = new User(email, password, CANDIDATE);
 
@@ -162,7 +163,9 @@ public class UserRegister extends AppCompatActivity {
                     ", UserID: " + updated.getUserId());
 
 
-            candidateService.updateCandidate(updated, new CandidateService.registerCallback() {
+            String token = prefs.getString("token", "Nenhum token encontrado");
+
+            candidateService.updateCandidate(updated, token, new CandidateService.registerCallback() {
                 @Override
                 public void onSuccess(Candidate candidate) {
                     runOnUiThread(() -> {
@@ -185,75 +188,67 @@ public class UserRegister extends AppCompatActivity {
                 public void onSuccess(int userId) {
                     Log.d("UserRegister", "Novo userId: " + userId);
 
-                    Candidate candidate = new Candidate(name, cpf, phone, userId);
-
-
-                    candidateService.registerCandidate(candidate, new CandidateService.registerCallback() {
+                    // Faz login após cadastro para obter o token
+                    loginService.login(email, password, new LoginService.LoginCallback() {
                         @Override
-                        public void onSuccess(Candidate candidate) {
-                            runOnUiThread(() -> {
-                                // Tudo o que você tem aqui
-                                SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putInt("userId", userId);
-                                editor.putInt("candidateId", candidate.getId());
-                                editor.putString("email", user.getEmail());
-                                editor.putString("type", user.getType().getValue());
-                                editor.putString("name", candidate.getName());
-                                editor.putString("cpf", candidate.getCpf());
-                                editor.putString("phone", candidate.getPhoneNumber());
-                                editor.putBoolean("isLoggedIn", true);
+                        public void onSuccess(User loggedUser) {
+                            String token = loggedUser.getToken();
 
-                                editor.apply();
+                            Candidate candidate = new Candidate(name, cpf, phone, userId);
 
-                                // Agora chama o login
-                                loginService.login(email, password, new LoginService.LoginCallback() {
-                                    @Override
-                                    public void onSuccess(User user) {
-                                        runOnUiThread(() -> {
-                                            loadingDialog.dismiss();
-                                            Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(UserRegister.this, Vacancies.class);
-                                            startActivity(intent);
+                            candidateService.registerCandidate(candidate, token, new CandidateService.registerCallback() {
+                                @Override
+                                public void onSuccess(Candidate candidate) {
+                                    runOnUiThread(() -> {
+                                        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putInt("userId", userId);
+                                        editor.putInt("candidateId", candidate.getId());
+                                        editor.putString("email", loggedUser.getEmail());
+                                        editor.putString("type", loggedUser.getType().getValue());
+                                        editor.putString("name", candidate.getName());
+                                        editor.putString("cpf", candidate.getCpf());
+                                        editor.putString("phone", candidate.getPhoneNumber());
+                                        editor.putString("token", token); // <- salva token aqui também
+                                        editor.putBoolean("isLoggedIn", true);
+                                        editor.apply();
 
-                                            finish();
-                                        });
-                                    }
+                                        loadingDialog.dismiss();
+                                        Toast.makeText(UserRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(UserRegister.this, Vacancies.class));
+                                        finish();
+                                    });
+                                }
 
-                                    @Override
-                                    public void onFailure(String errorMessage) {
-                                        runOnUiThread(() -> {
-                                            loadingDialog.dismiss();
-                                                    Toast.makeText(UserRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
-                                                }
-                                        );
-                                    }
-                                });
+                                @Override
+                                public void onFailure(String error) {
+                                    runOnUiThread(() -> {
+                                        loadingDialog.dismiss();
+                                        Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
+                                    });
+                                }
                             });
-
                         }
 
-
                         @Override
-                        public void onFailure(String error) {
+                        public void onFailure(String errorMessage) {
                             runOnUiThread(() -> {
-                                Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
                                 loadingDialog.dismiss();
+                                Toast.makeText(UserRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
                             });
                         }
                     });
-
                 }
 
                 @Override
                 public void onFailure(String error) {
-
                     runOnUiThread(() -> {
-                        Toast.makeText(UserRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
+                        Toast.makeText(UserRegister.this, "Erro ao cadastrar usuário: " + error, Toast.LENGTH_SHORT).show();
                     });
                 }
             });
+
         }
 
 

@@ -360,8 +360,12 @@ public class Profile extends AppCompatActivity {
         loadingDialog.show(getSupportFragmentManager(), "loading");
         if(candidateId != -1){
 
+            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
-            candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId, new CandidateService.DeleteCallback() {
+            String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+
+
+            candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId,token, new CandidateService.DeleteCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();

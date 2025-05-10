@@ -265,10 +265,13 @@ public class CurriculumRegister extends AppCompatActivity {
             addressNumberInput.requestFocus();
             return;
         }
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "nanhum token encontrado");
 
         Candidate candidate = new Candidate(fullName, phoneNumber, cpf,userId );
 
-        candidateService.updateCandidate(candidate, new CandidateService.registerCallback() {
+        candidateService.updateCandidate(candidate, token, new CandidateService.registerCallback() {
             @Override
             public void onSuccess(Candidate candidate) {
 

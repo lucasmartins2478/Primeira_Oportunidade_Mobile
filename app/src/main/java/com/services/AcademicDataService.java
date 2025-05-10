@@ -43,7 +43,7 @@ public class AcademicDataService {
         void onFailure(String errorMessage);
     }
 
-    public static void registerAcademicData(Context context, AcademicData academicData, AcademicDataCallback callback) {
+    public static void registerAcademicData(Context context, AcademicData academicData, String token, AcademicDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -76,6 +76,7 @@ public class AcademicDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -112,7 +113,7 @@ public class AcademicDataService {
             }
         }).start();
     }
-    public static void updateAcademicData(Context context, AcademicData academicData, AcademicDataCallback callback) {
+    public static void updateAcademicData(Context context, AcademicData academicData, String token, AcademicDataCallback callback) {
         new Thread(() -> {
             try {
                 // Recuperar o userId do SharedPreferences
@@ -145,6 +146,7 @@ public class AcademicDataService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("PUT");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -201,11 +203,12 @@ public class AcademicDataService {
 
 
 
-    public static void getAcademicDataByCurriculumId(int curriculumId, FetchAcademicDataCallback callback) {
+    public static void getAcademicDataByCurriculumId(int curriculumId, String token, FetchAcademicDataCallback callback) {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
                 .url(BASE_URL + "/" + curriculumId)
+                .addHeader("Authorization", "Bearer "+token)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -258,13 +261,14 @@ public class AcademicDataService {
         });
     }
 
-    public static void deleteAcademicData(Context context, int academicDataId, AcademicDataCallback callback) {
+    public static void deleteAcademicData(Context context, int academicDataId, String token, AcademicDataCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL(BASE_URL + "/" + academicDataId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 

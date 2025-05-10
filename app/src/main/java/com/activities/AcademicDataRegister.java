@@ -245,6 +245,8 @@ public class AcademicDataRegister extends AppCompatActivity {
                     Log.d("AcademicDataDebug", "Dados finais de academicData: " +
                             "ID=" + academicData.getId() + ", Curso=" + course + ", Instituição=" + inst);
 
+                    String token = sharedPreferences.getString("token", "Nenhum token encontrado")
+
 
                     if (academicData.getId() != 0) { // Editando
                         AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {

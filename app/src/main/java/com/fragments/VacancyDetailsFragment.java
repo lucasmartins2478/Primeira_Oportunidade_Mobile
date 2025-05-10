@@ -97,6 +97,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
         int candidateId = sharedPreferences.getInt("candidateId", -1);
         String userType = sharedPreferences.getString("type", "Usuário não encontrado");
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         // Preenche os dados no layout do BottomSheet
         TextView tvTitle = view.findViewById(R.id.tvTitle);
@@ -183,8 +184,9 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         });
 
 
+
         btnCancelVacancy.setOnClickListener(v -> {
-            vacancyService.updateIsActiveToFalse(vacancy.getId(), new VacancyService.RegisterIdCallback() {
+            vacancyService.updateIsActiveToFalse(vacancy.getId(), token,new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     requireActivity().runOnUiThread(()->{
@@ -205,7 +207,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         });
 
         btnFillVacancy.setOnClickListener(v -> {
-            vacancyService.updateIsFilledToTrue(vacancy.getId(), new VacancyService.RegisterIdCallback() {
+            vacancyService.updateIsFilledToTrue(vacancy.getId(), token, new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     requireActivity().runOnUiThread(()->{

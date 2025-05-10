@@ -105,6 +105,8 @@ public class FormLogin extends AppCompatActivity {
                     SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
 
+                    editor.putString("token", user.getToken());
+
                     if (user.getType() == UserType.CANDIDATE) {
                         candidateService.fetchCandidateFromApi(user.getId(), new CandidateService.CandidateCallback() {
                             @Override

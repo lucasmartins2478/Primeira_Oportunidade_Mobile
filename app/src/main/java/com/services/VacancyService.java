@@ -1,5 +1,8 @@
 package com.services;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.models.Vacancy;
 import com.models.VacancyScore;
 
@@ -24,6 +27,9 @@ public class VacancyService {
 
     private OkHttpClient client;
 
+    private Context context;
+
+
     public boolean registerVacancy(Vacancy vacancy){
         return true;
     }
@@ -31,6 +37,8 @@ public class VacancyService {
 
     public VacancyService(){
         client = new OkHttpClient();
+        this.context = context; // Recebe o Contexto
+
     }
 
     public List<Vacancy> getVacancies(){
@@ -39,13 +47,14 @@ public class VacancyService {
 
 
 
-  public void fetchVacanciesFromApi(VacancyCallback callback) {
+  public void fetchVacanciesFromApi(String token, VacancyCallback callback) {
     new Thread(() -> {
         try {
             client = new OkHttpClient();
 
             Request request = new Request.Builder()
                     .url(fetchUrl)
+                    .addHeader("Authorization", "Bearer " + token)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -90,13 +99,14 @@ public class VacancyService {
     }).start();
 }
 
-    public void fetchVacanciesByCompanyId(int companyId, VacancyCallback callback) {
+    public void fetchVacanciesByCompanyId(int companyId, String token, VacancyCallback callback) {
         new Thread(() -> {
             try {
                 client = new OkHttpClient();
 
                 Request request = new Request.Builder()
                         .url(fetchUrl)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
@@ -151,7 +161,7 @@ public class VacancyService {
         void onFailure(String error);
     }
 
-    public void registerVacancyWithId(Vacancy vacancy, RegisterIdCallback callback) {
+    public void registerVacancyWithId(Vacancy vacancy, String token, RegisterIdCallback callback) {
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject();
@@ -174,7 +184,7 @@ public class VacancyService {
                         MediaType.get("application/json; charset=utf-8")
                 );
 
-                Request request = new Request.Builder().url(registerUrl).post(body).build();
+                Request request = new Request.Builder().url(registerUrl).post(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -193,7 +203,7 @@ public class VacancyService {
             }
         }).start();
     }
-    public void updateVacancy(Vacancy vacancy, RegisterIdCallback callback) {
+    public void updateVacancy(Vacancy vacancy, String token, RegisterIdCallback callback) {
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject();
@@ -213,7 +223,7 @@ public class VacancyService {
 
                 RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json.toString());
 
-                Request request = new Request.Builder().url(registerUrl+"/"+vacancy.getId()).put(body).build();
+                Request request = new Request.Builder().url(registerUrl+"/"+vacancy.getId()).put(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -233,7 +243,7 @@ public class VacancyService {
         }).start();
     }
 
-    public void updateIsActiveToFalse(int vacancyId, RegisterIdCallback callback) {
+    public void updateIsActiveToFalse(int vacancyId, String token, RegisterIdCallback callback) {
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject();
@@ -245,7 +255,7 @@ public class VacancyService {
                         MediaType.get("application/json; charset=utf-8")
                 );
 
-                Request request = new Request.Builder().url(registerUrl+"IsActive/"+vacancyId).put(body).build();
+                Request request = new Request.Builder().url(registerUrl+"IsActive/"+vacancyId).put(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -263,7 +273,7 @@ public class VacancyService {
             }
         }).start();
     }
-    public void updateIsFilledToTrue(int vacancyId, RegisterIdCallback callback) {
+    public void updateIsFilledToTrue(int vacancyId, String token, RegisterIdCallback callback) {
         new Thread(() -> {
             try {
                 JSONObject json = new JSONObject();
@@ -275,7 +285,7 @@ public class VacancyService {
                         MediaType.get("application/json; charset=utf-8")
                 );
 
-                Request request = new Request.Builder().url(registerUrl+"IsFilled/"+vacancyId).put(body).build();
+                Request request = new Request.Builder().url(registerUrl+"IsFilled/"+vacancyId).put(body).addHeader("Authorization", "Bearer " + token).build();
 
                 Response response = client.newCall(request).execute();
 
@@ -300,7 +310,12 @@ public class VacancyService {
             JSONArray competencias,
             VacancyCallback callback
     ) {
-        fetchVacanciesFromApi(new VacancyCallback() {
+
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        String token = prefs.getString("token", null); // Pega o token ou null se não existir
+
+
+        fetchVacanciesFromApi(token, new VacancyCallback() {
             @Override
             public void onSuccess(ArrayList<Vacancy> allVagas) {
                 ArrayList<VacancyScore> scoredVagas = new ArrayList<>();

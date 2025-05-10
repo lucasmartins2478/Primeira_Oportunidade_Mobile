@@ -50,9 +50,11 @@ public class MyVacancies extends AppCompatActivity {
         int companyId = sharedPreferences.getInt("companyId", -1);
         Log.d("LoginDebug", "Company ID recuperado: " + companyId);
 
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+
 
         if(companyId != -1){
-            vacancyService.fetchVacanciesByCompanyId(companyId, new VacancyService.VacancyCallback() {
+            vacancyService.fetchVacanciesByCompanyId(companyId,token, new VacancyService.VacancyCallback() {
                 @Override
                 public void onSuccess(ArrayList<Vacancy> vacancies) {
                     runOnUiThread(() -> {

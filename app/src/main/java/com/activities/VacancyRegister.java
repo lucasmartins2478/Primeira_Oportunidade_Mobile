@@ -164,6 +164,8 @@ public class VacancyRegister extends AppCompatActivity {
         String locality = sharedPreferences.getString("address", "Nenhum endereço encontrado");
         String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
 
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+
 
         if (isEditMode) {
             vacancyToEdit.setTitle(vacancyName);
@@ -178,7 +180,7 @@ public class VacancyRegister extends AppCompatActivity {
             vacancyToEdit.setRequirements(requirements);
             vacancyToEdit.setBenefits(benefits);
 
-            vacancyService.updateVacancy(vacancyToEdit, new VacancyService.RegisterIdCallback() {
+            vacancyService.updateVacancy(vacancyToEdit, token, new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
@@ -201,7 +203,7 @@ public class VacancyRegister extends AppCompatActivity {
             // Modo cadastro (já está pronto)
             Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level, companyId , false, true, companyName);
 
-            vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
+            vacancyService.registerVacancyWithId(vacancy,token, new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
@@ -278,6 +280,7 @@ public class VacancyRegister extends AppCompatActivity {
         int companyId = sharedPreferences.getInt("companyId", 0);
         String locality = sharedPreferences.getString("address", "Nenhum endereço encontrado");
         String companyName = sharedPreferences.getString("name", "Nenhum nome encontrado");
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
 
         if (isEditMode) {
@@ -293,7 +296,7 @@ public class VacancyRegister extends AppCompatActivity {
             vacancyToEdit.setRequirements(requirements);
             vacancyToEdit.setBenefits(benefits);
 
-            vacancyService.updateVacancy(vacancyToEdit, new VacancyService.RegisterIdCallback() {
+            vacancyService.updateVacancy(vacancyToEdit, token, new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
@@ -316,7 +319,7 @@ public class VacancyRegister extends AppCompatActivity {
             // Modo cadastro (já está pronto)
             Vacancy vacancy = new Vacancy(vacancyName, description, aboutCompany, benefits, requirements, modality, locality, uf, contact, salary, level, companyId , false, true, companyName);
 
-            vacancyService.registerVacancyWithId(vacancy, new VacancyService.RegisterIdCallback() {
+            vacancyService.registerVacancyWithId(vacancy, token, new VacancyService.RegisterIdCallback() {
                 @Override
                 public void onSuccess(int vacancyId) {
                     runOnUiThread(() -> {
