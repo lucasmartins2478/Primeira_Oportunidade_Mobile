@@ -20,7 +20,7 @@ public class AnswerService {
         void onFailure(String errorMessage);
     }
 
-    public static void submitAnswer(Answer answer, AnswerCallback callback) {
+    public static void submitAnswer(Answer answer, String token, AnswerCallback callback) {
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -41,6 +41,7 @@ public class AnswerService {
                         .url("https://backend-po.onrender.com/answer")
                         .addHeader("Content-Type", "application/json")
                         .addHeader("Accept", "application/json")
+                        .addHeader("Authorization", "Bearer " + token)
                         .post(body)
                         .build();
 
@@ -61,7 +62,7 @@ public class AnswerService {
         }).start();
     }
 
-    public static void getAnswerByCandidateAndQuestionId(int questionId, int candidateId, FetchAnswerByQuestionCallback callback) {
+    public static void getAnswerByCandidateAndQuestionId(int questionId, int candidateId, String token, FetchAnswerByQuestionCallback callback) {
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
@@ -69,6 +70,7 @@ public class AnswerService {
 
                 Request request = new Request.Builder()
                         .url(url)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 Response response = client.newCall(request).execute();

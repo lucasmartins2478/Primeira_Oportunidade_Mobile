@@ -63,7 +63,11 @@ private ArrayList<Integer> vacancyIdsCandidatadas;
     }
 
     private void buscarCandidaturasDoUsuario() {
-        ApplicationService.getAllApplications(this, new ApplicationService.ApplicationsListCallback() {
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = prefs.getString("token", "Nenhum token encontrado" );
+        ApplicationService.getAllApplications(this,token, new ApplicationService.ApplicationsListCallback() {
             @Override
             public void onSuccess(List<Application> applications) {
                 // Filtra as candidaturas que são do candidato atual

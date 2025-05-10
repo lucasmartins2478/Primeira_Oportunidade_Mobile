@@ -1,5 +1,7 @@
 package com.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -49,6 +51,8 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     VacancyService vacancyService;
     private Vacancy vacancy;
 
+    String token;
+
     LoadingDialogFragment loadingDialog;
 
     // Cria uma nova instância do fragmento com a vaga que será exibida
@@ -97,7 +101,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
         int candidateId = sharedPreferences.getInt("candidateId", -1);
         String userType = sharedPreferences.getString("type", "Usuário não encontrado");
-        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+        token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         // Preenche os dados no layout do BottomSheet
         TextView tvTitle = view.findViewById(R.id.tvTitle);
@@ -184,6 +188,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         });
 
 
+        token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         btnCancelVacancy.setOnClickListener(v -> {
             vacancyService.updateIsActiveToFalse(vacancy.getId(), token,new VacancyService.RegisterIdCallback() {
@@ -231,7 +236,12 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         if ("candidate".equals(userType)) {
 
-            ApplicationService.getApplicationsByVacancyId(getContext(), vacancy.getId(), new ApplicationService.ApplicationsListCallback() {
+            SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+            token = prefs.getString("token", "Nenhum token encontrado");
+
+
+            ApplicationService.getApplicationsByVacancyId(getContext(), vacancy.getId(), token, new ApplicationService.ApplicationsListCallback() {
                 @Override
                 public void onSuccess(java.util.List<Application> applications) {
                     boolean alreadyApplied = false;
@@ -273,10 +283,11 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         loadingDialog.show(getParentFragmentManager(), "loading");
         Log.d("ApplyDebug", "Chamou applyForVacancy para vagaId: " + vacancyId);
 
-        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
+        token = prefs.getString("token", "Nenhum token encontrado");
 
-        candidateService.fetchCandidateFromApiByCandidateId(userId, new CandidateService.CandidateCallback() {
+        candidateService.fetchCandidateFromApiByCandidateId(userId, token,new CandidateService.CandidateCallback() {
             @Override
             public void onSuccess(Candidate candidate) {
                 Log.d("ApplyDebug", "Candidato retornado: " + candidate.getId() + " | CurriculumId: " + candidate.getCurriculumId());
@@ -287,7 +298,8 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                     Log.d("ApplyDebug", "Passou do if, vai tentar aplicar!");
 
 
-                    ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+
+                    ApplicationService.registerApplication(getContext(), application, token, new ApplicationService.ApplicationCallback() {
                         @Override
                         public void onSuccess() {
                             if (isAdded()) {
@@ -354,9 +366,10 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     }
 
     public void cancelApplication(int vacancyId){
-        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
-        ApplicationService.cancelApplication(vacancyId, userId, new ApplicationService.ApplicationCallback() {
+        token = prefs.getString("token", "Nenhum token encontrado");
+        ApplicationService.cancelApplication(vacancyId, userId,token, new ApplicationService.ApplicationCallback() {
             @Override
             public void onSuccess() {
                 Toast.makeText(getContext(), "Candidatura cancelada com sucesso!", Toast.LENGTH_SHORT).show();

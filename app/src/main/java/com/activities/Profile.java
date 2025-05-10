@@ -191,7 +191,11 @@ public class Profile extends AppCompatActivity {
     }
 
     private void fetchAcademicData(int curriculumId) {
-        AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
+
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = prefs.getString("token", "Nenhum token encontrado");
+        AcademicDataService.getAcademicDataByCurriculumId(curriculumId, token, new AcademicDataService.FetchAcademicDataCallback() {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
                 runOnUiThread(() -> {

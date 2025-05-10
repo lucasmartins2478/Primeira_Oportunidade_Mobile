@@ -1,5 +1,6 @@
 package com.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -106,9 +107,12 @@ public class CandidateDetails extends AppCompatActivity {
 
         CandidateService candidateService = new CandidateService();
 
-        // Usa o método que recebe o ID do candidato
+        SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = prefs.getString("token", "Nenhum token encontrado");
+
         candidateService.fetchCandidateFromApiByCandidateId(
-                Integer.parseInt(candidateId),
+                Integer.parseInt(candidateId), token,
                 new CandidateService.CandidateCallback() {
                     @Override
                     public void onSuccess(Candidate candidate) {
@@ -167,7 +171,11 @@ public class CandidateDetails extends AppCompatActivity {
     private void fetchAcademicData(int curriculumId) {
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
-        AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
+
+        AcademicDataService.getAcademicDataByCurriculumId(curriculumId, token, new AcademicDataService.FetchAcademicDataCallback() {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
                 runOnUiThread(() -> {
@@ -312,11 +320,15 @@ public class CandidateDetails extends AppCompatActivity {
 
 
     private void fetchAnswersForQuestions(List<Question> questions) {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nenhum token encontrado");
         loadingDialog.show(getSupportFragmentManager(), "loading");
 
         // Vamos fazer as requisições para pegar as respostas para cada pergunta
         for (Question question : questions) {
-            AnswerService.getAnswerByCandidateAndQuestionId(question.getId(), Integer.parseInt(candidateId), new AnswerService.FetchAnswerByQuestionCallback() {
+            AnswerService.getAnswerByCandidateAndQuestionId(question.getId(), Integer.parseInt(candidateId), token,new AnswerService.FetchAnswerByQuestionCallback() {
                 @Override
                 public void onSuccess(Answer answer) {
                     runOnUiThread(() -> {

@@ -51,6 +51,8 @@ public class AcademicDataRegister extends AppCompatActivity {
 
     private EditText instituitionNameInput, startDateInput, endDateInput, cityInput;
 
+    private String token;
+
     CheckBox isCurrentlyStudying;
 
     @Override
@@ -105,7 +107,9 @@ public class AcademicDataRegister extends AppCompatActivity {
             loadCurriculumData(curriculumId);
 
 
-            AcademicDataService.getAcademicDataByCurriculumId(curriculumId, new AcademicDataService.FetchAcademicDataCallback() {
+            token = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("token", "Nanhum token encontrado");
+
+            AcademicDataService.getAcademicDataByCurriculumId(curriculumId, token, new AcademicDataService.FetchAcademicDataCallback() {
                 @Override
                 public void onSuccess(List<AcademicData> dataList) {
 
@@ -245,11 +249,11 @@ public class AcademicDataRegister extends AppCompatActivity {
                     Log.d("AcademicDataDebug", "Dados finais de academicData: " +
                             "ID=" + academicData.getId() + ", Curso=" + course + ", Instituição=" + inst);
 
-                    String token = sharedPreferences.getString("token", "Nenhum token encontrado")
+                    token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
 
                     if (academicData.getId() != 0) { // Editando
-                        AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
+                        AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData,token, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
                                 loadingDialog.dismiss();
@@ -265,7 +269,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                             }
                         });
                     } else { // Cadastrando novo
-                        AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData, new AcademicDataService.AcademicDataCallback() {
+                        AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData,token, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
                                 loadingDialog.dismiss();
@@ -342,6 +346,9 @@ public class AcademicDataRegister extends AppCompatActivity {
         for (AcademicData data : academicDataList) {
             View form = inflater.inflate(R.layout.item_academic_data_form, containerLayout, false);
 
+
+            SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
             EditText courseInput = form.findViewById(R.id.course_name_input);
             EditText startDateInput = form.findViewById(R.id.start_date_input);
             EditText endDateInput = form.findViewById(R.id.end_date_input);
@@ -385,6 +392,10 @@ public class AcademicDataRegister extends AppCompatActivity {
             startDateInput.addTextChangedListener(MaskEditText.mask(startDateInput, "##/####"));
             endDateInput.addTextChangedListener(MaskEditText.mask(endDateInput, "##/####"));
 
+
+
+            token = sharedPreferences.getString("token", "Nanhum token encontrado");
+
             // Botão de remover
             ImageButton removeButton = form.findViewById(R.id.remove_form_button);
             removeButton.setOnClickListener(v -> {
@@ -392,7 +403,7 @@ public class AcademicDataRegister extends AppCompatActivity {
 
                 if (data != null && data.getId() > 0) {
                     // Exclusão no backend
-                    AcademicDataService.deleteAcademicData(AcademicDataRegister.this, data.getId(), new AcademicDataService.AcademicDataCallback() {
+                    AcademicDataService.deleteAcademicData(AcademicDataRegister.this, data.getId(),token, new AcademicDataService.AcademicDataCallback() {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {

@@ -1,6 +1,10 @@
 package com.adapters;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +29,13 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
 
     private CandidateService candidateService;
 
+    Context context;
+
 
     public ApplicationsAdapter(List<Application> applications) {
         this.applications = applications;
         this.candidateService = new CandidateService();
+        this.context = context;
 
     }
 
@@ -46,7 +53,11 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
         // 🔄 Mostra um texto temporário enquanto carrega
         holder.textCandidateName.setText("Carregando candidato...");
 
-        candidateService.fetchCandidateFromApiByCandidateId(app.getUserId(), new CandidateService.CandidateCallback() {
+        SharedPreferences prefs = context.getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = prefs.getString("token", "Nenhum token encontrado");
+
+        candidateService.fetchCandidateFromApiByCandidateId(app.getUserId(), token,new CandidateService.CandidateCallback() {
             @Override
             public void onSuccess(Candidate candidate) {
                 holder.textCandidateName.post(() ->

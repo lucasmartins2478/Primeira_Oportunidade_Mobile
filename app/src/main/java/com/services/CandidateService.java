@@ -51,7 +51,7 @@ public class CandidateService {
 
 
 
-    public void fetchCandidateFromApi(int userId, CandidateCallback callback) {
+    public void fetchCandidateFromApi(int userId, String token, CandidateCallback callback) {
         new Thread(() -> {
             try {
                 String url = apiUrl + "/" + userId;
@@ -59,6 +59,7 @@ public class CandidateService {
 
                 Request request = new Request.Builder()
                         .url(url)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
@@ -89,7 +90,7 @@ public class CandidateService {
             }
         }).start();
     }
-    public void fetchCandidateFromApiByCandidateId(int userId, CandidateCallback callback) {
+    public void fetchCandidateFromApiByCandidateId(int userId, String token, CandidateCallback callback) {
         new Thread(() -> {
             try {
                 String url = apiUrl + "Id/" + userId;
@@ -97,6 +98,7 @@ public class CandidateService {
 
                 Request request = new Request.Builder()
                         .url(url)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {

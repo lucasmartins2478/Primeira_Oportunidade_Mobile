@@ -1,5 +1,8 @@
 package com.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -72,8 +75,11 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TextView noApplications = view.findViewById(R.id.noApplications);
 
+        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
 
-        ApplicationService.getApplicationsByVacancyId(getContext(), vacancyId, new ApplicationService.ApplicationsListCallback() {
+
+        ApplicationService.getApplicationsByVacancyId(getContext(), vacancyId,token, new ApplicationService.ApplicationsListCallback() {
             @Override
             public void onSuccess(List<Application> applications) {
 

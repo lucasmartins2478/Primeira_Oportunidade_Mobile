@@ -1,5 +1,7 @@
 package com.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -177,7 +179,7 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
     private void submitAnswers() {
 
         loadingDialog.show(getParentFragmentManager(), "loading");
-        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
         Log.d("submitAnswers", "User ID: " + userId);
 
@@ -207,8 +209,12 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
         // Zera o contador antes de enviar
         sentAnswersCount = 0;
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        String token = sharedPreferences.getString("token", "Nanhum token encontrado");
+
         for (Answer answer : answers) {
-            AnswerService.submitAnswer(answer, new AnswerService.AnswerCallback() {
+            AnswerService.submitAnswer(answer, token, new AnswerService.AnswerCallback() {
                 @Override
                 public void onSuccess() {
                     Log.d("AnswerBottomSheet", "Resposta enviada com sucesso.");
@@ -255,17 +261,19 @@ public class AnswerBottomSheetFragment extends BottomSheetDialogFragment {
     public void applyForVacancy(int vacancyId) {
 
         loadingDialog.show(getParentFragmentManager(), "loading");
-        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
         int userId = prefs.getInt("candidateId", -1);
+        String token = prefs.getString("token", "Nenhum token encontrado");
 
-        candidateService.fetchCandidateFromApiByCandidateId(userId, new CandidateService.CandidateCallback() {
+        candidateService.fetchCandidateFromApiByCandidateId(userId, token,  new CandidateService.CandidateCallback() {
             @Override
             public void onSuccess(Candidate candidate) {
                 if(candidate.getCurriculumId() == userId){
                     Application application = new Application(vacancyId,userId);
 
+                    String token = prefs.getString("token", "Nenhum token encontrado");
 
-                    ApplicationService.registerApplication(getContext(), application, new ApplicationService.ApplicationCallback() {
+                    ApplicationService.registerApplication(getContext(), application, token, new ApplicationService.ApplicationCallback() {
                         @Override
                         public void onSuccess() {
                             if (isAdded() && getContext() != null) {

@@ -108,7 +108,7 @@ public class FormLogin extends AppCompatActivity {
                     editor.putString("token", user.getToken());
 
                     if (user.getType() == UserType.CANDIDATE) {
-                        candidateService.fetchCandidateFromApi(user.getId(), new CandidateService.CandidateCallback() {
+                        candidateService.fetchCandidateFromApi(user.getId(), user.getToken(), new CandidateService.CandidateCallback() {
                             @Override
                             public void onSuccess(Candidate candidate) {
                                 runOnUiThread(() -> {

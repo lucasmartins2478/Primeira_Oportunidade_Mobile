@@ -35,7 +35,7 @@ public class ApplicationService {
         void onFailure(String errorMessage);
     }
 
-    public static void registerApplication(Context context, Application application, ApplicationService.ApplicationCallback callback) {
+    public static void registerApplication(Context context, Application application, String token, ApplicationService.ApplicationCallback callback) {
         new Thread(() -> {
             try {
 
@@ -56,6 +56,7 @@ public class ApplicationService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
                 conn.setDoOutput(true);
 
                 OutputStream os = conn.getOutputStream();
@@ -96,7 +97,7 @@ public class ApplicationService {
 
 
 
-    public static void getApplicationsByVacancyId(Context context, int vacancyId, ApplicationsListCallback callback) {
+    public static void getApplicationsByVacancyId(Context context, int vacancyId, String token ,ApplicationsListCallback callback) {
         new Thread(() -> {
             try {
                 String urlString = BASE_URL + "s/vacancy/" + vacancyId;
@@ -104,6 +105,7 @@ public class ApplicationService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 
@@ -159,7 +161,7 @@ public class ApplicationService {
             }
         }).start();
     }
-    public static void getAllApplications(Context context, ApplicationsListCallback callback) {
+    public static void getAllApplications(Context context, String token,  ApplicationsListCallback callback) {
         new Thread(() -> {
             try {
                 String urlString = "https://backend-po.onrender.com/applications";
@@ -167,6 +169,7 @@ public class ApplicationService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 
@@ -222,7 +225,7 @@ public class ApplicationService {
         }).start();
     }
 
-    public static void cancelApplication(int vacancyId, int userId, ApplicationCallback callback) {
+    public static void cancelApplication(int vacancyId, int userId, String token, ApplicationCallback callback) {
         new Thread(() -> {
             try {
                 String urlString = BASE_URL + "/" + userId + "/" + vacancyId;
@@ -230,6 +233,7 @@ public class ApplicationService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
                 conn.setRequestProperty("Accept", "application/json");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
 
                 int responseCode = conn.getResponseCode();
 
