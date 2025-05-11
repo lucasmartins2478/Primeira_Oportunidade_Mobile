@@ -380,12 +380,16 @@
                     android:layout_height="wrap_content"
                     android:text="@string/logo_label" />
 
-                <EditText
-                    android:id="@+id/logo_input"
+                <androidx.appcompat.widget.AppCompatButton
                     style="@style/EditTextRegister"
-                    android:layout_width="157dp"
-                    android:inputType="text"
-                    android:layout_height="100dp" />
+
+                    android:drawableTop="@drawable/image_icon"
+                    android:id="@+id/select_logo_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#A9A8A8"
+                    android:textAllCaps="false"
+                    android:text="Clique para adicionar imagem" />
             </LinearLayout>
 
 

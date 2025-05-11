@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.glide)
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0") // aqui ainda precisa ser manual
     implementation(libs.okhttp)
     implementation(libs.appcompat)
     implementation(libs.material)

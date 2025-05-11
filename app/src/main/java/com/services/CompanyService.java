@@ -145,7 +145,7 @@ public class CompanyService {
 
 
 
-    public void registerCompany(Company company,String token, RegisterCallback callback){
+    public void registerCompany(Company company,String token, CompanyCallback callback){
 
         new Thread(()->{
             try{
@@ -177,8 +177,33 @@ public class CompanyService {
 
                 Response response = client.newCall(request).execute();
 
+
+
                 if(response.isSuccessful()){
-                    callback.onSuccess();
+
+                    String responseData = response.body().string();
+                    JSONObject responseJson = new JSONObject(responseData);
+
+
+                    int id = responseJson.getInt("id");
+                    int userId = responseJson.getInt("userId");
+                    String companyName = responseJson.getString("name");
+                    String cnpj = responseJson.getString("cnpj");
+                    String segment = responseJson.getString("segment");
+                    String responsible = responseJson.getString("responsible");
+                    String phone = responseJson.getString("phoneNumber");
+                    String city = responseJson.getString("city");
+                    String cep = responseJson.getString("cep");
+                    String address = responseJson.getString("address");
+                    int addressNumber = responseJson.getInt("addressNumber");
+                    String uf = responseJson.getString("uf");
+                    String url = responseJson.getString("url");
+                    String logo = responseJson.getString("logo");
+
+
+
+                    Company createdCompany = new Company(id, companyName, cnpj, segment, responsible, phone, city, cep, address, addressNumber, uf, url, logo, userId);
+                    callback.onSuccess(createdCompany);
                 }
                 else{
                     String errorBody = response.body() != null ? response.body().string() : "sem corpo";

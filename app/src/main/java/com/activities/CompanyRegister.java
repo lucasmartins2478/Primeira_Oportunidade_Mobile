@@ -1,12 +1,17 @@
 package com.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -14,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
@@ -21,12 +27,20 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.fragments.LoadingDialogFragment;
+import com.models.Candidate;
 import com.models.Company;
 import com.models.MaskEditText;
 import com.models.User;
 import com.models.UserType;
+import com.services.CandidateService;
 import com.services.CompanyService;
 import com.services.LoginService;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class CompanyRegister extends AppCompatActivity {
 
@@ -41,6 +55,11 @@ public class CompanyRegister extends AppCompatActivity {
     private LinearLayout confirmPasswordContainer, passwordContainer;
 
     AppCompatButton registerBtn, changePassword;
+
+    private static final int PICK_FILE_REQUEST_CODE = 101;
+    private Uri selectedFileUri = null;
+    private String selectedFileName = null;
+
 
 
     private EditText companyNameInput, cnpjInput, emailInput, phoneInput, responsibleInput, websiteInput, cityInput, cepInput, addressInput, addressNumberInput, passwordInput, confirmPasswordInput;
@@ -87,6 +106,15 @@ public class CompanyRegister extends AppCompatActivity {
         cnpjInput.addTextChangedListener(MaskEditText.mask(cnpjInput, "##.###.###/####-##"));
         cepInput.addTextChangedListener(MaskEditText.mask(cepInput, "#####-###"));
 
+
+        AppCompatButton selectLogoButton = findViewById(R.id.select_logo_button);
+
+        selectLogoButton.setOnClickListener(view1 -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(intent, "Selecione o arquivo"), PICK_FILE_REQUEST_CODE);
+        });
 
         Spinner segmentSpinner = findViewById(R.id.segment_spinner);
 
@@ -146,8 +174,10 @@ public class CompanyRegister extends AppCompatActivity {
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
 
-        EditText logoInput = findViewById(R.id.logo_input);
-        String logo = logoInput.getText().toString().trim();
+
+
+        String logo = selectedFileName != null ? selectedFileName : "";
+
 
         // Validação de campos obrigatórios
         if (companyName.isEmpty()) {
@@ -288,14 +318,17 @@ public class CompanyRegister extends AppCompatActivity {
                     company.setUserId(userId);
 
 
-                    companyService.registerCompany(company, token, new CompanyService.RegisterCallback() {
+                    loginService.login(email, password, new LoginService.LoginCallback() {
                         @Override
-                        public void onSuccess() {
-                            runOnUiThread(() -> {
-                                // Aqui você já tem o userId (do loginService.registerUser)
-                                companyService.fetchCompanyFromApi(userId,token,  new CompanyService.CompanyCallback() {
-                                    @Override
-                                    public void onSuccess(Company fetchedCompany) {
+                        public void onSuccess(User loggedUser) {
+                            String token = loggedUser.getToken();
+
+
+
+                            companyService.registerCompany(company, token, new CompanyService.CompanyCallback() {
+                                @Override
+                                public void onSuccess(Company fetchedCompany) {
+                                    runOnUiThread(() -> {
                                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
                                         editor.putInt("companyId", fetchedCompany.getId()); // SALVANDO companyId agora
@@ -315,49 +348,40 @@ public class CompanyRegister extends AppCompatActivity {
                                         editor.putString("uf", fetchedCompany.getUf());
                                         editor.putString("url", fetchedCompany.getWebsite());
                                         editor.putString("logo", fetchedCompany.getLogo());
+                                        editor.putBoolean("isLoggedIn", true);
 
                                         editor.apply();
 
-                                        loginService.login(email, password, new LoginService.LoginCallback() {
-                                            @Override
-                                            public void onSuccess(User user) {
-                                                runOnUiThread(() -> {
-                                                    loadingDialog.dismiss();
-                                                    Toast.makeText(CompanyRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(CompanyRegister.this, Vacancies.class);
-                                                    startActivity(intent);
-
-                                                    finish();
-                                                });
-                                            }
-
-                                            @Override
-                                            public void onFailure(String errorMessage) {
-                                                runOnUiThread(() -> {
-                                                            loadingDialog.dismiss();
-                                                            Toast.makeText(CompanyRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
-                                                        }
-                                                );
-                                            }
-                                        });
-
-                                    }
-
-                                    @Override
-                                    public void onFailure(String error) {
-                                        Toast.makeText(CompanyRegister.this, "Erro ao recuperar empresa: " + error, Toast.LENGTH_SHORT).show();
                                         loadingDialog.dismiss();
-                                    }
-                                });
+                                        Toast.makeText(CompanyRegister.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(CompanyRegister.this, Vacancies.class);
+                                        startActivity(intent);
+
+                                        finish();
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
+                                    runOnUiThread(() -> {
+                                        loadingDialog.dismiss();
+                                        Toast.makeText(CompanyRegister.this, "Erro ao cadastrar candidato: " + error, Toast.LENGTH_SHORT).show();
+                                    });
+                                }
                             });
                         }
 
                         @Override
-                        public void onFailure(String error) {
-                            runOnUiThread(() -> Toast.makeText(CompanyRegister.this, "Erro ao cadastrar empresa: " + error, Toast.LENGTH_SHORT).show());
-                            loadingDialog.dismiss();
+                        public void onFailure(String errorMessage) {
+                            runOnUiThread(() -> {
+                                loadingDialog.dismiss();
+                                Toast.makeText(CompanyRegister.this, "Erro ao fazer login após o cadastro: " + errorMessage, Toast.LENGTH_LONG).show();
+                            });
                         }
                     });
+
+
+
 
                 }
 
@@ -373,6 +397,52 @@ public class CompanyRegister extends AppCompatActivity {
         }
 
     }
+
+    @SuppressLint("Range")
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                if (cursor != null) cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
+    private String saveImageLocally(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            File file = new File(getFilesDir(), "company_logo.jpg"); // Nome fixo
+            OutputStream outputStream = new FileOutputStream(file);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.close();
+            inputStream.close();
+
+            return file.getAbsolutePath(); // Esse path será salvo no SharedPreferences
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 
 
     private void loadCompanyData() {
@@ -403,8 +473,6 @@ public class CompanyRegister extends AppCompatActivity {
         addressInput.setText(address);
         addressNumberInput.setText(addressNumber != -1 ? String.valueOf(addressNumber) : "");
 
-        EditText logoInput = findViewById(R.id.logo_input);
-        logoInput.setText(logo);
 
         Spinner segmentSpinner = findViewById(R.id.segment_spinner);
         Spinner ufSpinner = findViewById(R.id.uf_spinner);
@@ -431,6 +499,31 @@ public class CompanyRegister extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            selectedFileUri = data.getData();
+
+            if (selectedFileUri != null) {
+                selectedFileName = getFileName(selectedFileUri);
+                String savedPath = saveImageLocally(selectedFileUri);
+                if (savedPath != null) {
+                    SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
+                    editor.putString("companyLogoPath", savedPath);
+                    editor.apply();
+                    Log.d("CompanyRegister", "Logo salva em: " + savedPath);
+                } else {
+                    Log.d("CompanyRegister", "Falha ao salvar imagem localmente.");
+                }
+
+                Toast.makeText(this, "Arquivo selecionado: " + selectedFileName, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 
 
