@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     private Vacancy vacancy;
 
     String token;
+    LinearLayout companyNameContainer, localityContainer,descriptionContainer, benefitsContainer, requirementsContainer, salaryContainer;
 
     LoadingDialogFragment loadingDialog;
 
@@ -89,7 +91,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         loadingDialog = new LoadingDialogFragment();
 
-        loadingDialog.show(getParentFragmentManager(), "loading");
+
 
         candidateService = new CandidateService();
         vacancyService = new VacancyService();
@@ -111,6 +113,15 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         TextView tvBenefits = view.findViewById(R.id.tvBenefits);
         TextView tvRequirements = view.findViewById(R.id.tvRequirements);
         TextView tvSalary = view.findViewById(R.id.tvSalary);
+
+        companyNameContainer = view.findViewById(R.id.company_name_container);
+        localityContainer = view.findViewById(R.id.locality_container);
+        descriptionContainer = view.findViewById(R.id.description_container);
+        benefitsContainer = view.findViewById(R.id.benefits_container);
+        requirementsContainer = view.findViewById(R.id.requirements_container);
+        salaryContainer = view.findViewById(R.id.salary_container);
+
+
 
         // Preenchendo os TextViews com os dados da vaga
         tvTitle.setText(vacancy.getTitle());
@@ -235,6 +246,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
 
         if ("candidate".equals(userType)) {
+            loadingDialog.show(getParentFragmentManager(), "loading");
 
             SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -257,6 +269,15 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                     } else {
                         btnApply.setVisibility(View.VISIBLE);
                     }
+                    tvTitle.setVisibility(View.VISIBLE);
+                    companyNameContainer.setVisibility(View.VISIBLE);
+                    localityContainer.setVisibility(View.VISIBLE);
+                    descriptionContainer.setVisibility(View.VISIBLE);
+                    benefitsContainer.setVisibility(View.VISIBLE);
+                    requirementsContainer.setVisibility(View.VISIBLE);
+                    salaryContainer.setVisibility(View.VISIBLE);
+
+                    loadingDialog.dismiss();
                 }
 
                 @Override
@@ -267,16 +288,27 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
             });
         }
         if ("company".equals(userType)) {
+            tvTitle.setVisibility(View.VISIBLE);
+            companyNameContainer.setVisibility(View.VISIBLE);
+            localityContainer.setVisibility(View.VISIBLE);
+            descriptionContainer.setVisibility(View.VISIBLE);
+            benefitsContainer.setVisibility(View.VISIBLE);
+            requirementsContainer.setVisibility(View.VISIBLE);
+            salaryContainer.setVisibility(View.VISIBLE);
             btnViewApplications.setVisibility(View.VISIBLE);
             btnCancelVacancy.setVisibility(View.VISIBLE);
             btnFillVacancy.setVisibility(View.VISIBLE);
             ivEditIcon.setVisibility(View.VISIBLE);
 
         }
-        loadingDialog.dismiss();
+
 
         return view;
     }
+
+
+
+
 
     public void applyForVacancy(int vacancyId) {
 

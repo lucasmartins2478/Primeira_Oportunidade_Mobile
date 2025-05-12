@@ -325,7 +325,7 @@ public class VacancyRegister extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
-                        startActivity(new Intent(VacancyRegister.this, MyVacancies.class));
+                        startActivity(new Intent(VacancyRegister.this, QuestionRegister.class));
                     });
                 }
 

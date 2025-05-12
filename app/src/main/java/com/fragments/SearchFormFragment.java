@@ -223,6 +223,17 @@ public class SearchFormFragment extends Fragment {
         spinnerModality.setOnItemSelectedListener(filterListener);
         spinnerLevel.setOnItemSelectedListener(filterListener);
 
+        searchInput.setOnTouchListener((v, event) -> {
+            final int DRAWABLE_RIGHT = 2;
+
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                if (event.getRawX() >= (searchInput.getRight() - searchInput.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    searchInput.setText(""); // Limpa o campo de busca
+                    return true;
+                }
+            }
+            return false;
+        });
 
         return view;
     }

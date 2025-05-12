@@ -122,7 +122,9 @@ public class CurriculumAnalysis extends AppCompatActivity {
                     Log.d("CompanyRegister", "Falha ao salvar imagem localmente.");
                 }
 
-                Toast.makeText(this, "Arquivo selecionado: " + selectedFileName, Toast.LENGTH_SHORT).show();
+                AppCompatButton selectLogoButton = findViewById(R.id.curriculum_input);
+                selectLogoButton.setText(selectedFileName); // Define o nome do arquivo como texto no botão
+                selectLogoButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null); // Remove o ícone
             }
         }
     }

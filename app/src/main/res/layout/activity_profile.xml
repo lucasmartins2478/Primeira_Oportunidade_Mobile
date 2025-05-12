@@ -60,8 +60,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
+            android:id="@+id/image_container"
             android:layout_width="146dp"
             android:layout_height="147dp"
+            android:visibility="gone"
             android:layout_gravity="center"
             android:clipChildren="false"
             android:clipToPadding="false">
@@ -90,6 +92,7 @@
         <TextView
             android:id="@+id/txt_name"
             android:textAlignment="center"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewData"
@@ -108,7 +111,7 @@
         <TextView
             android:id="@+id/txt_city"
             android:textAlignment="center"
-
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewData"

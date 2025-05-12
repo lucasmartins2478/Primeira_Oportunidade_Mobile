@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,6 +57,7 @@ public class Profile extends AppCompatActivity {
     TextView   textCity;
     CompanyService companyService;
     String email;
+    FrameLayout imageContainer;
     int  candidateId, companyId, curriculumId, userId;
     AppCompatButton btnAddCurriculum, btnAnalysis;
     LinearLayout academicContainer;
@@ -64,6 +66,7 @@ public class Profile extends AppCompatActivity {
     LoginService loginService;
 
     LoadingDialogFragment loadingDialog;
+    ImageView profileImageView;
 
     CandidateService candidateService;
 
@@ -102,7 +105,7 @@ public class Profile extends AppCompatActivity {
             startActivityForResult(Intent.createChooser(intent, "Selecione uma imagem"), PICK_FILE_REQUEST_CODE);
         });
 
-        ImageView profileImageView = findViewById(R.id.profile_img);
+        profileImageView = findViewById(R.id.profile_img);
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String logoPath = prefs.getString("companyLogoPath", null);
@@ -144,6 +147,7 @@ public class Profile extends AppCompatActivity {
         competenceContainerTitle = findViewById(R.id.textCompetencesLabel);
 
 
+        imageContainer = findViewById(R.id.image_container);
         companyDataTitle = findViewById(R.id.textCompanyDataTitle);
         txtCompanyName = findViewById(R.id.txt_company_name);
         txtCnpj = findViewById(R.id.txt_cnpj);
@@ -164,19 +168,10 @@ public class Profile extends AppCompatActivity {
 
         coursesContainer = findViewById(R.id.coursesContainer);
 
-        loadUserData();
 
         if( candidateId != -1){
 
-            txtAge.setVisibility(View.VISIBLE);
-            academicContainerTitle.setVisibility(View.VISIBLE);
-            academicContainer.setVisibility(View.VISIBLE);
-            competencesContainer.setVisibility(View.VISIBLE);
-            competenceContainerTitle.setVisibility(View.VISIBLE);
-            courseContainerTitle.setVisibility(View.VISIBLE);
-            coursesContainer.setVisibility(View.VISIBLE);
-            btnAddCurriculum.setVisibility(View.VISIBLE);
-            btnAnalysis.setVisibility(View.VISIBLE);
+
             if(curriculumId != -1){
                 btnAddCurriculum.setText("Editar currículo");
             }
@@ -186,24 +181,15 @@ public class Profile extends AppCompatActivity {
 
 
 
+
         }else {
 
-            companyDataTitle.setVisibility(View.VISIBLE);
-            txtCompanyName.setVisibility(View.VISIBLE);
-            txtCnpj.setVisibility(View.VISIBLE);
-            txtSegment.setVisibility(View.VISIBLE);
-            txtEmail.setVisibility(View.VISIBLE);
-            txtPhone.setVisibility(View.VISIBLE);
-            txtResponsible.setVisibility(View.VISIBLE);
-            txtUrl.setVisibility(View.VISIBLE);
-            txtCompanyAddressTitle.setVisibility(View.VISIBLE);
-            txtCompanyCity.setVisibility(View.VISIBLE);
-            txtCep.setVisibility(View.VISIBLE);
-            txtUf.setVisibility(View.VISIBLE);
-            txtAddress.setVisibility(View.VISIBLE);
-            txtAddressNumber.setVisibility(View.VISIBLE);
+
             fetchCompanyData(userId);
         }
+
+
+
 
 
     }
@@ -221,13 +207,22 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
+                    txtName.setVisibility(View.VISIBLE);
+                    txtAge.setVisibility(View.VISIBLE);
+                    textCity.setVisibility(View.VISIBLE);
                     txtAge.setText(curriculum.getAge()+" anos"+", "+DateUtils.formatDate(curriculum.getBirthDate()));
                     textCity.setText( curriculum.getCity()+" - "+ curriculum.getUf());
-
+                    String name = prefs.getString("name", "Usuário não encontrado");
+                    txtName.setText(name);
+                    imageContainer.setVisibility(View.VISIBLE);
+                    competenceContainerTitle.setVisibility(View.VISIBLE);
+                    academicContainerTitle.setVisibility(View.VISIBLE);
+                    courseContainerTitle.setVisibility(View.VISIBLE);
+                    btnAddCurriculum.setVisibility(View.VISIBLE);
+                    btnAnalysis.setVisibility(View.VISIBLE);
                     fetchAcademicData(candidateId, token);
                     fetchCourseData(candidateId, token);
                     fetchCompetences(candidateId, token);
-
 
                     loadingDialog.dismiss();
 
@@ -236,9 +231,27 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
+                runOnUiThread(() -> {
+                    // Mesmo sem currículo, mostra nome e imagem padrão
+                    String name = prefs.getString("name", "Usuário não encontrado");
+                    txtName.setText(name);
+                    txtName.setVisibility(View.VISIBLE);
+                    textCity.setVisibility(View.GONE); // Não tem cidade ainda
+                    txtAge.setVisibility(View.GONE);   // Nem idade
 
-                loadingDialog.dismiss();
+                    imageContainer.setVisibility(View.VISIBLE);
+
+                    Glide.with(Profile.this)
+                            .load(R.drawable.user_img)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(profileImageView);
+
+                    btnAddCurriculum.setVisibility(View.VISIBLE); // ainda pode cadastrar
+
+                    loadingDialog.dismiss();
+                });
             }
+
         });
     }
 
@@ -249,6 +262,8 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(List<AcademicData> dataList) {
                 runOnUiThread(() -> {
+                    academicContainerTitle.setVisibility(View.VISIBLE);
+                    academicContainer.setVisibility(View.VISIBLE);
                     academicContainer.removeAllViews(); // limpa antes de adicionar
 
                     for (AcademicData data : dataList) {
@@ -282,6 +297,8 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 runOnUiThread(() -> {
+                    courseContainerTitle.setVisibility(View.VISIBLE);
+                    coursesContainer.setVisibility(View.VISIBLE);
                     // Exibindo os cursos
                     if (courseDataList.isEmpty()) {
                         TextView noCoursesMessage = new TextView(Profile.this);
@@ -315,6 +332,8 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(List<CompetenceData> competences) {
                 runOnUiThread(() -> {
+                    competencesContainer.setVisibility(View.VISIBLE);
+                    competenceContainerTitle.setVisibility(View.VISIBLE);
                     // Se houver competências
                     if (competences.isEmpty()) {
                         TextView noCompetencesMessage = new TextView(Profile.this);
@@ -348,6 +367,22 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onSuccess(Company company) {
                 runOnUiThread(() -> {
+                    imageContainer.setVisibility(View.VISIBLE);
+                    txtName.setVisibility(View.VISIBLE);
+                    companyDataTitle.setVisibility(View.VISIBLE);
+                    txtCompanyName.setVisibility(View.VISIBLE);
+                    txtCnpj.setVisibility(View.VISIBLE);
+                    txtSegment.setVisibility(View.VISIBLE);
+                    txtEmail.setVisibility(View.VISIBLE);
+                    txtPhone.setVisibility(View.VISIBLE);
+                    txtResponsible.setVisibility(View.VISIBLE);
+                    txtUrl.setVisibility(View.VISIBLE);
+                    txtCompanyAddressTitle.setVisibility(View.VISIBLE);
+                    txtCompanyCity.setVisibility(View.VISIBLE);
+                    txtCep.setVisibility(View.VISIBLE);
+                    txtUf.setVisibility(View.VISIBLE);
+                    txtAddress.setVisibility(View.VISIBLE);
+                    txtAddressNumber.setVisibility(View.VISIBLE);
                     textCity.setText(company.getCity()+" - "+company.getUf());
                     txtCompanyName.setText("Nome: " + company.getCompanyName());
                     txtCnpj.setText("CNPJ: " + company.getCnpj());
@@ -377,6 +412,7 @@ public class Profile extends AppCompatActivity {
     }
 
     private void loadUserData() {
+
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
         String name = sharedPreferences.getString("name", "Usuário não encontrado");
@@ -519,7 +555,7 @@ public class Profile extends AppCompatActivity {
                 String savedPath = saveImageLocally(selectedFileUri);
                 if (savedPath != null) {
                     SharedPreferences.Editor editor = getSharedPreferences("UserPrefs", MODE_PRIVATE).edit();
-                    editor.putString("companyLogoPath", savedPath);
+                    editor.putString("userLogoPath", savedPath);
                     editor.apply();
                     Log.d("CompanyRegister", "Logo salva em: " + savedPath);
                     ImageView profileImageView = findViewById(R.id.profile_img);

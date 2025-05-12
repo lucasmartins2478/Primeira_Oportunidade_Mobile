@@ -52,6 +52,7 @@ public class MyVacancies extends AppCompatActivity {
 
         String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
+        System.out.println(token);
 
         if(companyId != -1){
             vacancyService.fetchVacanciesByCompanyId(companyId,token, new VacancyService.VacancyCallback() {

@@ -17,6 +17,7 @@
         tools:targetApi="31">
         <activity
             android:name=".Chatbot"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".CommunityStep4"
@@ -38,6 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".Chat"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".CandidateDetails"
@@ -53,36 +55,44 @@
             android:exported="false" />
         <activity
             android:name=".CoursesRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".AdditionalDataRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".AcademicDataRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".CurriculumRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".MyVacancies"
             android:exported="false" />
         <activity
             android:name=".QuestionRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Profile"
             android:exported="false" />
         <activity
             android:name=".VacancyRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ResetPassword"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".Vacancies"
             android:exported="false" />
         <activity
             android:name=".CompanyRegister"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".UserRegister"

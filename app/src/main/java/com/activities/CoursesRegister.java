@@ -90,7 +90,7 @@ public class CoursesRegister extends AppCompatActivity {
 
         int curriculumId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("curriculumId", -1);
         if(curriculumId != -1){
-            loadingDialog.show(getSupportFragmentManager(), "loading");
+            showLoadingDialog();
 
             CompetenceDataService.getCompetencesByCurriculumId(curriculumId, token,new CompetenceDataService.FetchCompetencesCallback() {
 
@@ -111,6 +111,8 @@ public class CoursesRegister extends AppCompatActivity {
             CourseDataService.getCourseDataByCurriculumId(curriculumId, token, new CourseDataService.FetchCourseDataCallback() {
                 public void onSuccess(List<CourseData> dataList) {
                     runOnUiThread(() -> {
+                        dismissLoadingDialog(); // <- aqui também
+
                         removeCourse(formInicial); // <- Agora sim: remove o formulário que está na tela
                         verificarECriarFormularioCurso(dataList);
                     });
@@ -122,10 +124,13 @@ public class CoursesRegister extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> Toast.makeText(CoursesRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        dismissLoadingDialog(); // <- aqui também
+
+                        Toast.makeText(CoursesRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    });
                 }
             });
-            loadingDialog.dismiss();
         }
 
 
@@ -137,7 +142,7 @@ public class CoursesRegister extends AppCompatActivity {
     }
     public void additionalData(View view){
 
-        loadingDialog.show(getSupportFragmentManager(), "loading");
+        showLoadingDialog();
 
 
 
@@ -197,15 +202,15 @@ public class CoursesRegister extends AppCompatActivity {
                 CourseDataService.updateCourseData(CoursesRegister.this, courseData,token, new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
-                        loadingDialog.dismiss();
+                        dismissLoadingDialog();
                         Toast.makeText(CoursesRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(CoursesRegister.this, Profile.class);
+                        Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
                         startActivity(intent);
                     }
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        loadingDialog.dismiss();
+                        dismissLoadingDialog();
                         Toast.makeText(CoursesRegister.this, "Erro ao atualizar dados", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -214,7 +219,7 @@ public class CoursesRegister extends AppCompatActivity {
                 CourseDataService.registerCourseData(CoursesRegister.this, courseData, token,new CourseDataService.CourseDataCallback() {
                     @Override
                     public void onSuccess() {
-                        loadingDialog.dismiss();
+                        dismissLoadingDialog();
                         Toast.makeText(CoursesRegister.this, "Dados da instituição "+ inst + " Enviados", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
                         startActivity(intent);
@@ -222,7 +227,7 @@ public class CoursesRegister extends AppCompatActivity {
 
                     @Override
                     public void onFailure(String errorMessage) {
-                        loadingDialog.dismiss();
+                        dismissLoadingDialog();
 
                     }
                 });
@@ -260,7 +265,7 @@ public class CoursesRegister extends AppCompatActivity {
     }
 
     private void addCompetenceItem(String competenceText, LinearLayout container, List<CompetenceData> list) {
-        loadingDialog.show(getSupportFragmentManager(), "loading");
+        showLoadingDialog();
 
         LayoutInflater inflater = LayoutInflater.from(this);
         View itemView = inflater.inflate(R.layout.competence_item, container, false);
@@ -288,7 +293,7 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
+                            dismissLoadingDialog();
                             Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                             container.removeView(itemView); // <- correto!
                         });
@@ -297,7 +302,7 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String errorMessage) {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
+                            dismissLoadingDialog();
                             Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }
@@ -315,14 +320,14 @@ public class CoursesRegister extends AppCompatActivity {
         CompetenceDataService.registerCompetenceData(this, competenceData,token, new CompetenceDataService.CompetenceDataCallback() {
             @Override
             public void onSuccess() {
-                loadingDialog.dismiss();
+                dismissLoadingDialog();
                 Toast.makeText(getApplicationContext(), "Competência enviada!", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                loadingDialog.dismiss();
+                dismissLoadingDialog();
                 Toast.makeText(getApplicationContext(), "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
 
             }
@@ -417,8 +422,7 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {
-                                loadingDialog.dismiss();
-
+                                dismissLoadingDialog();
                                 Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                                 containerLayout.removeView(form);
                                 formViews.remove(form);
@@ -428,14 +432,14 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onFailure(String errorMessage) {
                             runOnUiThread(() -> {
-                                loadingDialog.dismiss();
+                                dismissLoadingDialog();
 
                                 Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                             });
                         }
                     });
                 } else {
-                    loadingDialog.dismiss();
+                    dismissLoadingDialog();
 
                     Log.d("Delete", "ID não válido ou null, removendo apenas da interface.");
                     containerLayout.removeView(form);
@@ -465,6 +469,22 @@ public class CoursesRegister extends AppCompatActivity {
     }
 
 
+
+    private void showLoadingDialog() {
+        if (loadingDialog == null) {
+            loadingDialog = new LoadingDialogFragment();
+        }
+
+        if (!loadingDialog.isAdded()) {
+            loadingDialog.show(getSupportFragmentManager(), "loading");
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isAdded()) {
+            loadingDialog.dismiss();
+        }
+    }
 
 
 

@@ -331,6 +331,7 @@ public class CompanyRegister extends AppCompatActivity {
                                     runOnUiThread(() -> {
                                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
                                         SharedPreferences.Editor editor = sharedPreferences.edit();
+                                        editor.putString("token", token); // <- salva token aqui também
                                         editor.putInt("companyId", fetchedCompany.getId()); // SALVANDO companyId agora
                                         editor.putInt("userId", userId);
                                         editor.putInt("companyId", fetchedCompany.getId()); // <-- Aqui está o ID que você precisa

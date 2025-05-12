@@ -80,7 +80,6 @@ public class AdditionalDataRegister extends AppCompatActivity {
     public void finishCurriculumRegister(View view){
 
         loadingDialog.show(getSupportFragmentManager(), "loading");
-        EditText attachedInput = findViewById(R.id.curriculum_input);
         EditText descriptionInput = findViewById(R.id.about_you_input);
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -106,18 +105,24 @@ public class AdditionalDataRegister extends AppCompatActivity {
 
 
                         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+                        int candidateId = sharedPreferences.getInt("candidateId", -1);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putInt("curriculumId", candidateId);
+                        editor.apply(); // <- ESSENCIAL
 
-                        editor.putInt("curriculumId", additionalData.getId());
 
                         Toast.makeText(AdditionalDataRegister.this, "Dados adicionais enviados. Cadastro finalizado", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(AdditionalDataRegister.this, Vacancies.class);
                         startActivity(intent);
+                        finish(); // <- para evitar que o usuário volte para essa tela com o botão de voltar
+
                     }
 
                     @Override
                     public void onFailure(String error) {
 
+                        Log.d("ERRO", "Erro ao cadastrar dados adicionais "+error);
+                        Toast.makeText(AdditionalDataRegister.this, "Erro ao cadastrar dados adicionais :" +error, Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
                     }
                 });
@@ -195,7 +200,9 @@ public class AdditionalDataRegister extends AppCompatActivity {
                     Log.d("CompanyRegister", "Falha ao salvar imagem localmente.");
                 }
 
-                Toast.makeText(this, "Arquivo selecionado: " + selectedFileName, Toast.LENGTH_SHORT).show();
+                AppCompatButton selectLogoButton = findViewById(R.id.curriculum_input);
+                selectLogoButton.setText(selectedFileName); // Define o nome do arquivo como texto no botão
+                selectLogoButton.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null); // Remove o ícone
             }
         }
     }

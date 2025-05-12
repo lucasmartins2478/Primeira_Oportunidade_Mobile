@@ -49,7 +49,7 @@ public class SearchCompanyFragment extends Fragment {
 
         loadingDialog = new LoadingDialogFragment();
 
-        loadingDialog.show(getParentFragmentManager(), "loading");
+
 
         searchInput = view.findViewById(R.id.searchInput);
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -70,13 +70,12 @@ public class SearchCompanyFragment extends Fragment {
         fetchCompanies();
         setupSearchAndFilters(view);
 
-        loadingDialog.dismiss();
 
         return view;
     }
 
     private void fetchCompanies() {
-        loadingDialog.show(getParentFragmentManager(), "loading");
+        showLoadingDialog();
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -87,13 +86,13 @@ public class SearchCompanyFragment extends Fragment {
             public void onSuccess(List<Company> companies) {
                 allCompanies = companies;
                 updateCompanyList(searchInput.getText().toString());
-                loadingDialog.dismiss();
+                dismissLoadingDialog();
             }
 
             @Override
             public void onFailure(String error) {
                 Toast.makeText(getContext(), "Erro: " + error, Toast.LENGTH_SHORT).show();
-                loadingDialog.dismiss();
+                dismissLoadingDialog();
             }
         });
 
@@ -131,7 +130,6 @@ public class SearchCompanyFragment extends Fragment {
 
     private void updateCompanyList(String query) {
 
-        loadingDialog.show(getParentFragmentManager(), "loading");
 
         String termo = query.toLowerCase().trim();
         String uf = spinnerUf.getSelectedItem().toString();
@@ -157,9 +155,21 @@ public class SearchCompanyFragment extends Fragment {
         adapter = new CompanyAdapter(filtradas, getContext(), company -> {
             // Clique na empresa
         });
-        loadingDialog.dismiss();
 
         recyclerView.setAdapter(adapter);
     }
+
+    private void showLoadingDialog() {
+        if (loadingDialog != null && !loadingDialog.isAdded()) {
+            loadingDialog.show(getParentFragmentManager(), "loading");
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isAdded()) {
+            loadingDialog.dismiss();
+        }
+    }
+
 
 }

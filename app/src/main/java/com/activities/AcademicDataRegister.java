@@ -219,7 +219,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                     Boolean isStudying = isStudyingYet.isChecked();
 
                     if (inst.isEmpty() || lvl.isEmpty() || per.isEmpty() ||
-                            start.isEmpty() || end.isEmpty() || course.isEmpty() || cityDyn.isEmpty()) {
+                            start.isEmpty() || course.isEmpty() || cityDyn.isEmpty()) {
                         Toast.makeText(AcademicDataRegister.this, "Preencha todos os campos dos formulários adicionados.", Toast.LENGTH_SHORT).show();
                         return;
                     }
