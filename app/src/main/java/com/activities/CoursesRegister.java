@@ -96,13 +96,18 @@ public class CoursesRegister extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(List<CompetenceData> competences) {
-                    runOnUiThread(() -> populateCompetenceDataForms(competences));
+                    runOnUiThread(() -> {
+                        populateCompetenceDataForms(competences);
+
+                    });
 
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> Toast.makeText(CoursesRegister.this, "Erro ao carregar competências: " + errorMessage, Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(CoursesRegister.this, "Erro ao carregar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    });
                 }
             });
 
@@ -265,7 +270,6 @@ public class CoursesRegister extends AppCompatActivity {
     }
 
     private void addCompetenceItem(String competenceText, LinearLayout container, List<CompetenceData> list) {
-        showLoadingDialog();
 
         LayoutInflater inflater = LayoutInflater.from(this);
         View itemView = inflater.inflate(R.layout.competence_item, container, false);
@@ -293,7 +297,6 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
-                            dismissLoadingDialog();
                             Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                             container.removeView(itemView); // <- correto!
                         });
@@ -302,7 +305,6 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String errorMessage) {
                         runOnUiThread(() -> {
-                            dismissLoadingDialog();
                             Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
                     }
@@ -320,14 +322,12 @@ public class CoursesRegister extends AppCompatActivity {
         CompetenceDataService.registerCompetenceData(this, competenceData,token, new CompetenceDataService.CompetenceDataCallback() {
             @Override
             public void onSuccess() {
-                dismissLoadingDialog();
                 Toast.makeText(getApplicationContext(), "Competência enviada!", Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onFailure(String errorMessage) {
-                dismissLoadingDialog();
                 Toast.makeText(getApplicationContext(), "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
 
             }
@@ -339,7 +339,6 @@ public class CoursesRegister extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String token = prefs.getString("token", "Nenhum token encontrado");
 
-        loadingDialog.show(getSupportFragmentManager(), "loading");
         LinearLayout competencesContainer = findViewById(R.id.competences_list_container);
 
         for (CompetenceData data : competenceDataList) {
@@ -356,7 +355,6 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
                             competencesContainer.removeView(itemView);
                             Toast.makeText(getApplicationContext(), "Competência removida!", Toast.LENGTH_SHORT).show();
                         });
@@ -365,7 +363,6 @@ public class CoursesRegister extends AppCompatActivity {
                     @Override
                     public void onFailure(String errorMessage) {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
 
                             Toast.makeText(getApplicationContext(), "Erro ao remover: " + errorMessage, Toast.LENGTH_SHORT).show();
                         });
@@ -380,7 +377,6 @@ public class CoursesRegister extends AppCompatActivity {
 
 
     private void populateCourseDataForms(List<CourseData> courseDataList){
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String token = prefs.getString("token", "Nenhum token encontrado");
@@ -422,7 +418,6 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             runOnUiThread(() -> {
-                                dismissLoadingDialog();
                                 Toast.makeText(CoursesRegister.this, "Dados removidos com sucesso", Toast.LENGTH_SHORT).show();
                                 containerLayout.removeView(form);
                                 formViews.remove(form);
@@ -432,7 +427,6 @@ public class CoursesRegister extends AppCompatActivity {
                         @Override
                         public void onFailure(String errorMessage) {
                             runOnUiThread(() -> {
-                                dismissLoadingDialog();
 
                                 Toast.makeText(CoursesRegister.this, "Erro ao excluir: " + errorMessage, Toast.LENGTH_SHORT).show();
                             });
@@ -475,16 +469,16 @@ public class CoursesRegister extends AppCompatActivity {
             loadingDialog = new LoadingDialogFragment();
         }
 
-        if (!loadingDialog.isAdded()) {
+        if (!loadingDialog.isAdded() && !loadingDialog.isVisible()) {
             loadingDialog.show(getSupportFragmentManager(), "loading");
         }
     }
-
     private void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isAdded()) {
             loadingDialog.dismiss();
         }
     }
+
 
 
 

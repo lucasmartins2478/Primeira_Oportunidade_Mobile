@@ -123,7 +123,6 @@ public class AcademicDataRegister extends AppCompatActivity {
                 public void onFailure(String errorMessage) {
                     runOnUiThread(() -> {
                         loadingDialog.dismiss();
-                        Toast.makeText(AcademicDataRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
                     });
                 }
             });

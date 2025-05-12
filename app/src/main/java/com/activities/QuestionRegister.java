@@ -58,8 +58,70 @@ public class QuestionRegister extends AppCompatActivity {
 
         AppCompatButton addQuestion = findViewById(R.id.add_question);
         addQuestion.setOnClickListener(v -> addQuestionInput());
+
+        AppCompatButton registerButton = findViewById(R.id.register_button); // Botão de finalizar
+        registerButton.setOnClickListener(v -> saveQuestions());
     }
 
+
+    private void saveQuestions() {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+        QuestionService service = new QuestionService();
+
+        AtomicInteger pendingRequests = new AtomicInteger(questionInputs.size());
+
+        for (EditText input : questionInputs) {
+            String questionText = input.getText().toString().trim();
+            if (questionText.isEmpty()) {
+                pendingRequests.decrementAndGet(); // Pula campo vazio
+                continue;
+            }
+
+            Question existingQuestion = (Question) input.getTag();
+            Question q = new Question();
+            q.setQuestion(questionText);
+            q.setVacancyId(vacancyId);
+
+            if (existingQuestion != null && existingQuestion.getId() > 0) {
+                q.setId(existingQuestion.getId());
+                service.updateQuestion(this, q, new QuestionService.QuestionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        checkCompletion(pendingRequests);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        runOnUiThread(() -> Toast.makeText(QuestionRegister.this, "Erro ao editar pergunta: " + errorMessage, Toast.LENGTH_SHORT).show());
+                        checkCompletion(pendingRequests);
+                    }
+                });
+            } else {
+                service.registerQuestion(this, q, new QuestionService.QuestionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        checkCompletion(pendingRequests);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        runOnUiThread(() -> Toast.makeText(QuestionRegister.this, "Erro ao cadastrar pergunta: " + errorMessage, Toast.LENGTH_SHORT).show());
+                        checkCompletion(pendingRequests);
+                    }
+                });
+            }
+        }
+    }
+
+    private void checkCompletion(AtomicInteger counter) {
+        if (counter.decrementAndGet() == 0) {
+            runOnUiThread(() -> {
+                loadingDialog.dismiss();
+                Toast.makeText(this, "Perguntas salvas com sucesso!", Toast.LENGTH_SHORT).show();
+                finish(); // Volta para a tela anterior
+            });
+        }
+    }
     private void loadQuestions() {
         loadingDialog.show(getSupportFragmentManager(), "loading");
         QuestionService service = new QuestionService();

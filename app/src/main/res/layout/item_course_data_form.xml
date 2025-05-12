@@ -98,7 +98,7 @@
                 style="@style/EditTextLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/duration" />
+                android:text="Duração (hrs)*" />
 
             <EditText
                 android:id="@+id/duration_input"
