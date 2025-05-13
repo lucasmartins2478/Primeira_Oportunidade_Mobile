@@ -289,31 +289,19 @@ public class LoginService {
 
 
 
-    public  void deleteUserData(Context context, int userId, LoginService.DeleteCallback callback) {
+    public  void deleteUserData(Context context, int userId, String token,  LoginService.DeleteCallback callback) {
         new Thread(() -> {
             try {
                 URL url = new URL("https://backend-po.onrender.com/user/" + userId);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("DELETE");
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Authorization", "Bearer " + token);
+
 
                 int responseCode = conn.getResponseCode();
 
-                InputStream is = responseCode < HttpURLConnection.HTTP_BAD_REQUEST
-                        ? conn.getInputStream()
-                        : conn.getErrorStream();
 
-                if (is != null) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    reader.close();
-                    is.close();
-                    System.out.println("Resposta (delete): " + response.toString());
-                }
 
                 if (responseCode == 200 || responseCode == 204) {
                     new Handler(Looper.getMainLooper()).post(callback::onSuccess);

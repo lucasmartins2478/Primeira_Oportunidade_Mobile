@@ -459,15 +459,35 @@ public class Profile extends AppCompatActivity {
         loadingDialog.show(getSupportFragmentManager(), "loading");
         if(candidateId != -1){
 
-
-
-
             candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId,token, new CandidateService.DeleteCallback() {
                 @Override
                 public void onSuccess() {
-                    Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
-                    loadingDialog.dismiss();
-                    logout();
+                    candidateService.deleteCandidate(Profile.this, userId, token, new CandidateService.DeleteCallback() {
+                        @Override
+                        public void onSuccess() {
+                            loginService.deleteUserData(Profile.this, userId, token, new LoginService.DeleteCallback() {
+                                @Override
+                                public void onSuccess() {
+                                    Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
+                                    logout();
+                                }
+
+                                @Override
+                                public void onFailure(String error) {
+                                    Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
+                            loadingDialog.dismiss();
+                        }
+                    });
+
 
                 }
 

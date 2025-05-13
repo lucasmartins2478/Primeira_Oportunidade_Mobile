@@ -43,8 +43,9 @@ public class ApplicationService {
 
                 JSONObject json = new JSONObject();
 
-                json.put("vacancyId", application.getVacancyId());
                 json.put("candidateId", application.getUserId());
+                json.put("vacancyId", application.getVacancyId());
+
 
 
 

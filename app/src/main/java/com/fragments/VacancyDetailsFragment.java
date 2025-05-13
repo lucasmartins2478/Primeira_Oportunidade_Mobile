@@ -55,7 +55,6 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     String token;
     LinearLayout companyNameContainer, localityContainer,descriptionContainer, benefitsContainer, requirementsContainer, salaryContainer;
 
-    LoadingDialogFragment loadingDialog;
 
     // Cria uma nova instância do fragmento com a vaga que será exibida
     public static VacancyDetailsFragment newInstance(Vacancy vacancy) {
@@ -89,7 +88,6 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_vacancy_details, container, false);
 
-        loadingDialog = new LoadingDialogFragment();
 
 
 
@@ -140,15 +138,16 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
 
         AppCompatButton btnApply = view.findViewById(R.id.apply);
+
+
         btnApply.setOnClickListener(v -> {
-            QuestionService.getQuestionsByVacancyId(getContext(), vacancy.getId(), new QuestionService.QuestionListCallback() {
+            QuestionService.getQuestionsByVacancyId(getContext(), vacancy.getId(), token, new QuestionService.QuestionListCallback() {
                 @Override
                 public void onSuccess(List<Question> questionList) {
                     requireActivity().runOnUiThread(() -> {
                         if (questionList.isEmpty()) {
                             // Não tem perguntas → aplicar direto
                             applyForVacancy(vacancy.getId());
-                            dismiss();
                         } else {
                             // Tem perguntas → abre o bottom sheet de respostas
                             AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
@@ -242,8 +241,6 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
 
         if ("candidate".equals(userType)) {
-            loadingDialog.show(getParentFragmentManager(), "loading");
-
             SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
             token = prefs.getString("token", "Nenhum token encontrado");
@@ -273,13 +270,13 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                     requirementsContainer.setVisibility(View.VISIBLE);
                     salaryContainer.setVisibility(View.VISIBLE);
 
-                    loadingDialog.dismiss();
+
                 }
 
                 @Override
                 public void onFailure(String errorMessage) {
                     Toast.makeText(getContext(), "Erro ao verificar candidatura: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    loadingDialog.dismiss();
+
                 }
             });
         }
@@ -308,7 +305,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
     public void applyForVacancy(int vacancyId) {
 
-        loadingDialog.show(getParentFragmentManager(), "loading");
+
         Log.d("ApplyDebug", "Chamou applyForVacancy para vagaId: " + vacancyId);
 
         SharedPreferences prefs = getContext().getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -335,7 +332,6 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                                 // Espera o toast aparecer, depois fecha
                                 new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> dismiss(), 1500);
 
-                                loadingDialog.dismiss();
                                 int companyId = vacancy.getCompanyId();
 
                                 // Envia notificação para a empresa
@@ -347,7 +343,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                         public void onFailure(String errorMessage) {
                             if (isAdded()) {
                                 Toast.makeText(getContext(), "Erro ao se candidatar: " + errorMessage, Toast.LENGTH_SHORT).show();
-                                loadingDialog.dismiss();
+
                                 dismiss();
                             }
                         }
@@ -358,13 +354,12 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                 }
                 else{
                     Toast.makeText(getContext(), "Você precisa de um currículo para se candidatar", Toast.LENGTH_SHORT).show();
-                    loadingDialog.dismiss();
+
                 }
             }
 
             @Override
             public void onFailure(String error) {
-                loadingDialog.dismiss();
 
             }
         });
@@ -416,5 +411,10 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                 || errorMessage.toLowerCase().contains("nenhuma pergunta")
                 || errorMessage.toLowerCase().contains("no questions");
     }
+
+
+
+
+
 
 }

@@ -122,7 +122,9 @@ public class AcademicDataRegister extends AppCompatActivity {
                 @Override
                 public void onFailure(String errorMessage) {
                     runOnUiThread(() -> {
-                        loadingDialog.dismiss();
+                        if (loadingDialog != null && loadingDialog.isAdded()) {
+                            loadingDialog.dismissAllowingStateLoss();
+                        }
                     });
                 }
             });
@@ -256,7 +258,9 @@ public class AcademicDataRegister extends AppCompatActivity {
                         AcademicDataService.updateAcademicData(AcademicDataRegister.this, academicData,token, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
-                                loadingDialog.dismiss();
+                                if (loadingDialog != null && loadingDialog.isAdded()) {
+                                    loadingDialog.dismissAllowingStateLoss();
+                                }
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, Profile.class);
                                 startActivity(intent);
@@ -264,7 +268,9 @@ public class AcademicDataRegister extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String errorMessage) {
-                                loadingDialog.dismiss();
+                                if (loadingDialog != null && loadingDialog.isAdded()) {
+                                    loadingDialog.dismissAllowingStateLoss();
+                                }
                                 Toast.makeText(AcademicDataRegister.this, "Erro ao atualizar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -272,7 +278,9 @@ public class AcademicDataRegister extends AppCompatActivity {
                         AcademicDataService.registerAcademicData(AcademicDataRegister.this, academicData,token, new AcademicDataService.AcademicDataCallback() {
                             @Override
                             public void onSuccess() {
-                                loadingDialog.dismiss();
+                                if (loadingDialog != null && loadingDialog.isAdded()) {
+                                    loadingDialog.dismissAllowingStateLoss();
+                                }
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " enviados", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
                                 startActivity(intent);
@@ -280,7 +288,9 @@ public class AcademicDataRegister extends AppCompatActivity {
 
                             @Override
                             public void onFailure(String errorMessage) {
-                                loadingDialog.dismiss();
+                                if (loadingDialog != null && loadingDialog.isAdded()) {
+                                    loadingDialog.dismissAllowingStateLoss();
+                                }
                                 Toast.makeText(AcademicDataRegister.this, "Erro ao registrar dados: " + errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -296,7 +306,9 @@ public class AcademicDataRegister extends AppCompatActivity {
 
             @Override
             public void onFailure(String errorMessage) {
-                loadingDialog.dismiss();
+                if (loadingDialog != null && loadingDialog.isAdded()) {
+                    loadingDialog.dismissAllowingStateLoss();
+                }
                 Toast.makeText(AcademicDataRegister.this, "Erro ao enviar dados principais: " + errorMessage, Toast.LENGTH_LONG).show();
             }
         });

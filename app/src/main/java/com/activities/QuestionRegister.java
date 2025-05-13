@@ -2,6 +2,7 @@ package com.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -81,10 +82,12 @@ public class QuestionRegister extends AppCompatActivity {
             Question q = new Question();
             q.setQuestion(questionText);
             q.setVacancyId(vacancyId);
+            SharedPreferences prefs  = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            String token = prefs.getString("token", "Nenhum token encontrado");
 
             if (existingQuestion != null && existingQuestion.getId() > 0) {
                 q.setId(existingQuestion.getId());
-                service.updateQuestion(this, q, new QuestionService.QuestionCallback() {
+                service.updateQuestion(this, q,token, new QuestionService.QuestionCallback() {
                     @Override
                     public void onSuccess() {
                         checkCompletion(pendingRequests);
@@ -97,7 +100,7 @@ public class QuestionRegister extends AppCompatActivity {
                     }
                 });
             } else {
-                service.registerQuestion(this, q, new QuestionService.QuestionCallback() {
+                service.registerQuestion(this, q, token,new QuestionService.QuestionCallback() {
                     @Override
                     public void onSuccess() {
                         checkCompletion(pendingRequests);
@@ -123,9 +126,12 @@ public class QuestionRegister extends AppCompatActivity {
         }
     }
     private void loadQuestions() {
+        SharedPreferences prefs  = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
+
         loadingDialog.show(getSupportFragmentManager(), "loading");
         QuestionService service = new QuestionService();
-        service.getQuestionsByVacancyId(this, vacancyId, new QuestionService.QuestionListCallback() {
+        service.getQuestionsByVacancyId(this, vacancyId,token, new QuestionService.QuestionListCallback() {
             @Override
             public void onSuccess(List<Question> questions) {
                 runOnUiThread(() -> {

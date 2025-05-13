@@ -61,6 +61,8 @@ public class SearchFormFragment extends Fragment {
     private ArrayList<Vacancy> allVacancies = new ArrayList<>();
 
     private VacancyService vacancyService;
+    private boolean dadosCurriculoCarregados = false;
+
     private ArrayList<Integer> candidaturasIds = new ArrayList<>();
 
     private Curriculum meuCurriculo;
@@ -260,7 +262,7 @@ public class SearchFormFragment extends Fragment {
 
 
             // Se for uma empresa (meuCurriculo é null), filtre apenas pelo companyId
-            if (meuCurriculo == null) {
+            if (podeCalcularScore()) {
                 SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", getContext().MODE_PRIVATE);
                 int companyId = prefs.getInt("companyId", -1);
 
@@ -272,8 +274,9 @@ public class SearchFormFragment extends Fragment {
                 // Filtro para candidatos
                 if (isMyApplicationsScreen) {
                     if (!uf.equals("Selecione")) {
-                        if (uf.equals("Ativas")) match &= !v.isActive();
-                        else if (uf.equals("Inativas")) match &= v.isActive();
+                        if (uf.equals("Ativas")) match &= v.isActive();
+                        else if (uf.equals("Inativas")) match &= !v.isActive();
+
                     }
 
                     if (!modality.equals("Selecione")) {
@@ -306,7 +309,7 @@ public class SearchFormFragment extends Fragment {
         }
 
         // Se meuCurriculo não for null, faça o cálculo do score
-        if (meuCurriculo != null) {
+        if (podeCalcularScore()) {
             // Calcular o score e ordenar as vagas
             ArrayList<Vacancy> vagasComScore = new ArrayList<>();
             for (Vacancy vaga : filtradas) {
@@ -416,8 +419,21 @@ public class SearchFormFragment extends Fragment {
 
             @Override
             public void onFailure(String errorMessage) {
+                meuCurriculo = null;
+                dadosCurriculoCarregados = true; // Permite seguir sem currículo
 
+                if (getActivity() == null) return;
+
+                getActivity().runOnUiThread(() -> {
+                    loadingDialog.dismiss();
+                    atualizarLista(searchInput.getText().toString());
+
+                    Toast.makeText(getContext(), "Currículo não encontrado. Mostrando vagas sem ordenação por compatibilidade.", Toast.LENGTH_SHORT).show();
+                });
             }
+
+
+
         });
     }
 
@@ -475,6 +491,15 @@ public class SearchFormFragment extends Fragment {
             atualizarLista(searchInput.getText().toString());
         }
     }
+
+    private boolean podeCalcularScore() {
+        return meuCurriculo != null
+                && dadosCurriculoCarregados
+                && !dadosAcademicos.isEmpty()
+                && !dadosCursos.isEmpty()
+                && !competencias.isEmpty();
+    }
+
 
 
 

@@ -28,7 +28,7 @@ public class QuestionService {
         void onFailure(String errorMessage);
     }
 
-    public void registerQuestion(Context context, Question question, QuestionCallback callback) {
+    public void registerQuestion(Context context, Question question,String token, QuestionCallback callback) {
         new Thread(() -> {
             Response response = null;
             try {
@@ -47,6 +47,7 @@ public class QuestionService {
                 Request request = new Request.Builder()
                         .url(REGISTER_URL)
                         .post(body)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 response = client.newCall(request).execute();
@@ -66,7 +67,7 @@ public class QuestionService {
             }
         }).start();
     }
-    public void updateQuestion(Context context, Question question, QuestionCallback callback) {
+    public void updateQuestion(Context context, Question question, String token, QuestionCallback callback) {
         new Thread(() -> {
             Response response = null;
             try {
@@ -85,6 +86,7 @@ public class QuestionService {
                 Request request = new Request.Builder()
                         .url("https://backend-po.onrender.com/vacancy/"+question.getVacancyId()+"/questions/"+question.getId())
                         .put(body)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 response = client.newCall(request).execute();
@@ -106,12 +108,13 @@ public class QuestionService {
     }
 
 
-    public static void getQuestionsByVacancyId(Context context, int vacancyId, QuestionListCallback callback) {
+    public static void getQuestionsByVacancyId(Context context, int vacancyId, String token,QuestionListCallback callback) {
         new Thread(() -> {
             try {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
                         .url("https://backend-po.onrender.com/questions/vacancy/" + vacancyId)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 Response response = client.newCall(request).execute();

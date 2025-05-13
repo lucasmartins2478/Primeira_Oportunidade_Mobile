@@ -293,8 +293,10 @@ public class CandidateDetails extends AppCompatActivity {
 
     private void fetchQuestions(int vacancyId) {
         loadingDialog.show(getSupportFragmentManager(), "loading");
+        SharedPreferences prefs  = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        String token = prefs.getString("token", "Nenhum token encontrado");
 
-        QuestionService.getQuestionsByVacancyId(CandidateDetails.this, vacancyId, new QuestionService.QuestionListCallback() {
+        QuestionService.getQuestionsByVacancyId(CandidateDetails.this, vacancyId, token, new QuestionService.QuestionListCallback() {
             @Override
             public void onSuccess(List<Question> questions) {
                 runOnUiThread(() -> {
