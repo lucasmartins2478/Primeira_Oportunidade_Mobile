@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.activities.CurriculumRegister;
 import com.activities.R;
 import com.activities.Vacancies;
 import com.activities.VacancyRegister;
@@ -100,6 +101,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("UserPrefs", requireActivity().MODE_PRIVATE);
         int candidateId = sharedPreferences.getInt("candidateId", -1);
+        int curriculumId = sharedPreferences.getInt("curriculumId", -1);
         String userType = sharedPreferences.getString("type", "Usuário não encontrado");
         token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
@@ -141,39 +143,28 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
 
         btnApply.setOnClickListener(v -> {
-            QuestionService.getQuestionsByVacancyId(getContext(), vacancy.getId(), token, new QuestionService.QuestionListCallback() {
-                @Override
-                public void onSuccess(List<Question> questionList) {
-                    requireActivity().runOnUiThread(() -> {
-                        if (questionList.isEmpty()) {
-                            // Não tem perguntas → aplicar direto
-                            applyForVacancy(vacancy.getId());
-                        } else {
-                            // Tem perguntas → abre o bottom sheet de respostas
-                            AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
-                            bottomSheet.setOnAnswersSubmittedListener(() -> {
-                                applyForVacancy(vacancy.getId());
-                            });
-                            bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
-                            dismiss();
+
+            if(curriculumId == -1){
+                dismiss();
+                ConfirmationDialogFragment.newInstance(
+                        "Ops, parece que você ainda não possui um currículo. Gostaria de começar o cadastro?.",
+                        new ConfirmationDialogFragment.ConfirmationListener() {
+                            @Override
+                            public void onConfirmed() {
+                                Intent intent = new Intent(getContext(), CurriculumRegister.class);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onCancelled() {
+                                // nada
+                            }
                         }
-                    });
-                }
+                ).show(getActivity().getSupportFragmentManager(), "ConfirmationDialog");
+            }else{
+                getQuestionsToApply();
+            }
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    if (isAdded()) {
-                        getActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), "Erro ao carregar perguntas", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-
-                }
-
-
-
-
-            });
         });
 
 
@@ -304,6 +295,41 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
 
 
+    public void getQuestionsToApply(){
+        QuestionService.getQuestionsByVacancyId(getContext(), vacancy.getId(), token, new QuestionService.QuestionListCallback() {
+            @Override
+            public void onSuccess(List<Question> questionList) {
+                requireActivity().runOnUiThread(() -> {
+                    if (questionList.isEmpty()) {
+                        // Não tem perguntas → aplicar direto
+                        applyForVacancy(vacancy.getId());
+                    } else {
+                        // Tem perguntas → abre o bottom sheet de respostas
+                        AnswerBottomSheetFragment bottomSheet = AnswerBottomSheetFragment.newInstance(vacancy.getId());
+                        bottomSheet.setOnAnswersSubmittedListener(() -> {
+                            applyForVacancy(vacancy.getId());
+                        });
+                        bottomSheet.show(getParentFragmentManager(), bottomSheet.getTag());
+                        dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                if (isAdded()) {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), "Erro ao carregar perguntas", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+
+
+
+
+        });
+    }
 
 
     public void applyForVacancy(int vacancyId) {
@@ -414,10 +440,5 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
                 || errorMessage.toLowerCase().contains("nenhuma pergunta")
                 || errorMessage.toLowerCase().contains("no questions");
     }
-
-
-
-
-
 
 }

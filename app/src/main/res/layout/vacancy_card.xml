@@ -22,14 +22,14 @@
         android:layout_width="252dp"
         android:layout_height="177dp"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="Título da Vaga"
+            android:text="Título da vaga"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -42,15 +42,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="Empresa: " />
+                android:text="Empresa: "
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/tvEmpresa"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
                 android:text="Nome da Empresa"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -62,8 +62,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:text="Modalidade: " />
+                android:text="Modalidade: "
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/tvModalidade"
