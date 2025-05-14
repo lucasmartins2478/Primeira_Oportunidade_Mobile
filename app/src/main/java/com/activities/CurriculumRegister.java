@@ -305,6 +305,7 @@ public class CurriculumRegister extends AppCompatActivity {
                     loadingDialog.dismiss();
                     Intent intent = new Intent(CurriculumRegister.this, Profile.class);
                     startActivity(intent);
+                    finish();
                 }
 
                 @Override
@@ -322,6 +323,7 @@ public class CurriculumRegister extends AppCompatActivity {
                     loadingDialog.dismiss();
                     Intent intent = new Intent(CurriculumRegister.this, AcademicDataRegister.class);
                     startActivity(intent);
+                    finish();
                 }
 
                 @Override

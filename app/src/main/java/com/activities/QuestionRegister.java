@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -82,6 +85,8 @@ public class QuestionRegister extends AppCompatActivity {
             Question q = new Question();
             q.setQuestion(questionText);
             q.setVacancyId(vacancyId);
+
+            Log.d("QuestionRegister", "Question : question:"+q.getQuestion()+", vacancyId:"+q.getVacancyId());
             SharedPreferences prefs  = getSharedPreferences("UserPrefs", MODE_PRIVATE);
             String token = prefs.getString("token", "Nenhum token encontrado");
 
@@ -162,13 +167,26 @@ public class QuestionRegister extends AppCompatActivity {
     }
 
     public void addQuestionInput(Question question) {
-        EditText input = new EditText(this);
-        input.setPadding(20, 20, 20, 20);
+        EditText input = (EditText) getLayoutInflater().inflate(R.layout.edit_text_question_input, questionsContainer, false);
         input.setHint("Digite a pergunta");
 
+        // Define altura personalizada (em dp)
+        int heightInDp = 90;
+        int heightInPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, heightInDp, getResources().getDisplayMetrics()
+        );
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                heightInPx
+        );
+        params.setMargins(0, 16, 0, 16); // margem entre os campos
+        input.setLayoutParams(params);
+
+        // Se a pergunta já existir, preenche o texto
         if (question != null) {
-            input.setText(question.getQuestion()); // Preenche com a pergunta existente
-            input.setTag(question); // Marca a pergunta com o objeto Question
+            input.setText(question.getQuestion());
+            input.setTag(question);
         }
 
         questionsContainer.addView(input);

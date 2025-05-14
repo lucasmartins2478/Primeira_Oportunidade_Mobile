@@ -264,6 +264,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, Profile.class);
                                 startActivity(intent);
+                                finish();
                             }
 
                             @Override
@@ -284,6 +285,7 @@ public class AcademicDataRegister extends AppCompatActivity {
                                 Toast.makeText(AcademicDataRegister.this, "Dados da instituição " + inst + " enviados", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(AcademicDataRegister.this, CoursesRegister.class);
                                 startActivity(intent);
+                                finish();
                             }
 
                             @Override

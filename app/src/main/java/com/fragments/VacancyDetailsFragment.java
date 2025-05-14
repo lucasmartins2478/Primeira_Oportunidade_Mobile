@@ -162,9 +162,12 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    requireActivity().runOnUiThread(() -> {
-                        Toast.makeText(getContext(), "Erro ao verificar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    });
+                    if (isAdded()) {
+                        getActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), "Erro ao carregar perguntas", Toast.LENGTH_SHORT).show();
+                        });
+                    }
+
                 }
 
 

@@ -36,7 +36,7 @@ import java.util.List;
 
 public class CandidateDetails extends AppCompatActivity {
 
-    TextView textCandidateName, textCandidateCpf, textCandidatePhone;
+    TextView textCandidateName, textCandidatePhone;
     TextView textBirthDate, textGender, textCity, textAbout, textInterest;
 
     LinearLayout academicContainer;
@@ -68,7 +68,6 @@ public class CandidateDetails extends AppCompatActivity {
 
 
         textCandidateName = findViewById(R.id.textCandidateName);
-        textCandidateCpf = findViewById(R.id.textCandidateCpf);
         textCandidatePhone = findViewById(R.id.textCandidatePhone);
 
         // Pega o ID enviado pelo Adapter
@@ -103,7 +102,6 @@ public class CandidateDetails extends AppCompatActivity {
 
     private void fetchCandidateData() {
 
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         CandidateService candidateService = new CandidateService();
 
@@ -117,9 +115,7 @@ public class CandidateDetails extends AppCompatActivity {
                     @Override
                     public void onSuccess(Candidate candidate) {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
                             textCandidateName.setText("Nome: " + candidate.getName());
-                            textCandidateCpf.setText("CPF: " + candidate.getCpf());
                             textCandidatePhone.setText("Telefone: " + candidate.getPhoneNumber());
                         });
                     }
@@ -127,7 +123,6 @@ public class CandidateDetails extends AppCompatActivity {
                     @Override
                     public void onFailure(String error) {
                         runOnUiThread(() -> {
-                            loadingDialog.dismiss();
                             textCandidateName.setText("Erro ao buscar candidato");
                         });
                     }
@@ -139,13 +134,11 @@ public class CandidateDetails extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
         String token = sharedPreferences.getString("token", "Nenhum token encontrado");
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         CurriculumService.getCurriculumByCandidateId(candidateId,token, new CurriculumService.FetchCurriculumCallback() {
             @Override
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     textBirthDate.setText("Nascimento: " + DateUtils.formatDate(curriculum.getBirthDate()));
                     textGender.setText("Gênero: " + curriculum.getGender());
                     textCity.setText("Cidade: " + curriculum.getCity());
@@ -162,7 +155,6 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
-                            loadingDialog.dismiss();
                             Toast.makeText(CandidateDetails.this, "Erro ao buscar currículo: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
                 );
@@ -171,7 +163,6 @@ public class CandidateDetails extends AppCompatActivity {
     }
 
     private void fetchAcademicData(int curriculumId, String token) {
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
 
 
@@ -181,7 +172,6 @@ public class CandidateDetails extends AppCompatActivity {
                 runOnUiThread(() -> {
                     academicContainer.removeAllViews(); // limpa antes de adicionar
 
-                    loadingDialog.dismiss();
 
                     for (AcademicData data : dataList) {
                         TextView info = new TextView(CandidateDetails.this);
@@ -206,7 +196,6 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     Toast.makeText(CandidateDetails.this, "Erro ao buscar dados acadêmicos: " + errorMessage, Toast.LENGTH_SHORT).show();
 
                 });
@@ -216,14 +205,12 @@ public class CandidateDetails extends AppCompatActivity {
 
 
     private void fetchCourseData(int curriculumId, String token) {
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
 
         CourseDataService.getCourseDataByCurriculumId(curriculumId,token, new CourseDataService.FetchCourseDataCallback() {
             @Override
             public void onSuccess(List<CourseData> courseDataList) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     // Exibindo os cursos
                     if (courseDataList.isEmpty()) {
                         TextView noCoursesMessage = new TextView(CandidateDetails.this);
@@ -246,7 +233,6 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     Toast.makeText(CandidateDetails.this, "Erro ao buscar curso complementar: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
             }
@@ -254,7 +240,6 @@ public class CandidateDetails extends AppCompatActivity {
     }
 
     private void fetchCompetences(int curriculumId, String token) {
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
 
 
@@ -264,7 +249,6 @@ public class CandidateDetails extends AppCompatActivity {
                 runOnUiThread(() -> {
                     // Se houver
 
-                    loadingDialog.dismiss();
                     if (competences.isEmpty()) {
                         TextView noCompetencesMessage = new TextView(CandidateDetails.this);
                         noCompetencesMessage.setText("Nenhuma competência informada.");
@@ -284,7 +268,6 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     Toast.makeText(CandidateDetails.this, "Erro ao buscar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
             }
@@ -292,7 +275,6 @@ public class CandidateDetails extends AppCompatActivity {
     }
 
     private void fetchQuestions(int vacancyId) {
-        loadingDialog.show(getSupportFragmentManager(), "loading");
         SharedPreferences prefs  = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String token = prefs.getString("token", "Nenhum token encontrado");
 
@@ -301,7 +283,6 @@ public class CandidateDetails extends AppCompatActivity {
             public void onSuccess(List<Question> questions) {
                 runOnUiThread(() -> {
 
-                    loadingDialog.dismiss();
                     if (!questions.isEmpty()) {
                         // Armazenar as perguntas, para depois buscar as respostas
                         fetchAnswersForQuestions(questions);
@@ -314,7 +295,6 @@ public class CandidateDetails extends AppCompatActivity {
             @Override
             public void onFailure(String errorMessage) {
                 runOnUiThread(() -> {
-                    loadingDialog.dismiss();
                     Toast.makeText(CandidateDetails.this, "Erro ao buscar perguntas: " + errorMessage, Toast.LENGTH_SHORT).show();
                 });
             }
@@ -329,7 +309,6 @@ public class CandidateDetails extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
         String token = sharedPreferences.getString("token", "Nenhum token encontrado");
-        loadingDialog.show(getSupportFragmentManager(), "loading");
 
         // Vamos fazer as requisições para pegar as respostas para cada pergunta
         for (Question question : questions) {
@@ -337,7 +316,6 @@ public class CandidateDetails extends AppCompatActivity {
                 @Override
                 public void onSuccess(Answer answer) {
                     runOnUiThread(() -> {
-                        loadingDialog.dismiss();
                         if (answer != null) {
                             displayAnswer(question, answer);
                         }
@@ -347,7 +325,6 @@ public class CandidateDetails extends AppCompatActivity {
                 @Override
                 public void onFailure(String errorMessage) {
                     runOnUiThread(() -> {
-                        loadingDialog.dismiss();
                         Log.d("Erro", "Erro ao buscar resposta: " + errorMessage);
                         Toast.makeText(CandidateDetails.this, "Erro ao buscar resposta: " + errorMessage, Toast.LENGTH_SHORT).show();
                     });

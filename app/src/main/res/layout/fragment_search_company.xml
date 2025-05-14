@@ -16,21 +16,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@color/blue"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <EditText
                 android:id="@+id/searchInput"
+                style="@style/SearchInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/SearchInput"
-                android:hint="Buscar empresa"
                 android:drawableLeft="@drawable/search_icon"
                 android:drawableRight="@drawable/close_icon"
-                android:textColorHint="@color/gray"
+                android:hint="Buscar empresa"
                 android:padding="12dp"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray" />
 
             <!-- Ícone de filtro -->
             <ImageView
@@ -38,98 +38,116 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="8dp"
+                android:layout_marginRight="20dp"
+                android:clickable="true"
                 android:src="@drawable/filter_icon"
-                android:contentDescription="Abrir filtros" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+
+            <!-- Container de filtros -->
+            <LinearLayout
+                android:id="@+id/filtersContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:gravity="center_horizontal"
+                android:paddingVertical="8dp"
+                android:background="@color/blue">
+
+                <!-- UF -->
+                <LinearLayout
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginLeft="20dp"
+                        android:text="Estado"
+                        android:textColor="#FFF"
+                        android:textSize="14sp" />
+
+                    <RelativeLayout
+                        android:layout_width="141dp"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/uf_spinner"
+                            style="@style/SpinnerFilter"
+                            android:layout_width="132dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:spinnerMode="dropdown" />
+
+                        <ImageView
+                            android:id="@+id/uf_spinner_arrow"
+                            android:layout_width="52dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="3dp"
+                            android:padding="8dp"
+                            android:src="@drawable/selection_icon_white" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <!-- Segment Filter -->
+                <LinearLayout
+                    android:layout_width="194dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginLeft="20dp"
+                        android:text="Segmento"
+                        android:textColor="#FFF"
+                        android:textSize="14sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/segment_spinner"
+                            style="@style/SpinnerFilter"
+                            android:layout_width="185dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:spinnerMode="dropdown" />
+
+                        <ImageView
+                            android:id="@+id/segment_spinner_arrow"
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:padding="8dp"
+                            android:src="@drawable/selection_icon_white" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+
         </LinearLayout>
 
-        <!-- Container de filtros -->
-        <LinearLayout
-            android:id="@+id/filtersContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            android:visibility="gone"
-            android:paddingVertical="12dp"
-            android:background="@color/blue">
 
-            <!-- UF -->
-            <LinearLayout
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginLeft="20dp"
-                    android:text="Estado"
-                    android:textColor="#FFF"
-                    android:textSize="14sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/uf_spinner"
-                        style="@style/SpinnerFilter"
-                        android:layout_width="111dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:spinnerMode="dropdown" />
-
-                    <ImageView
-                        android:id="@+id/uf_spinner_arrow"
-                        android:layout_width="52dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="3dp"
-                        android:padding="8dp"
-                        android:src="@drawable/selection_icon_white" />
-                </RelativeLayout>
-            </LinearLayout>
-
-            <!-- Segment Filter -->
-            <LinearLayout
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Segmento"
-                    android:textColor="#FFF"
-                    android:layout_marginLeft="20dp"
-                    android:textSize="14sp"
-                    android:layout_gravity="start" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/segment_spinner"
-                        style="@style/SpinnerFilter"
-                        android:layout_width="111dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:spinnerMode="dropdown" />
-
-                    <ImageView
-                        android:id="@+id/segment_spinner_arrow"
-                        android:layout_width="60dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:padding="8dp"
-                        android:src="@drawable/selection_icon_white" />
-                </RelativeLayout>
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Lista de empresas -->

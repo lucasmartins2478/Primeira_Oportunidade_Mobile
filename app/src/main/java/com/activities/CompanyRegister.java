@@ -274,6 +274,18 @@ public class CompanyRegister extends AppCompatActivity {
             company.setLogo(logo);
             company.setUserId(userId);
 
+            loginService.updateUser(user, token, new LoginService.UserCallback() {
+                @Override
+                public void onSuccess(int userId) {
+
+                }
+
+                @Override
+                public void onFailure(String error) {
+
+                }
+            });
+
             companyService.updateCompany(company,token, new CompanyService.RegisterCallback() {
                 @Override
                 public void onSuccess() {

@@ -105,9 +105,7 @@ public class CoursesRegister extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(CoursesRegister.this, "Erro ao carregar competências: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    });
+
                 }
             });
 
@@ -132,7 +130,6 @@ public class CoursesRegister extends AppCompatActivity {
                     runOnUiThread(() -> {
                         dismissLoadingDialog(); // <- aqui também
 
-                        Toast.makeText(CoursesRegister.this, "Erro: " + errorMessage, Toast.LENGTH_SHORT).show();
                     });
                 }
             });
@@ -211,6 +208,7 @@ public class CoursesRegister extends AppCompatActivity {
                         Toast.makeText(CoursesRegister.this, "Dados da instituição " + inst + " atualizados com sucesso", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override
@@ -228,6 +226,7 @@ public class CoursesRegister extends AppCompatActivity {
                         Toast.makeText(CoursesRegister.this, "Dados da instituição "+ inst + " Enviados", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(CoursesRegister.this, AdditionalDataRegister.class);
                         startActivity(intent);
+                        finish();
                     }
 
                     @Override

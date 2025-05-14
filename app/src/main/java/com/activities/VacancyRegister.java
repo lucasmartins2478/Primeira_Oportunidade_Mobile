@@ -302,7 +302,11 @@ public class VacancyRegister extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga atualizada com sucesso", Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
-                        finish(); // ou redirecionar de volta pra lista
+
+                        Intent intent = new Intent(VacancyRegister.this, QuestionRegister.class);
+                        intent.putExtra("vacancyId", vacancyId);  // ✅ envia o ID
+                        startActivity(intent);
+                        finish();
                     });
                 }
 
@@ -325,7 +329,11 @@ public class VacancyRegister extends AppCompatActivity {
                     runOnUiThread(() -> {
                         Toast.makeText(VacancyRegister.this, "Vaga cadastrada com sucesso", Toast.LENGTH_SHORT).show();
                         loadingDialog.dismiss();
-                        startActivity(new Intent(VacancyRegister.this, QuestionRegister.class));
+
+                        Intent intent = new Intent(VacancyRegister.this, QuestionRegister.class);
+                        intent.putExtra("vacancyId", vacancyId);  // ✅ envia o ID
+                        startActivity(intent);
+                        finish();
                     });
                 }
 

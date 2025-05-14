@@ -178,7 +178,7 @@ public class LoginService {
         }).start();
     }
 
-    public void updateUser(User user, UserCallback callback) {
+    public void updateUser(User user, String token, UserCallback callback) {
         new Thread(() -> {
             try {
                 // Criando JSON do usuário
@@ -200,6 +200,7 @@ public class LoginService {
                 Request request = new Request.Builder()
                         .url(apiUrl+"/"+user.getId())
                         .put(body)
+                        .addHeader("Authorization", "Bearer " + token)
                         .build();
 
                 // Enviando requisição

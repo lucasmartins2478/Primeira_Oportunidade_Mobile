@@ -32,12 +32,12 @@ public class ApplicationsAdapter extends RecyclerView.Adapter<ApplicationsAdapte
     Context context;
 
 
-    public ApplicationsAdapter(List<Application> applications) {
+    public ApplicationsAdapter(Context context, List<Application> applications) {
+        this.context = context;
         this.applications = applications;
         this.candidateService = new CandidateService();
-        this.context = context;
-
     }
+
 
     @NonNull
     @Override

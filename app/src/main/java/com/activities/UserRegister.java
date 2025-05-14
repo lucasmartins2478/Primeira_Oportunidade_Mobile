@@ -157,13 +157,27 @@ public class UserRegister extends AppCompatActivity {
                     userId
             );
 
+            String token = prefs.getString("token", "Nenhum token encontrado");
+
+
             Log.d("CandidateUpdate", "Updated Candidate - Name: " + updated.getName() +
                     ", CPF: " + updated.getCpf() +
                     ", Phone: " + updated.getPhoneNumber() +
                     ", UserID: " + updated.getUserId());
 
+            loginService.updateUser(user, token, new LoginService.UserCallback() {
+                @Override
+                public void onSuccess(int userId) {
 
-            String token = prefs.getString("token", "Nenhum token encontrado");
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    
+                }
+            });
+
+
 
             candidateService.updateCandidate(updated, token, new CandidateService.registerCallback() {
                 @Override

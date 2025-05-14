@@ -61,44 +61,46 @@ public class ApplicationsBottomSheetFragment extends BottomSheetDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bottom_sheet_applications, container, false);
+        return inflater.inflate(R.layout.bottom_sheet_applications, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         loadingDialog = new LoadingDialogFragment();
-
         loadingDialog.show(getParentFragmentManager(), "loading");
-
-        if (getArguments() != null) {
-            vacancyId = getArguments().getInt(ARG_VACANCY_ID);
-        }
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerApplications);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         TextView noApplications = view.findViewById(R.id.noApplications);
 
-        SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
-        String token = prefs.getString("token", "Nenhum token encontrado");
+        if (getArguments() != null) {
+            vacancyId = getArguments().getInt(ARG_VACANCY_ID);
+        }
 
+        if (getActivity() != null) {
+            SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", MODE_PRIVATE);
+            String token = prefs.getString("token", "Nenhum token encontrado");
 
-        ApplicationService.getApplicationsByVacancyId(getContext(), vacancyId,token, new ApplicationService.ApplicationsListCallback() {
-            @Override
-            public void onSuccess(List<Application> applications) {
-
-                if(applications.isEmpty()){
-                    noApplications.setVisibility(View.VISIBLE);
+            ApplicationService.getApplicationsByVacancyId(getContext(), vacancyId, token, new ApplicationService.ApplicationsListCallback() {
+                @Override
+                public void onSuccess(List<Application> applications) {
+                    if (applications.isEmpty()) {
+                        noApplications.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setAdapter(new ApplicationsAdapter(requireContext(), applications));
+                    }
+                    loadingDialog.dismiss();
                 }
-                else{
-                    recyclerView.setAdapter(new ApplicationsAdapter(applications));
 
+                @Override
+                public void onFailure(String error) {
+                    Toast.makeText(getContext(), "Erro: " + error, Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 }
-            }
-
-            @Override
-            public void onFailure(String error) {
-                Toast.makeText(getContext(), "Erro: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-        loadingDialog.dismiss();
-
-        return view;
+            });
+        }
     }
+
 }

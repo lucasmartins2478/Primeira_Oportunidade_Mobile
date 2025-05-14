@@ -487,10 +487,12 @@ public class SearchFormFragment extends Fragment {
 
     private void checkIfDataLoaded() {
         if (meuCurriculo != null && !dadosAcademicos.isEmpty() && !dadosCursos.isEmpty() && !competencias.isEmpty()) {
-            // Todos os dados estão carregados, então podemos atualizar a lista
+            dadosCurriculoCarregados = true; // ✅ ESSA LINHA RESOLVE TUDO
+
             atualizarLista(searchInput.getText().toString());
         }
     }
+
 
     private boolean podeCalcularScore() {
         return meuCurriculo != null

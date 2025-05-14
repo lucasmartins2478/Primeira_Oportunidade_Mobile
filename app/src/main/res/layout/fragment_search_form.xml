@@ -44,8 +44,8 @@
                 android:id="@+id/filtersContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:visibility="gone"
+                android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp">
