@@ -388,8 +388,8 @@ public class AcademicDataRegister extends AppCompatActivity {
             courseInput.setText(data.getCourseName());
             cityInput.setText(data.getCity());
             institutionInput.setText(data.getInstitutionName());
-            startDateInput.setText(data.getStartDate().replace("-", "/"));
-            endDateInput.setText(data.getEndDate().replace("-", "/"));
+            startDateInput.setText(formatDateToMonthYear(data.getStartDate()));
+            endDateInput.setText(formatDateToMonthYear(data.getEndDate()));
             isStudyingYet.setChecked(data.getIsCurrentlyStudying());
 
             // Seleciona valores nos spinners
@@ -458,8 +458,8 @@ public class AcademicDataRegister extends AppCompatActivity {
                 runOnUiThread(() -> {
 
                     instituitionNameInput.setText(safeText(curriculum.getSchoolName()));
-                    startDateInput.setText(safeText(curriculum.getSchoolStartDate()).replace("-", "/"));
-                    endDateInput.setText(safeText(curriculum.getSchoolEndDate()).replace("-", "/"));
+                    startDateInput.setText(formatDateToMonthYear(curriculum.getSchoolStartDate()));
+                    endDateInput.setText(formatDateToMonthYear(curriculum.getSchoolEndDate()));
                     cityInput.setText(safeText(curriculum.getSchoolCity()));
 
 
@@ -495,6 +495,21 @@ public class AcademicDataRegister extends AppCompatActivity {
         return (value == null || value.equalsIgnoreCase("null")) ? "" : value;
     }
 
+
+    private String formatDateToMonthYear(String isoDate) {
+        try {
+            // Formato de entrada ISO 8601
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            Date date = inputFormat.parse(isoDate);
+
+            // Formato de saída MM/yyyy
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
 
 

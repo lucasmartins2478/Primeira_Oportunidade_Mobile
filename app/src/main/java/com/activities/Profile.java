@@ -29,6 +29,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.fragments.ConfirmationDialogFragment;
 import com.fragments.LoadingDialogFragment;
 import com.models.AcademicData;
 import com.models.Company;
@@ -450,15 +451,31 @@ public class Profile extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void deleteAllData(View view){
-        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+    public void deleteAllData(View view) {
+        ConfirmationDialogFragment.newInstance(
+                "Tem certeza que deseja apagar todos os seus dados? Essa ação não poderá ser desfeita.",
+                new ConfirmationDialogFragment.ConfirmationListener() {
+                    @Override
+                    public void onConfirmed() {
+                        performDeleteAllData();
+                    }
 
+                    @Override
+                    public void onCancelled() {
+                        // nada
+                    }
+                }
+        ).show(getSupportFragmentManager(), "ConfirmationDialog");
+    }
+
+    private void performDeleteAllData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         loadingDialog.show(getSupportFragmentManager(), "loading");
-        if(candidateId != -1){
 
-            candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId,token, new CandidateService.DeleteCallback() {
+        if (candidateId != -1) {
+            candidateService.deleteAllCandidateData(Profile.this, userId, curriculumId, token, new CandidateService.DeleteCallback() {
                 @Override
                 public void onSuccess() {
                     candidateService.deleteCandidate(Profile.this, userId, token, new CandidateService.DeleteCallback() {
@@ -486,23 +503,16 @@ public class Profile extends AppCompatActivity {
                             loadingDialog.dismiss();
                         }
                     });
-
-
                 }
 
                 @Override
                 public void onFailure(String error) {
                     Toast.makeText(Profile.this, "Erro ao apagar dados", Toast.LENGTH_SHORT).show();
                     loadingDialog.dismiss();
-
                 }
             });
-
-        }else{
-
-
-            Log.d("Delete (empresa) :", "companyId: "+companyId);
-            companyService.deleteAllCompanyData(Profile.this, userId,token, new CompanyService.RegisterCallback() {
+        } else {
+            companyService.deleteAllCompanyData(Profile.this, userId, token, new CompanyService.RegisterCallback() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(Profile.this, "Dados apagados com sucesso", Toast.LENGTH_SHORT).show();
@@ -518,6 +528,7 @@ public class Profile extends AppCompatActivity {
             });
         }
     }
+
     @SuppressLint("Range")
     private String getFileName(Uri uri) {
         String result = null;

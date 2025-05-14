@@ -352,7 +352,7 @@ public class CurriculumRegister extends AppCompatActivity {
             public void onSuccess(Curriculum curriculum) {
                 runOnUiThread(() -> {
 
-                    birthDateInput.setText(curriculum.getBirthDate());
+                    birthDateInput.setText(convertIsoToBrazilianDate(curriculum.getBirthDate()));
                     ageInput.setText(curriculum.getAge());
                     cityInput.setText(curriculum.getCity());
                     cepInput.setText(curriculum.getCep());
@@ -417,6 +417,17 @@ public class CurriculumRegister extends AppCompatActivity {
         });
     }
 
+    private String convertIsoToBrazilianDate(String isoDate) {
+        try {
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            SimpleDateFormat brFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            return brFormat.format(isoFormat.parse(isoDate));
+        } catch (ParseException | NullPointerException e) {
+            e.printStackTrace();
+            return ""; // Retorna vazio caso falhe
+        }
+    }
 
 
 

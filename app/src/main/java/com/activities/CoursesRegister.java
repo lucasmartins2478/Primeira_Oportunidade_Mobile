@@ -33,8 +33,12 @@ import com.services.AcademicDataService;
 import com.services.CompetenceDataService;
 import com.services.CourseDataService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CoursesRegister extends AppCompatActivity {
 
@@ -399,7 +403,7 @@ public class CoursesRegister extends AppCompatActivity {
             courseName.setText(data.getCourseName());
             duration.setText(data.getDuration());
             institutionName.setText(data.getGrantingIntitution());
-            endDate.setText(data.getEndDate().replace("-", "/"));
+            endDate.setText(formatDateToMonthYear(data.getEndDate()));
             isStudyingYet.setChecked(data.isInProgress());
             if (data.getModality() != null) {
                 int levelPosition = modalityAdapter.getPosition(data.getModality());
@@ -475,6 +479,21 @@ public class CoursesRegister extends AppCompatActivity {
     private void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isAdded()) {
             loadingDialog.dismiss();
+        }
+    }
+
+    private String formatDateToMonthYear(String isoDate) {
+        try {
+            // Formato de entrada ISO 8601
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+            Date date = inputFormat.parse(isoDate);
+
+            // Formato de saída MM/yyyy
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MM/yyyy", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
         }
     }
 
