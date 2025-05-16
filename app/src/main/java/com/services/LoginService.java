@@ -120,6 +120,12 @@ public class LoginService {
         void onFailure(String error);
     }
 
+    public interface  UpdateCallback{
+        void onSuccess(String email);
+
+        void onFailure(String error);
+    }
+
     public interface UserCallback{
         void onSuccess(int userId);
 
@@ -178,14 +184,13 @@ public class LoginService {
         }).start();
     }
 
-    public void updateUser(User user, String token, UserCallback callback) {
+    public void updateEmail(String email, int userId, String token, UpdateCallback callback) {
         new Thread(() -> {
             try {
                 // Criando JSON do usuário
                 JSONObject json = new JSONObject();
-                json.put("email", user.getEmail());
-                json.put("password", user.getPassword());
-                json.put("type", user.getType().getValue());
+                json.put("email", email);
+
 
                 Log.d("UserRegisterJSON", json.toString());
 
@@ -198,7 +203,7 @@ public class LoginService {
 
                 // Criando requisição POST
                 Request request = new Request.Builder()
-                        .url(apiUrl+"/"+user.getId())
+                        .url("https://backend-po.onrender.com/userUpdateEmail/"+userId)
                         .put(body)
                         .addHeader("Authorization", "Bearer " + token)
                         .build();
@@ -212,8 +217,54 @@ public class LoginService {
                         Log.d("UserRegisterResponse", "Dados recebidos: " + responseData);
 
                         JSONObject jsonResponse = new JSONObject(responseData);
-                        int userId = jsonResponse.getInt("id");
+                        int id = jsonResponse.getInt("id");
+                        String emailReturned = jsonResponse.getString("email");
 
+                        callback.onSuccess(emailReturned);
+                    } catch (Exception e) {
+                        Log.e("UserRegisterParseError", "Erro ao ler resposta: ", e);
+                        callback.onFailure("Erro ao processar resposta do servidor.");
+                    }
+                } else {
+                    callback.onFailure("Erro ao cadastrar o usuário: " + response.message());
+                }
+
+
+            } catch (Exception e) {
+                callback.onFailure("Falha ao conectar: " + e.getMessage());
+            }
+        }).start();
+    }
+    public void updatePassword(String newPassword, String oldPassword, int userId, String token, UserCallback callback) {
+        new Thread(() -> {
+            try {
+                // Criando JSON do usuário
+                JSONObject json = new JSONObject();
+                json.put("currentPassword", oldPassword);
+                json.put("newPassword", newPassword);
+
+
+                Log.d("UserRegisterJSON", json.toString());
+
+
+                // Criando corpo da requisição
+                RequestBody body = RequestBody.create(
+                        json.toString(),
+                        MediaType.get("application/json; charset=utf-8")
+                );
+
+                // Criando requisição POST
+                Request request = new Request.Builder()
+                        .url("https://backend-po.onrender.com/userUpdatePassword/"+userId)
+                        .put(body)
+                        .addHeader("Authorization", "Bearer " + token)
+                        .build();
+
+                // Enviando requisição
+                Response response = client.newCall(request).execute();
+
+                if (response.isSuccessful()) {
+                    try {
                         callback.onSuccess(userId);
                     } catch (Exception e) {
                         Log.e("UserRegisterParseError", "Erro ao ler resposta: ", e);

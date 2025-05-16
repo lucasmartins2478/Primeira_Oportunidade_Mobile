@@ -183,48 +183,66 @@ public class CompanyRegister extends AppCompatActivity {
         if (companyName.isEmpty()) {
             companyNameInput.setError("Preencha o nome da empresa");
             companyNameInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (cnpj.isEmpty()) {
             cnpjInput.setError("Preencha o CNPJ");
             cnpjInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
         if (email.isEmpty()) {
             emailInput.setError("Preencha o email corporativo");
             emailInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (phoneNumber.isEmpty()) {
             phoneInput.setError("Preencha o telefone");
             phoneInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (responsible.isEmpty()) {
             responsibleInput.setError("Preencha o nome do responsável");
             responsibleInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (city.isEmpty()) {
             cityInput.setError("Preencha o nome da cidade");
             cityInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (cep.isEmpty()) {
             cepInput.setError("Preencha o CEP");
             cepInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
         if (address.isEmpty()) {
             addressInput.setError("Preencha o endereço");
             addressInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (addressNumber.isEmpty()) {
             addressNumberInput.setError("Preencha o número do endereço");
             addressNumberInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         int addressNumberInt = Integer.parseInt(addressNumber);
@@ -234,15 +252,21 @@ public class CompanyRegister extends AppCompatActivity {
             if (password.isEmpty()) {
                 passwordInput.setError("Preencha a senha");
                 passwordInput.requestFocus();
+                loadingDialog.dismiss();
+
                 return;
             }
             if (confirmPassword.isEmpty()) {
                 confirmPasswordInput.setError("Preencha a confirmação de senha");
                 confirmPasswordInput.requestFocus();
+                loadingDialog.dismiss();
+
                 return;
             }
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+
                 return;
             }
         }
@@ -274,7 +298,7 @@ public class CompanyRegister extends AppCompatActivity {
             company.setLogo(logo);
             company.setUserId(userId);
 
-            loginService.updateUser(user, token, new LoginService.UserCallback() {
+            loginService.updateEmail(email, userId, token, new LoginService.UserCallback() {
                 @Override
                 public void onSuccess(int userId) {
 

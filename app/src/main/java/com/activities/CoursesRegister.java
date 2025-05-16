@@ -181,6 +181,8 @@ public class CoursesRegister extends AppCompatActivity {
 
             if (inst.isEmpty() || modality.isEmpty() || duration.isEmpty() || end.isEmpty() || course.isEmpty() ) {
                 Toast.makeText(CoursesRegister.this, "Preencha todos os campos dos formulários adicionados.", Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+
                 return;
             }
 

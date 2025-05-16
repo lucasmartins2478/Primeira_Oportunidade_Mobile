@@ -93,10 +93,14 @@ public class FormLogin extends AppCompatActivity {
         if (email.isEmpty()) {
             emailInput.setError("Preencha o email");
             emailInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         } else if (password.isEmpty()) {
             passwordInput.setError("Preencha a senha");
             passwordInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         } else {
             loginService.login(email, password, new LoginService.LoginCallback() {

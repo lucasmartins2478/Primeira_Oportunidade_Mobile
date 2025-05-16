@@ -105,32 +105,51 @@ public class UserRegister extends AppCompatActivity {
         if (name.isEmpty()) {
             nameInput.setError("Preencha o seu nome");
             nameInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(phone.isEmpty()){
             phoneInput.setError("Preencha o telefone");
             phoneInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(cpf.isEmpty()){
             cpfInput.setError("Preencha o CPF");
             cpfInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (email.isEmpty()) {
             emailInput.setError("Preencha o email");
             emailInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(candidateId == -1){
             if (password.isEmpty()) {
                 passwordInput.setError("Preencha a senha");
                 passwordInput.requestFocus();
+                loadingDialog.dismiss();
+
                 return;
             }
             if (confirmPassword.isEmpty()){
                 confirmPasswordInput.setError("Confirme a senha");
                 confirmPasswordInput.requestFocus();
+                loadingDialog.dismiss();
+
+                return;
+            }
+            if(!password.equals(confirmPassword)){
+                Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show();
+
+                loadingDialog.dismiss();
+
                 return;
             }
         }
@@ -165,7 +184,7 @@ public class UserRegister extends AppCompatActivity {
                     ", Phone: " + updated.getPhoneNumber() +
                     ", UserID: " + updated.getUserId());
 
-            loginService.updateUser(user, token, new LoginService.UserCallback() {
+            loginService.updateEmail(email, userId, token, new LoginService.UserCallback() {
                 @Override
                 public void onSuccess(int userId) {
 

@@ -156,6 +156,8 @@ public class AcademicDataRegister extends AppCompatActivity {
         if(institutionName.isEmpty()){
             instituitionNameInput.setError("Preencha o nome da intituição de ensino");
             instituitionNameInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
@@ -163,17 +165,23 @@ public class AcademicDataRegister extends AppCompatActivity {
         if(startDate.isEmpty()){
             startDateInput.setError("Preencha a data de início");
             startDateInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(endDate.isEmpty()){
             endDateInput.setError("Preencha a data de conclusão");
             endDateInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
         if(city.isEmpty()){
             cityInput.setError("Preencha a cidade");
             cityInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
@@ -222,6 +230,8 @@ public class AcademicDataRegister extends AppCompatActivity {
                     if (inst.isEmpty() || lvl.isEmpty() || per.isEmpty() ||
                             start.isEmpty() || course.isEmpty() || cityDyn.isEmpty()) {
                         Toast.makeText(AcademicDataRegister.this, "Preencha todos os campos dos formulários adicionados.", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+
                         return;
                     }
 

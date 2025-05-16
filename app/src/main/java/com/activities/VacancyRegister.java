@@ -128,32 +128,44 @@ public class VacancyRegister extends AppCompatActivity {
         if (salary.isEmpty()) {
             salaryInput.setError("Preencha o salário");
             salaryInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (city.isEmpty()) {
             cityInput.setError("Preencha a cidade");
             cityInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
         if (aboutCompany.isEmpty()) {
             aboutCompanyInput.setError("Preencha informações sobre a empresa");
             aboutCompanyInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (description.isEmpty()) {
             descriptionInput.setError("Preencha a descrição da vaga");
             descriptionInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (requirements.isEmpty()) {
             requirementsInput.setError("Preencha os requisitos");
             requirementsInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (benefits.isEmpty()) {
             benefitsInput.setError("Preencha os benefícios");
             benefitsInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
@@ -246,32 +258,44 @@ public class VacancyRegister extends AppCompatActivity {
         if (salary.isEmpty()) {
             salaryInput.setError("Preencha o salário");
             salaryInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (city.isEmpty()) {
             cityInput.setError("Preencha a cidade");
             cityInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 
         if (aboutCompany.isEmpty()) {
             aboutCompanyInput.setError("Preencha informações sobre a empresa");
             aboutCompanyInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (description.isEmpty()) {
             descriptionInput.setError("Preencha a descrição da vaga");
             descriptionInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (requirements.isEmpty()) {
             requirementsInput.setError("Preencha os requisitos");
             requirementsInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if (benefits.isEmpty()) {
             benefitsInput.setError("Preencha os benefícios");
             benefitsInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
 

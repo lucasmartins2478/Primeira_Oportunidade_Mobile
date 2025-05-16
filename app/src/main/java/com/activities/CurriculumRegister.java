@@ -26,8 +26,10 @@ import com.models.Candidate;
 import com.models.Curriculum;
 import com.models.DateValidator;
 import com.models.MaskEditText;
+import com.models.User;
 import com.services.CandidateService;
 import com.services.CurriculumService;
+import com.services.LoginService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,10 +40,12 @@ public class CurriculumRegister extends AppCompatActivity {
 
     private CurriculumService curriculumService;
     private CandidateService candidateService;
+
+    private LoginService loginService;
     int curriculumId, candidateId, userId;
     AppCompatButton registerBtn;
     LoadingDialogFragment loadingDialog;
-    private EditText fullNameInput, birthDateInput, ageInput, cpfInput, genderInput, raceInput, phoneNumberInput, emailInput, cityInput, cepInput, ufInput, addressInput, addressNumberInput;
+    private EditText fullNameInput, birthDateInput, ageInput, cpfInput, phoneNumberInput, cityInput, cepInput, ufInput, addressInput, addressNumberInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class CurriculumRegister extends AppCompatActivity {
 
         curriculumService = new CurriculumService();
         candidateService = new CandidateService();
+        loginService = new LoginService();
 
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
 
@@ -71,7 +76,6 @@ public class CurriculumRegister extends AppCompatActivity {
         Log.d("Curriculo", "CurriculumId: "+curriculumId);
 
         String name = sharedPreferences.getString("name", "Usuário não encontrado");
-        String email = sharedPreferences.getString("email", "Email não encontrado");
         String phone = sharedPreferences.getString("phone", "Telefone não encontrado");
         String cpf = sharedPreferences.getString("cpf", "CPF não encontrado");
 
@@ -86,8 +90,6 @@ public class CurriculumRegister extends AppCompatActivity {
         cpfInput.setText(cpf);
         phoneNumberInput = findViewById(R.id.phone_number_input);
         phoneNumberInput.setText(phone);
-        emailInput = findViewById(R.id.email_input);
-        emailInput.setText(email);
         cityInput = findViewById(R.id.city_input);
         cepInput = findViewById(R.id.cep_input);
         addressInput = findViewById(R.id.address_input);
@@ -192,7 +194,6 @@ public class CurriculumRegister extends AppCompatActivity {
         String gender = ((Spinner) findViewById(R.id.gender_spinner)).getSelectedItem().toString();
         String race = ((Spinner) findViewById(R.id.race_spinner)).getSelectedItem().toString();
         String phoneNumber = phoneNumberInput.getText().toString();
-        String email = emailInput.getText().toString();
         String city = cityInput.getText().toString();
         String cep = cepInput.getText().toString();
         String uf = ((Spinner) findViewById(R.id.uf_spinner)).getSelectedItem().toString();
@@ -203,66 +204,73 @@ public class CurriculumRegister extends AppCompatActivity {
         if(fullName.isEmpty()){
             fullNameInput.setError("Preencha o nome completo");
             fullNameInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(birthDate.isEmpty()){
             birthDateInput.setError("Preencha a data de nascimento");
             birthDateInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(age.isEmpty()){
             ageInput.setError("Preencha a idade");
             ageInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(cpf.isEmpty()){
             cpfInput.setError("Preencha o CPF");
             cpfInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
-        if(gender.isEmpty()){
-            genderInput.setError("Preencha o gênero");
-            genderInput.requestFocus();
-            return;
-        }
-        if(race.isEmpty()){
-            raceInput.setError("Preencha a raça");
-            raceInput.requestFocus();
-            return;
-        }
+
         if(phoneNumber.isEmpty()){
             phoneNumberInput.setError("Preencha o número de telefone");
             phoneNumberInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
-        if(email.isEmpty()){
-            emailInput.setError("Preencha o email");
-            emailInput.requestFocus();
-            return;
-        }
+
         if(city.isEmpty()){
             cityInput.setError("Preencha a cidade");
             cityInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(cep.isEmpty()){
             cepInput.setError("Preencha o CEP");
             cepInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(uf.isEmpty()){
             ufInput.setError("Preencha o estado");
             ufInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(address.isEmpty()){
             addressInput.setError("Preencha o endereço");
             addressInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         if(addressNumber.isEmpty()){
             addressNumberInput.setError("Preencha o número de endereço");
             addressNumberInput.requestFocus();
+            loadingDialog.dismiss();
+
             return;
         }
         SharedPreferences sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -270,6 +278,8 @@ public class CurriculumRegister extends AppCompatActivity {
         String token = sharedPreferences.getString("token", "Nenhum token encontrado");
 
         Candidate candidate = new Candidate(fullName, phoneNumber, cpf,userId );
+
+
 
         candidateService.updateCandidate(candidate, token, new CandidateService.registerCallback() {
             @Override
