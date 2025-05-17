@@ -88,6 +88,8 @@ public class UserRegister extends AppCompatActivity {
 
     public void changePassword(View view){
 
+        Intent intent = new Intent(UserRegister.this, ChangePassword.class);
+        startActivity(intent);
     }
 
     public void registerUser(View view){
@@ -184,15 +186,18 @@ public class UserRegister extends AppCompatActivity {
                     ", Phone: " + updated.getPhoneNumber() +
                     ", UserID: " + updated.getUserId());
 
-            loginService.updateEmail(email, userId, token, new LoginService.UserCallback() {
+            loginService.updateEmail(email, userId, token, new LoginService.UpdateCallback() {
                 @Override
-                public void onSuccess(int userId) {
+                public void onSuccess(String email) {
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("email", email);
+                    editor.apply(); // <- ESSENCIAL: salva de fato no SharedPreferences
 
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    
+
                 }
             });
 

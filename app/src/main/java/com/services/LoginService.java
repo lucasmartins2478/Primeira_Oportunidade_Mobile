@@ -235,7 +235,7 @@ public class LoginService {
             }
         }).start();
     }
-    public void updatePassword(String newPassword, String oldPassword, int userId, String token, UserCallback callback) {
+    public void updatePassword(String newPassword, String oldPassword, int userId, String token, DeleteCallback callback) {
         new Thread(() -> {
             try {
                 // Criando JSON do usuário
@@ -265,7 +265,7 @@ public class LoginService {
 
                 if (response.isSuccessful()) {
                     try {
-                        callback.onSuccess(userId);
+                        callback.onSuccess();
                     } catch (Exception e) {
                         Log.e("UserRegisterParseError", "Erro ao ler resposta: ", e);
                         callback.onFailure("Erro ao processar resposta do servidor.");

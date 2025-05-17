@@ -401,7 +401,7 @@ public class VacancyDetailsFragment extends BottomSheetDialogFragment {
         intent.putExtra("vacancy", vaga);  // Passe os dados da vaga para o Fragment
 
         // Crie um PendingIntent para abrir a Activity/Fragment
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         // Crie a notificação
         Notification notification = new NotificationCompat.Builder(context, "CANAL_VAGAS_EMPRESA")

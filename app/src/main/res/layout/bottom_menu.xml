@@ -44,17 +44,7 @@
         android:paddingLeft="30dp"
         android:text="@string/companies_menu_option"
         android:textAlignment="viewStart" />
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnProfile"
-        style="@style/MenuOptionButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:drawableLeft="@drawable/profile_icon"
-        android:drawablePadding="10dp"
-        android:paddingLeft="30dp"
-        android:text="@string/profile_menu_option"
-        android:textAlignment="viewStart" />
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnMyApplications"
         style="@style/MenuOptionButton"
@@ -88,7 +78,17 @@
         android:text="Chatbot"
         android:textAlignment="viewStart" />
 
-
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnProfile"
+        style="@style/MenuOptionButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableLeft="@drawable/profile_icon"
+        android:drawablePadding="10dp"
+        android:paddingLeft="30dp"
+        android:text="@string/profile_menu_option"
+        android:textAlignment="viewStart" />
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnClose"
         style="@style/MenuOptionButton"

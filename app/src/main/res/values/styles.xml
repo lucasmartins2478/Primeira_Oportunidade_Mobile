@@ -84,11 +84,16 @@
     </style>
 
     <style name="MenuOptionButton">
-        <item name="android:background">@drawable/option_menu_button</item>
+        <item name="android:background">@drawable/option_menu_button</item> <!-- Seu fundo -->
         <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:layout_margin">10dp</item>
         <item name="textAllCaps">false</item>
+        <item name="android:elevation">12dp</item> <!-- Tente um valor maior se necessário -->
     </style>
+
+
+
     <style name="MenuOrangeBar">
         <item name="android:background">@drawable/menu_orange_bar</item>
         <item name="android:layout_marginBottom">40dp</item>

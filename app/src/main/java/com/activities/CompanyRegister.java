@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -27,12 +25,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.fragments.LoadingDialogFragment;
-import com.models.Candidate;
 import com.models.Company;
 import com.models.MaskEditText;
 import com.models.User;
 import com.models.UserType;
-import com.services.CandidateService;
 import com.services.CompanyService;
 import com.services.LoginService;
 
@@ -149,6 +145,8 @@ public class CompanyRegister extends AppCompatActivity {
 
     public void changePassword(View view){
 
+        Intent intent = new Intent(CompanyRegister.this, ChangePassword.class);
+        startActivity(intent);
     }
 
     public void registerCompany(View view) {
@@ -298,9 +296,12 @@ public class CompanyRegister extends AppCompatActivity {
             company.setLogo(logo);
             company.setUserId(userId);
 
-            loginService.updateEmail(email, userId, token, new LoginService.UserCallback() {
+            loginService.updateEmail(email, userId, token, new LoginService.UpdateCallback() {
                 @Override
-                public void onSuccess(int userId) {
+                public void onSuccess(String email) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("email", email);
+                    editor.apply(); // <- ESSENCIAL: salva de fato no SharedPreferences
 
                 }
 

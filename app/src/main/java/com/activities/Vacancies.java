@@ -65,20 +65,20 @@ public class Vacancies extends AppCompatActivity {
 
 
     private void criarCanalDeNotificacao() {
-        // Verifica se a versão do Android é 8.0 (API 26) ou superior
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Canal de Vagas";
-            String description = "Notificações sobre vagas compatíveis";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-
-            // Cria o canal de notificação
-            NotificationChannel channel = new NotificationChannel("CANAL_VAGAS", name, importance);
-            channel.setDescription(description);
-
-            // Registra o canal no sistema
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager.getNotificationChannel("CANAL_VAGAS") == null) {
+                CharSequence name = "Canal de Vagas";
+                String description = "Notificações sobre vagas compatíveis";
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+                NotificationChannel channel = new NotificationChannel("CANAL_VAGAS", name, importance);
+                channel.setDescription(description);
+
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
+
 
 }

@@ -71,7 +71,6 @@ public class SearchFormFragment extends Fragment {
     private List<String> competencias = new ArrayList<>();
     private boolean isFilterOpen;
 
-    LoadingDialogFragment loadingDialog;
 
     private boolean isMyApplicationsScreen = false;
 
@@ -83,11 +82,10 @@ public class SearchFormFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_form, container, false);
 
-        loadingDialog = new LoadingDialogFragment();
 
 
 
-        loadingDialog.show(getParentFragmentManager(), "loading");
+
 
 
         Bundle args = getArguments();
@@ -188,7 +186,6 @@ public class SearchFormFragment extends Fragment {
                         allVacancies = vacancies;
                     }
                 }
-                loadingDialog.dismiss();
 
                 getActivity().runOnUiThread(() -> atualizarLista(""));
             }
@@ -241,7 +238,6 @@ public class SearchFormFragment extends Fragment {
     }
 
     private void atualizarLista(String query) {
-        loadingDialog.show(getParentFragmentManager(), "loading");
         String termo = query.toLowerCase().trim();
 
         Spinner spinnerUf = getView().findViewById(R.id.uf_spinner);
@@ -342,7 +338,6 @@ public class SearchFormFragment extends Fragment {
                 recyclerView.setAdapter(adapter);
             });
         }
-        loadingDialog.dismiss();
     }
 
 
@@ -369,7 +364,8 @@ public class SearchFormFragment extends Fragment {
 
         // Envie a notificação
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);  // ID única para a notificação
+        int notificationId = vaga.getId(); // Assuming each vacancy has a unique ID
+        notificationManager.notify(notificationId, notification);
     }
 
 
@@ -425,7 +421,7 @@ public class SearchFormFragment extends Fragment {
                 if (getActivity() == null) return;
 
                 getActivity().runOnUiThread(() -> {
-                    loadingDialog.dismiss();
+
                     atualizarLista(searchInput.getText().toString());
 
                     Toast.makeText(getContext(), "Currículo não encontrado. Mostrando vagas sem ordenação por compatibilidade.", Toast.LENGTH_SHORT).show();
