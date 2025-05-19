@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Teste Botpress</title>
+    <script src="https://cdn.botpress.cloud/webchat/v2.4/inject.js"></script>
+    <style></style>
+</head>
+
+<body>
+<div id="webchat" style="width: 100px; height: 500px;"></div>
+
+<script>
+    window.botpress.on("webchat:ready", () => {
+        window.botpress.open();
+    });
+
+    window.botpress.init({
+        botId: "0924fe9e-a417-4694-94ff-88ee2641b5fc",
+        clientId: "3c29f539-a65e-457c-8eab-80eea7ff6606",
+        selector: "#webchat"
+    });
+</script>
+</body>
+
+</html>

@@ -7,17 +7,76 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
     tools:context=".AptitudeTests">
+
     <LinearLayout
-        android:background="@color/background_color"
+        android:id="@+id/linearLayout9"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background_color"
+        app:layout_constraintBottom_toTopOf="@+id/bottomMenuFragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
 
+        <LinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="41dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="start|center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                style="@style/BackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:onClick="onBackPressed"
+                android:src="@drawable/back_button" />
+
+            <TextView
+                style="@style/RegisterTitle"
+                android:layout_width="330dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Bem-vindo aos testes de aptidão"
+                android:textAlignment="center"
+
+                />
 
 
+        </LinearLayout>
+
+        <TextView
+            style="@style/RegisterTitle"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="normal"
+            android:text="Conheça nossos testes"
+            android:textAlignment="center"
+
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/testRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>
+
+
     <fragment
         android:id="@+id/bottomMenuFragment"
         android:name="com.fragments.BottomMenuFragment"

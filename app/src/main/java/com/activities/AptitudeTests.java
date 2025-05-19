@@ -3,28 +3,61 @@ package com.activities;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.adapters.TestAdapter;
+import com.models.QuestionTest;
+import com.models.Test;
+import com.models.TestWithQuestionCount;
+import com.services.QuestionTestService;
+import com.services.TestService;
+import com.activities.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AptitudeTests extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private TestAdapter adapter;
+    private List<TestWithQuestionCount> testWithCounts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_aptitude_tests);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        recyclerView = findViewById(R.id.testRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        loadData();
     }
 
-    public void onBackPressed(View view){
+    private void loadData() {
+        new Thread(() -> {
+            List<Test> tests = TestService.fetchTests();
+            List<QuestionTest> questions = QuestionTestService.fetchQuestions();
+
+            for (Test test : tests) {
+                int count = 0;
+                for (QuestionTest q : questions) {
+                    if (q.getTest_id() == test.getId()) {
+                        count++;
+                    }
+                }
+                testWithCounts.add(new TestWithQuestionCount(test, count));
+            }
+
+            runOnUiThread(() -> {
+                adapter = new TestAdapter(testWithCounts, AptitudeTests.this);
+                recyclerView.setAdapter(adapter);
+            });
+        }).start();
+    }
+
+    public void onBackPressed(View view) {
         finish();
     }
-
 }

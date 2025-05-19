@@ -1,5 +1,7 @@
 package com.services;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -41,11 +43,14 @@ public class QuestionOptionService {
                 JSONObject obj = jsonArray.getJSONObject(i);
 
                 int id = obj.getInt("id");
-                int questionId = obj.getInt("question_id");
+                int question_test_id = obj.getInt("question_test_id");
                 String optionText = obj.getString("option_text");
-                boolean isCorrect = obj.getBoolean("is_correct");
+                boolean isCorrect = obj.getInt("is_correct") == 1;
 
-                QuestionOption option = new QuestionOption(id, questionId, optionText, isCorrect);
+                Log.d("OPTION_DEBUG", "id: " + id + ", question_test_id: " + question_test_id + ", texto: " + optionText + ", correta: " + isCorrect);
+
+
+                QuestionOption option = new QuestionOption(id, question_test_id, optionText, isCorrect);
                 optionList.add(option);
             }
 
