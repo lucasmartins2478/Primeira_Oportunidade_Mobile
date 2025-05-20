@@ -7,6 +7,7 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/card_background"
         android:orientation="vertical"
+        android:layout_margin="25dp"
         android:padding="20dp">
 
         <TextView

@@ -91,6 +91,7 @@ public class ChangePassword extends AppCompatActivity {
                 runOnUiThread(()->{
                     loadingDialog.dismiss();
                     Toast.makeText(ChangePassword.this, "Senha alterada com sucesso", Toast.LENGTH_SHORT).show();
+                    finish();
 
                 });
             }
