@@ -199,23 +199,7 @@
                     android:inputType="text"
                     />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="vertical">
 
-                    <TextView
-                        style="@style/EditTextLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/city_label" />
-
-                    <EditText
-                        android:id="@+id/city_input"
-                        android:inputType="text"
-                        style="@style/EditTextRegister" />
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -281,6 +265,23 @@
                             android:src="@drawable/select_icon" />
                     </RelativeLayout>
                 </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/EditTextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/city_label" />
+
+                <EditText
+                    android:id="@+id/city_input"
+                    android:inputType="text"
+                    style="@style/EditTextRegister" />
             </LinearLayout>
 
             <LinearLayout

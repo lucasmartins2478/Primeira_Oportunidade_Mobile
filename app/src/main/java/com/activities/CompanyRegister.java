@@ -25,10 +25,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.fragments.LoadingDialogFragment;
+import com.models.Address;
 import com.models.Company;
 import com.models.MaskEditText;
 import com.models.User;
 import com.models.UserType;
+import com.services.AddressService;
 import com.services.CompanyService;
 import com.services.LoginService;
 
@@ -137,6 +139,18 @@ public class CompanyRegister extends AppCompatActivity {
             loadCompanyData();
 
         }
+
+        cepInput.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) { // Quando perde o foco
+                String cep = cepInput.getText().toString().replaceAll("[^\\d]", "");
+
+                if (cep.length() == 8) {
+                    buscarEndereco(cep);
+                } else {
+                    Toast.makeText(getApplicationContext(), "CEP inválido", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
         companyService = new CompanyService();
@@ -565,6 +579,45 @@ public class CompanyRegister extends AppCompatActivity {
 
 
     }
+
+    private void buscarEndereco(String cep) {
+        loadingDialog.show(getSupportFragmentManager(), "loading");
+        AddressService service = new AddressService();
+        service.fetchAddressFromViacep(cep, new AddressService.FetchCallback() {
+            @Override
+            public void onSuccess(Address address) {
+                runOnUiThread(() -> {
+                    // Preencha os campos automaticamente
+
+                    ((EditText) findViewById(R.id.address_input)).setText(address.getLogradouro());
+                    ((EditText) findViewById(R.id.city_input)).setText(address.getLocalidade());
+                    Spinner ufSpinner = findViewById(R.id.uf_spinner);
+
+                    ufSpinner.post(() -> {
+                        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) ufSpinner.getAdapter();
+                        for (int i = 0; i < adapter.getCount(); i++) {
+                            if (address.getUf().equalsIgnoreCase(adapter.getItem(i).toString())) {
+                                ufSpinner.setSelection(i);
+                                break;
+                            }
+                        }
+                    });
+
+                    loadingDialog.dismiss();
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                            loadingDialog.dismiss();
+                            Toast.makeText(getApplicationContext(), "Erro: " + error, Toast.LENGTH_SHORT).show();
+                        }
+                );
+            }
+        });
+    }
+
 
 
 
