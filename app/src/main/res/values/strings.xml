@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PrimeiraOportunidade</string>
+    <string name="app_name">Primeira Oportunidade</string>
     <string name="forgot_password_text">Esqueceu sua senha?</string>
     <string name="create_account_text">Primeiro acesso? Crie uma conta</string>
     <string name="email_hint">E-mail</string>

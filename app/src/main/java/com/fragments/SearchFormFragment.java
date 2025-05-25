@@ -347,13 +347,11 @@ public class SearchFormFragment extends Fragment {
 
     public void enviarNotificacao(Context context, Vacancy vaga) {
         // Crie um Intent que será disparado quando o usuário clicar na notificação
-        Intent intent = new Intent(context, Vacancies.class);  // Ou a Activity que contém o Fragment
-        intent.putExtra("vacancy", vaga);  // Passe os dados da vaga para o Fragment
+        Intent intent = new Intent(context, Vacancies.class);
+        intent.putExtra("vacancy", vaga);
 
-        // Crie um PendingIntent para abrir a Activity/Fragment
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        // Crie a notificação
         Notification notification = new NotificationCompat.Builder(context, "CANAL_VAGAS")
                 .setContentTitle("Vaga Compatível Encontrada!")
                 .setContentText("Uma vaga pode ser interessante para você! Clique para ver os detalhes.")
@@ -362,7 +360,7 @@ public class SearchFormFragment extends Fragment {
                 .setAutoCancel(true)  // A notificação desaparece quando clicada
                 .build();
 
-        // Envie a notificação
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         int notificationId = vaga.getId(); // Assuming each vacancy has a unique ID
         notificationManager.notify(notificationId, notification);
