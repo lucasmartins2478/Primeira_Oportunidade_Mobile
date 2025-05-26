@@ -35,6 +35,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestViewHolder
         return new TestViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull TestViewHolder holder, int position) {
         TestWithQuestionCount item = testList.get(position);
@@ -42,13 +43,26 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestViewHolder
         holder.title.setText(item.getTest().getTitle());
         holder.questionCount.setText(item.getQuestionCount() + " perguntas");
 
+        Integer userScore = item.getUserScore();
+        if (userScore != null) {
+            holder.testScore.setText(userScore + "%");
+            holder.testScore.setVisibility(View.VISIBLE);
+
+            holder.btnStart.setText("Refazer Teste");
+            holder.btnStart.setBackgroundResource(R.drawable.button_orange); // ou use estilo ButtonOrange
+        } else {
+            holder.testScore.setVisibility(View.GONE);
+            holder.btnStart.setText("Realizar Teste");
+            holder.btnStart.setBackgroundResource(R.drawable.button_blue);
+        }
+
         holder.btnStart.setOnClickListener(v -> {
             Intent intent = new Intent(context, TestExecutionActivity.class);
             intent.putExtra("testId", item.getTest().getId());
             context.startActivity(intent);
-
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -56,14 +70,18 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestViewHolder
     }
 
     public static class TestViewHolder extends RecyclerView.ViewHolder {
-        TextView title, questionCount;
+        TextView title, questionCount, testScore;
         Button btnStart;
 
         public TestViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.testTitle);
             questionCount = itemView.findViewById(R.id.questionCount);
+            testScore = itemView.findViewById(R.id.testScore); // novo
             btnStart = itemView.findViewById(R.id.btnStart);
         }
     }
+
+
+
 }

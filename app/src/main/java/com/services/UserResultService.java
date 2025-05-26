@@ -1,10 +1,13 @@
 package com.services;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -65,4 +68,42 @@ public class UserResultService {
 
         return resultList;
     }
+
+    public static void sendUserTestResult(int userId, int testId, int score, int totalQuestions, int timeTakenSeconds) {
+        new Thread(() -> {
+            try {
+                URL url = new URL("https://backend-po.onrender.com/user-test-results");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+
+                JSONObject json = new JSONObject();
+                json.put("candidate_id", userId);
+                json.put("test_id", testId);
+                json.put("score", score);
+                json.put("total_questions", totalQuestions);
+                json.put("time_taken_seconds", timeTakenSeconds);
+
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte[] input = json.toString().getBytes("utf-8");
+                    os.write(input, 0, input.length);
+                }
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == 201 || responseCode == 200) {
+                    Log.d("SEND_RESULT", "Resultado enviado com sucesso!");
+                } else {
+                    Log.e("SEND_RESULT", "Erro ao enviar resultado. Código: " + responseCode);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+
+
 }

@@ -21,6 +21,7 @@ import com.models.QuestionOption;
 import com.models.QuestionTest;
 import com.services.QuestionOptionService;
 import com.services.QuestionTestService;
+import com.services.UserResultService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ public class TestExecutionActivity extends AppCompatActivity {
     private Map<Integer, Integer> userAnswers = new HashMap<>();
 
     private TextView questionText;
+    private long startTime;
     private RadioGroup optionsGroup;
     private AppCompatButton btnNext;
 
@@ -45,7 +47,7 @@ public class TestExecutionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_execution);
-
+        startTime = System.currentTimeMillis();
         testId = getIntent().getIntExtra("testId", -1);
 
         questionText = findViewById(R.id.questionText);
@@ -145,11 +147,26 @@ public class TestExecutionActivity extends AppCompatActivity {
 
 
     private void showResult() {
+        int totalQuestions = questions.size();
+        int timeTaken = calculateTimeTaken(); // você pode implementar isso como quiser
+
+        int userId = getSharedPreferences("UserPrefs", MODE_PRIVATE).getInt("candidateId", -1);
+
+        // Enviar resultado para o backend
+        UserResultService.sendUserTestResult(userId, testId, score, totalQuestions, timeTaken);
+
         new AlertDialog.Builder(this)
                 .setTitle("Resultado")
-                .setMessage("Você acertou " + score + " de " + questions.size() + " perguntas.")
+                .setMessage("Você acertou " + score + " de " + totalQuestions + " perguntas.")
                 .setPositiveButton("OK", (dialog, which) -> finish())
                 .setCancelable(false)
                 .show();
     }
+
+    private int calculateTimeTaken() {
+        long endTime = System.currentTimeMillis();
+        return (int) ((endTime - startTime) / 1000); // tempo em segundos
+    }
+
+
 }
