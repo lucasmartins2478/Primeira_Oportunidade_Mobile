@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import com.activities.R;
 import com.adapters.MessageAdapter;
@@ -62,17 +63,18 @@ public class SearchMessagesFragment extends Fragment {
             allMessages.clear(); // Limpar mensagens antigas
             allMessages.addAll(messages); // Adicionar as novas mensagens
             adapter.notifyDataSetChanged(); // Notificar o adapter de que a lista foi atualizada
+            recyclerView.scrollToPosition(allMessages.size() - 1);
+
+
         });
     }
-
-
-
-
 
     // Método para adicionar uma nova mensagem
     public void adicionarMensagem(Message message) {
         allMessages.add(message); // Adiciona a nova mensagem no final da lista
         adapter.notifyItemInserted(allMessages.size() - 1); // Notifica que o item foi inserido na última posição
+        recyclerView.scrollToPosition(allMessages.size() - 1);
+
     }
 
 }

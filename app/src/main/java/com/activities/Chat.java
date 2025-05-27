@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -44,6 +47,23 @@ public class Chat extends AppCompatActivity {
         inputMessage = findViewById(R.id.inputMessage);
         sendMessageButton = findViewById(R.id.sendMessageButton);
         chatService = new ChatService(); // Instanciando o ChatService
+
+        inputMessage.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
+                    actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+
+                String messageText = inputMessage.getText().toString().trim();
+                if (!messageText.isEmpty()) {
+                    enviarMensagem(messageText);
+                    inputMessage.setText(""); // Limpa o campo após enviar
+                } else {
+                    Toast.makeText(Chat.this, "Digite uma mensagem", Toast.LENGTH_SHORT).show();
+                }
+                return true; // Indica que a ação foi tratada
+            }
+            return false;
+        });
 
         // Carregar o fragmento de pesquisa
         if (savedInstanceState == null) {
@@ -127,6 +147,7 @@ public class Chat extends AppCompatActivity {
                 // Mensagem enviada com sucesso
                 runOnUiThread(() -> {
                     loadingDialog.dismiss();
+
                     Toast.makeText(Chat.this, "Mensagem enviada!", Toast.LENGTH_SHORT).show();
                     // Adicionar a nova mensagem à lista no fragmento
                     if (searchMessagesFragment != null) {

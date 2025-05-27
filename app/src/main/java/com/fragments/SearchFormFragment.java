@@ -258,7 +258,7 @@ public class SearchFormFragment extends Fragment {
 
 
             // Se for uma empresa (meuCurriculo é null), filtre apenas pelo companyId
-            if (podeCalcularScore()) {
+            if (!podeCalcularScore()) {
                 SharedPreferences prefs = getActivity().getSharedPreferences("UserPrefs", getContext().MODE_PRIVATE);
                 int companyId = prefs.getInt("companyId", -1);
 

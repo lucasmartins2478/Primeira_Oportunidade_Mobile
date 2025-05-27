@@ -247,10 +247,6 @@ public class CoursesRegister extends AppCompatActivity {
 
     }
 
-
-
-
-
     public void addCourseDataForm(View view) {
         View form = inflater.inflate(R.layout.item_course_data_form, containerLayout, false);
 
@@ -378,9 +374,6 @@ public class CoursesRegister extends AppCompatActivity {
             competencesContainer.addView(itemView);
         }
     }
-
-
-
     private void populateCourseDataForms(List<CourseData> courseDataList){
 
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
@@ -498,11 +491,4 @@ public class CoursesRegister extends AppCompatActivity {
             return "";
         }
     }
-
-
-
-
-
-
-
 }
