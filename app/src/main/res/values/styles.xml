@@ -114,6 +114,12 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="ButtonPremium">
+        <item name="android:background">@drawable/premium_background</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
     <style name="TextViewData">
         <item name="android:textSize">18sp</item>
         <item name="android:layout_margin">10dp</item>

@@ -36,11 +36,28 @@
             android:layout_height="wrap_content">
 
             <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/button_title"
                 style="@style/SectionTitle"
                 android:layout_width="281dp"
                 android:layout_height="wrap_content"
                 android:elevation="6dp"
                 android:text="@string/your_profile"
+                android:visibility="gone"
+                android:textColor="@color/black"
+                android:translationZ="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/premium_button"
+                style="@style/ButtonPremium"
+                android:layout_width="281dp"
+                android:layout_height="wrap_content"
+                android:elevation="6dp"
+                android:visibility="gone"
+                android:text="Faça Upgrade"
+                android:onClick="premium"
                 android:textColor="@color/black"
                 android:translationZ="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -32,8 +32,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.billing)
     implementation(libs.glide)
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0") // aqui ainda precisa ser manual
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     implementation(libs.okhttp)
     implementation(libs.appcompat)
     implementation(libs.material)

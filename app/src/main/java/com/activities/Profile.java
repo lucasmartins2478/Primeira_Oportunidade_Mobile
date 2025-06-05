@@ -69,6 +69,7 @@ public class Profile extends AppCompatActivity {
     LoadingDialogFragment loadingDialog;
     ImageView profileImageView;
 
+    AppCompatButton btnTitle, btnPremium;
     CandidateService candidateService;
 
     private static final int PICK_FILE_REQUEST_CODE = 101;
@@ -108,6 +109,7 @@ public class Profile extends AppCompatActivity {
 
         profileImageView = findViewById(R.id.profile_img);
 
+
         SharedPreferences prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
         String logoPath = prefs.getString("companyLogoPath", null);
 
@@ -146,6 +148,8 @@ public class Profile extends AppCompatActivity {
         competencesContainer = findViewById(R.id.competencesContainer);
         courseContainerTitle = findViewById(R.id.textCoursesLabel);
         competenceContainerTitle = findViewById(R.id.textCompetencesLabel);
+        btnPremium = findViewById(R.id.premium_button);
+        btnTitle = findViewById(R.id.button_title);
 
 
         imageContainer = findViewById(R.id.image_container);
@@ -173,6 +177,7 @@ public class Profile extends AppCompatActivity {
         if( candidateId != -1){
 
 
+            btnTitle.setVisibility(View.VISIBLE);
             if(curriculumId != -1){
                 btnAddCurriculum.setText("Editar currículo");
             }
@@ -184,8 +189,7 @@ public class Profile extends AppCompatActivity {
 
 
         }else {
-
-
+            btnPremium.setVisibility(View.VISIBLE);
             fetchCompanyData(userId);
         }
 
@@ -601,6 +605,10 @@ public class Profile extends AppCompatActivity {
                 Toast.makeText(this, "Arquivo selecionado: " + selectedFileName, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    public void premium(View view){
+        Intent intent = new Intent(Profile.this, Premium.class);
+        startActivity(intent);
     }
 
     private void logout() {

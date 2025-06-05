@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:background="#0D47A1"
+    android:padding="24dp">
+
+    <!-- Título principal -->
+
+
+    <LinearLayout
+        android:layout_width="348dp"
+        android:layout_height="552dp"
+        android:layout_margin="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/card_background"
+        android:orientation="vertical"
+        android:padding="30dp">
+
+        <ImageView
+            android:layout_width="235dp"
+            android:layout_height="82dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/titlePremium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="Plano Premium"
+            android:textColor="@android:color/black"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <!-- Subtítulo -->
+        <TextView
+            android:id="@+id/subTitlePremium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="Desbloqueie todo o potencial da sua experiência!"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Benefícios -->
+        <TextView
+            android:id="@+id/benefitsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:lineSpacingExtra="6dp"
+            android:text="• Candidaturas em destaque\n• Criação de testes de aptidão\n• Acesso antecipado a vagas\n• Suporte prioritário\n• E muito mais!"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+        <!-- Botão de Assinar -->
+        <Button
+            android:id="@+id/btnSubscribe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="#FF9800"
+            android:text="Assinar Plano Premium"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <!-- Botão de Sair -->
+        <TextView
+            android:id="@+id/btnDismiss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:onClick="cancel"
+            android:gravity="center"
+            android:text="Não quero esses benefícios"
+            android:textColor="@color/blue"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    </LinearLayout>
