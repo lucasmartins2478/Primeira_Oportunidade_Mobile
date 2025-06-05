@@ -1,10 +1,13 @@
 package com.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,22 +18,25 @@ import com.models.TestWithQuestionCount;
 import com.models.UserResult;
 import com.services.QuestionTestService;
 import com.services.TestService;
-import com.activities.R;
 import com.services.UserResultService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AptitudeTests extends AppCompatActivity {
-
+public class SkillTests extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TestAdapter adapter;
     private List<TestWithQuestionCount> testWithCounts = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aptitude_tests);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_skill_tests);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         recyclerView = findViewById(R.id.testRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -68,7 +74,7 @@ public class AptitudeTests extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                adapter = new TestAdapter(testWithCounts, AptitudeTests.this);
+                adapter = new TestAdapter(testWithCounts, SkillTests.this);
                 recyclerView.setAdapter(adapter);
             });
         }).start();

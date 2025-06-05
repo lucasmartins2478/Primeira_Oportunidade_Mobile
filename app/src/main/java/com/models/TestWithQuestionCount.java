@@ -14,5 +14,10 @@ public class TestWithQuestionCount {
     public Test getTest() { return test; }
     public int getQuestionCount() { return questionCount; }
     public Integer getUserScore() { return userScore; }
+
+    public void setUserScore(Integer score) {
+        this.userScore = score;
+    }
+
 }
 

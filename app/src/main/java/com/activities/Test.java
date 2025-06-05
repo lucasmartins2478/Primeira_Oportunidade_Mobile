@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -28,8 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TestExecutionActivity extends AppCompatActivity {
-
+public class Test extends AppCompatActivity {
     private List<QuestionTest> questions;
     private List<QuestionOption> options;
     private int currentQuestionIndex = 0;
@@ -39,24 +37,37 @@ public class TestExecutionActivity extends AppCompatActivity {
     private TextView questionText;
     private long startTime;
     private RadioGroup optionsGroup;
-    private AppCompatButton btnNext;
+    private AppCompatButton btnNext, btnPrevious;
 
     private int testId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_execution);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_test);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
         startTime = System.currentTimeMillis();
         testId = getIntent().getIntExtra("testId", -1);
-
+        btnPrevious = findViewById(R.id.btnPrevious);
         questionText = findViewById(R.id.questionText);
         optionsGroup = findViewById(R.id.optionsGroup);
         btnNext = findViewById(R.id.btnNext);
 
         loadQuestionsAndOptions();
+        btnPrevious.setOnClickListener(v -> {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showCurrentQuestion();
+            } else {
+                Toast.makeText(this, "Esta é a primeira pergunta.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
     private void loadQuestionsAndOptions() {
         new Thread(() -> {
             List<QuestionTest> allQuestions = QuestionTestService.fetchQuestions();
@@ -167,6 +178,4 @@ public class TestExecutionActivity extends AppCompatActivity {
         long endTime = System.currentTimeMillis();
         return (int) ((endTime - startTime) / 1000); // tempo em segundos
     }
-
-
 }

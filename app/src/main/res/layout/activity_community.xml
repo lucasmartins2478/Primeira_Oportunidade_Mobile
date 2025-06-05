@@ -9,7 +9,7 @@
     android:background="@color/blue"
     tools:context=".Community">
 
-    <!-- ScrollView com todo o conteúdo (menos o fragment) -->
+
     <ScrollView
         android:id="@+id/scrollContainer"
         android:layout_width="0dp"

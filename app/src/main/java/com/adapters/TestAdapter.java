@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.activities.R;
-import com.activities.TestExecutionActivity;
+import com.activities.Test;
 import com.models.TestWithQuestionCount;
 
 import java.util.List;
@@ -57,7 +57,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestViewHolder
         }
 
         holder.btnStart.setOnClickListener(v -> {
-            Intent intent = new Intent(context, TestExecutionActivity.class);
+            Intent intent = new Intent(context, Test.class);
             intent.putExtra("testId", item.getTest().getId());
             context.startActivity(intent);
         });

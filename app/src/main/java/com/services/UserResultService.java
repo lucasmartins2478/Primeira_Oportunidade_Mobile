@@ -51,12 +51,30 @@ public class UserResultService {
                 JSONObject obj = jsonArray.getJSONObject(i);
 
                 int id = obj.getInt("id");
-                int userId = obj.getInt("user_id");
+                int userId = obj.getInt("candidate_id"); // esse é o campo real da API
                 int testId = obj.getInt("test_id");
-                int score = obj.getInt("score");
+                int score = 0;
+                try {
+                    String scoreStr = obj.getString("score");
+
+                    if (scoreStr.trim().startsWith("{")) {
+                        // Caso criptografado
+                        JSONObject scoreJson = new JSONObject(scoreStr);
+                        score = Integer.parseInt(scoreJson.getString("content"));
+                    } else {
+                        // Caso simples
+                        score = Integer.parseInt(scoreStr);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(); // loga o erro mas não quebra
+                    score = 0;
+                }
+
                 int totalQuestions = obj.getInt("total_questions");
                 int timeTakenSeconds = obj.getInt("time_taken_seconds");
                 Date createdAt = sdf.parse(obj.getString("created_at"));
+
+
 
                 UserResult result = new UserResult(id, userId, testId, score, totalQuestions, timeTakenSeconds, createdAt);
                 resultList.add(result);

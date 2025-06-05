@@ -46,7 +46,7 @@ public class Community extends AppCompatActivity {
         startActivity(intent);
     }
     public void openAptitudeTests(View view){
-        Intent intent = new Intent(Community.this, AptitudeTests.class);
+        Intent intent = new Intent(Community.this, SkillTests.class);
         startActivity(intent);
     }
 }
