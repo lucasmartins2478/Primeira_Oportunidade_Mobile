@@ -18,12 +18,13 @@ public class Chatbot extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chatbot);
 
-
         WebView webView = findViewById(R.id.webChatBot);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true); // Recomendado para bots modernos
-        webView.loadUrl("https://files.bpcontent.cloud/2025/05/18/22/20250518222931-A4IYCXU8.html");
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.setWebViewClient(new WebViewClient()); // Garante que o conteúdo abre no WebView
 
+        // Abre o chatbot.html da pasta assets
+        webView.loadUrl("file:///android_asset/chatbot.html");
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
